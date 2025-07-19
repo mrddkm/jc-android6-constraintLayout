@@ -3,10 +3,13 @@ package com.jc.constraintlayout
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
+import android.view.View
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -18,10 +21,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
+import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.jc.constraintlayout.ui.theme.ConstraintLayoutTheme
 
+@Suppress("DEPRECATION")
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +39,9 @@ class MainActivity : ComponentActivity() {
 
             ConstraintLayoutTheme(darkTheme = isDarkTheme) {
                 Surface(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .systemBarsPadding(),
                     color = MaterialTheme.colorScheme.background
                 ) {
                     ResponsiveConstraintLayoutTemplate(
@@ -53,17 +61,86 @@ class MainActivity : ComponentActivity() {
 
     @SuppressLint("ObsoleteSdkInt")
     private fun setupWindowForAndroid6() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            enableEdgeToEdge()
-        } else {
-            WindowCompat.setDecorFitsSystemWindows(window, false)
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                val windowInsetsController =
-                    WindowCompat.getInsetsController(window, window.decorView)
-                windowInsetsController.systemBarsBehavior =
-                    WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
+                // Android 11+ (API 30+)
+                enableEdgeToEdge()
             }
+
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
+                // Android 6+ (API 23+)
+                setupFullscreenForAndroid6()
+            }
+
+            else -> {
+                // Android 5 and below
+                setupLegacyFullscreen()
+            }
+        }
+    }
+
+    @SuppressLint("ObsoleteSdkInt")
+    private fun setupFullscreenForAndroid6() {
+        // Option 1: Hide navigation bar completely (user can swipe to show it)
+        hideNavigationBar()
+
+        // Option 2: Navigation bar with padding
+        // setupWindowInsets()
+    }
+
+    @SuppressLint("ObsoleteSdkInt")
+    private fun hideNavigationBar() {
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
+
+            windowInsetsController.hide(WindowInsetsCompat.Type.navigationBars())
+
+            windowInsetsController.systemBarsBehavior =
+                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        } else {
+            window.decorView.systemUiVisibility = (
+                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
+                            View.SYSTEM_UI_FLAG_FULLSCREEN or
+                            View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                    )
+        }
+    }
+
+    private fun setupWindowInsets() {
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { view, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
+    }
+
+    @SuppressLint("ObsoleteSdkInt")
+    private fun setupLegacyFullscreen() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            window.setFlags(
+                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN
+            )
+
+            window.decorView.systemUiVisibility = (
+                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
+                            View.SYSTEM_UI_FLAG_FULLSCREEN or
+                            View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
+                            View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
+                            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    )
+        }
+    }
+
+    @SuppressLint("ObsoleteSdkInt")
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            hideNavigationBar()
         }
     }
 
@@ -112,13 +189,4 @@ fun ResponsiveConstraintLayoutTemplate(
         headerPercent = headerPercent,
         footerPercent = footerPercent
     )
-}
-
-@SuppressLint("ObsoleteSdkInt")
-fun isAndroid6Plus(): Boolean {
-    return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-}
-
-fun isAndroid10Plus(): Boolean {
-    return Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
 }
