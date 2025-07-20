@@ -13,3 +13,5 @@
 .externalNativeBuild
 .cxx
 local.properties
+/app/release/output-metadata.json
+/.idea/inspectionProfiles/Project_Default.xml
