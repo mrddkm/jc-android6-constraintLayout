@@ -32,4 +32,11 @@
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowBackground">@android:color/black</item>
     </style>
+
+    <!-- Splash application theme -->
+    <style name="Theme.CustomSplashScreen" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowBackground">@drawable/splash_bg</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
 </resources>
