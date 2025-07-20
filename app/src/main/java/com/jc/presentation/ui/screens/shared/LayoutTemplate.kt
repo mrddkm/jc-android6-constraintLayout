@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.jc.presentation.ui.screens
+package com.jc.presentation.ui.screens.shared
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -23,7 +23,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 
 @Composable
-fun ConstraintLayoutTemplate(
+fun LayoutTemplate(
     title: String = "Template Layout",
     onBackClick: () -> Unit = {},
     onThemeToggle: () -> Unit = {},
@@ -315,7 +315,7 @@ fun DefaultMainContent() {
 fun ExampleUsage() {
     var isDarkTheme by remember { mutableStateOf(false) }
 
-    ConstraintLayoutTemplate(
+    LayoutTemplate(
         title = "Dashboard",
         onBackClick = { /* Handle back navigation */ },
         onThemeToggle = { isDarkTheme = !isDarkTheme },
@@ -345,7 +345,7 @@ fun ExampleUsage() {
 @Composable
 fun ConstraintLayoutTemplatePreview() {
     MaterialTheme {
-        ConstraintLayoutTemplate()
+        LayoutTemplate()
     }
 }
 
@@ -353,7 +353,7 @@ fun ConstraintLayoutTemplatePreview() {
 @Composable
 fun ConstraintLayoutTemplateTabletPreview() {
     MaterialTheme {
-        ConstraintLayoutTemplate(
+        LayoutTemplate(
             title = "Tablet View",
             isDarkTheme = true
         )

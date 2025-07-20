@@ -25,7 +25,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import com.jc.presentation.ui.screens.ConstraintLayoutTemplate
+import com.jc.presentation.ui.screens.shared.LayoutTemplate
 import com.jc.presentation.ui.theme.ConstraintLayoutTheme
 
 @Suppress("DEPRECATION")
@@ -182,7 +182,7 @@ fun ResponsiveConstraintLayoutTemplate(
         0.15f to 0.10f // Phone: header 15%, footer 10%
     }
 
-    ConstraintLayoutTemplate(
+    LayoutTemplate(
         title = title,
         onBackClick = onBackClick,
         onThemeToggle = onThemeToggle,
