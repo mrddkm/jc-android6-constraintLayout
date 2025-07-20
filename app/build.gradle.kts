@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.io.FileInputStream
 import java.time.Clock
 import java.time.Instant
@@ -9,6 +10,9 @@ import java.util.TimeZone
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.google.ksp)
 }
 
 val buildProperties = Properties()
@@ -45,6 +49,11 @@ android {
     }
 
     buildTypes {
+        debug {
+            isMinifyEnabled = false
+            isDebuggable = true
+            applicationIdSuffix = ".debug"
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -57,14 +66,20 @@ android {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
     }
-    kotlinOptions {
-        jvmTarget = "21"
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_21)
+        }
     }
+//    kotlinOptions {
+//        jvmTarget = "21"
+//        freeCompilerArgs += listOf(
+//            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
+//        )
+//    }
     buildFeatures {
         compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.14"
+        buildConfig = true
     }
 
     packaging {
@@ -79,20 +94,54 @@ base {
 }
 
 dependencies {
+    // Compose BOM
     implementation(platform(libs.androidx.compose.bom))
+
+    // Core Android
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.google.material)
+
+    // Lifecycle
     implementation(libs.bundles.lifecycle)
+
+    // Compose
     implementation(libs.bundles.compose.core)
     implementation(libs.androidx.constraintlayout.compose)
+
+    // Navigation
+    implementation(libs.androidx.navigation.compose)
+
+    // Coroutines
+    implementation(libs.bundles.coroutines)
+
+    // Serialization
+    implementation(libs.kotlinx.serialization.json)
+
+    // Ktor Client
+    implementation(libs.bundles.ktor.client)
+
+    // Koin DI
+    implementation(platform(libs.koin.bom))
+    implementation(libs.bundles.koin)
+
+    // Room Database
+    implementation(libs.bundles.room)
+    ksp(libs.room.compiler)
+
+    // DataStore
+    implementation(libs.bundles.datastore)
+
+    // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.bundles.compose.testing)
     androidTestImplementation(platform(libs.androidx.compose.bom))
+
+    // Debug
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 }
