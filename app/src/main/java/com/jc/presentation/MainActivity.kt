@@ -1,4 +1,4 @@
-package com.jc.constraintlayout
+package com.jc.presentation
 
 import android.annotation.SuppressLint
 import android.os.Build
@@ -25,7 +25,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import com.jc.constraintlayout.ui.theme.ConstraintLayoutTheme
+import com.jc.presentation.ui.screens.ConstraintLayoutTemplate
+import com.jc.presentation.ui.theme.ConstraintLayoutTheme
 
 @Suppress("DEPRECATION")
 class MainActivity : ComponentActivity() {
