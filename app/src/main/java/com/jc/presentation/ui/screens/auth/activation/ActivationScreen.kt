@@ -52,7 +52,7 @@ fun ActivationScreen(
 
         // MAIN SECTION (90%)
         MainSection(
-            content = {
+            contentMain = {
                 ActivationContent(
                     onActivate = onNavigateToSignIn
                 )

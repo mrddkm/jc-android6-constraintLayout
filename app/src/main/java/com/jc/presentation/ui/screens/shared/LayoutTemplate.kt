@@ -4,14 +4,12 @@ package com.jc.presentation.ui.screens.shared
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -24,13 +22,12 @@ import androidx.constraintlayout.compose.Dimension
 
 @Composable
 fun LayoutTemplate(
-    title: String = "Template Layout",
-    onBackClick: () -> Unit = {},
     onThemeToggle: () -> Unit = {},
     isDarkTheme: Boolean = false,
-    headerPercent: Float = 0.15f,
-    footerPercent: Float = 0.10f,
-    content: @Composable () -> Unit = { DefaultMainContent() }
+    headerPercent: Float = 0.10f,
+    footerPercent: Float = 0.07f,
+    contentHeader: @Composable () -> Unit = { DefaultHeaderContent() },
+    contentMain: @Composable () -> Unit = { DefaultMainContent() }
 ) {
     ConstraintLayout(
         modifier = Modifier
@@ -47,8 +44,7 @@ fun LayoutTemplate(
 
         // HEADER SECTION (flexible %)
         HeaderSection(
-            title = title,
-            onBackClick = onBackClick,
+            contentHeader = contentHeader,
             isDarkTheme = isDarkTheme,
             modifier = Modifier.constrainAs(header) {
                 top.linkTo(parent.top)
@@ -62,7 +58,7 @@ fun LayoutTemplate(
 
         // MAIN SECTION (flexible %)
         MainSection(
-            content = content,
+            contentMain = contentMain,
             isDarkTheme = isDarkTheme,
             modifier = Modifier.constrainAs(main) {
                 top.linkTo(topGuideline)
@@ -92,8 +88,7 @@ fun LayoutTemplate(
 
 @Composable
 fun HeaderSection(
-    title: String,
-    onBackClick: () -> Unit,
+    contentHeader: @Composable () -> Unit,
     isDarkTheme: Boolean,
     modifier: Modifier = Modifier
 ) {
@@ -108,67 +103,16 @@ fun HeaderSection(
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
+                .padding(4.dp)
         ) {
-            val (backButton, titleText, profileImage) = createRefs()
-
-            IconButton(
-                onClick = onBackClick,
-                modifier = Modifier.constrainAs(backButton) {
-                    start.linkTo(parent.start)
-                    top.linkTo(parent.top)
-                    bottom.linkTo(parent.bottom)
-                }
-            ) {
-                Icon(
-                    Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
-                    tint = if (isDarkTheme) Color.White else Color.Black
-                )
-            }
-
-            Text(
-                text = title,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                color = if (isDarkTheme) Color.White else Color.Black,
-                modifier = Modifier.constrainAs(titleText) {
-                    start.linkTo(backButton.end, margin = 16.dp)
-                    end.linkTo(profileImage.start, margin = 16.dp)
-                    top.linkTo(parent.top)
-                    bottom.linkTo(parent.bottom)
-                    width = Dimension.fillToConstraints
-                },
-                textAlign = TextAlign.Center
-            )
-
-            Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .background(
-                        if (isDarkTheme) Color.Gray else Color.LightGray,
-                        RoundedCornerShape(20.dp)
-                    )
-                    .constrainAs(profileImage) {
-                        end.linkTo(parent.end)
-                        top.linkTo(parent.top)
-                        bottom.linkTo(parent.bottom)
-                    },
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "U",
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold
-                )
-            }
+            contentHeader()
         }
     }
 }
 
 @Composable
 fun MainSection(
-    content: @Composable () -> Unit,
+    contentMain: @Composable () -> Unit,
     isDarkTheme: Boolean,
     modifier: Modifier = Modifier
 ) {
@@ -185,7 +129,7 @@ fun MainSection(
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            content()
+            contentMain()
         }
     }
 }
@@ -254,6 +198,47 @@ fun FooterSection(
 }
 
 @Composable
+fun DefaultHeaderContent() {
+    Card(
+        modifier = Modifier.padding(2.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        ConstraintLayout(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(2.dp)
+        ) {
+            val (appName, signOutButton) = createRefs()
+
+            Text(
+                text = "Parkir App",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.constrainAs(appName) {
+                    start.linkTo(parent.start)
+                    top.linkTo(parent.top)
+                    bottom.linkTo(parent.bottom)
+                }
+            )
+
+            IconButton(
+                onClick = {},
+                modifier = Modifier.constrainAs(signOutButton) {
+                    end.linkTo(parent.end)
+                    top.linkTo(parent.top)
+                    bottom.linkTo(parent.bottom)
+                }
+            ) {
+                Icon(
+                    Icons.AutoMirrored.Filled.ExitToApp,
+                    contentDescription = "Sign Out"
+                )
+            }
+        }
+    }
+}
+
+@Composable
 fun DefaultMainContent() {
     ConstraintLayout(
         modifier = Modifier.fillMaxSize()
@@ -311,36 +296,6 @@ fun DefaultMainContent() {
     }
 }
 
-@Composable
-fun ExampleUsage() {
-    var isDarkTheme by remember { mutableStateOf(false) }
-
-    LayoutTemplate(
-        title = "Dashboard",
-        onBackClick = { /* Handle back navigation */ },
-        onThemeToggle = { isDarkTheme = !isDarkTheme },
-        isDarkTheme = isDarkTheme
-    ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "Custom Main Content",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(
-                onClick = { /* Action */ }
-            ) {
-                Text("Sample Button")
-            }
-        }
-    }
-}
-
 @Preview(showBackground = true)
 @Composable
 fun ConstraintLayoutTemplatePreview() {
@@ -354,7 +309,6 @@ fun ConstraintLayoutTemplatePreview() {
 fun ConstraintLayoutTemplateTabletPreview() {
     MaterialTheme {
         LayoutTemplate(
-            title = "Tablet View",
             isDarkTheme = true
         )
     }

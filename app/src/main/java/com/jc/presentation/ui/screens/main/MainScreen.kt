@@ -45,8 +45,6 @@ fun MainScreen(
     onThemeToggle: () -> Unit = {},
     isDarkTheme: Boolean = false
 ) {
-    var isDarkTheme by remember { mutableStateOf(false) }
-
     ConstraintLayout(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -71,7 +69,7 @@ fun MainScreen(
 
         // MAIN SECTION (75%)
         MainSection(
-            content = {
+            contentMain = {
                 MainContent(
                     onNavigateToPayment = onNavigateToPayment
                 )
@@ -89,7 +87,7 @@ fun MainScreen(
 
         // FOOTER SECTION (10%)
         FooterSection(
-            onThemeToggle = { isDarkTheme = !isDarkTheme },
+            onThemeToggle = onThemeToggle,
             isDarkTheme = isDarkTheme,
             modifier = Modifier.constrainAs(footer) {
                 top.linkTo(bottomGuideline)

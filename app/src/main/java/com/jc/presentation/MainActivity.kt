@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -47,6 +46,10 @@ class MainActivity : ComponentActivity() {
                         .systemBarsPadding(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    ResponsiveConstraintLayoutTemplate(
+                        onThemeToggle = { isDarkTheme = !isDarkTheme },
+                        isDarkTheme = isDarkTheme
+                    )
                     val navController = rememberNavController()
                     AppNavigation(navController = navController)
                 }
@@ -64,7 +67,7 @@ class MainActivity : ComponentActivity() {
 
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
                 // Android 6+ (API 23+)
-                setupFullscreenForAndroid6()
+                hideNavigationBar()
             }
 
             else -> {
@@ -72,15 +75,6 @@ class MainActivity : ComponentActivity() {
                 setupLegacyFullscreen()
             }
         }
-    }
-
-    @SuppressLint("ObsoleteSdkInt")
-    private fun setupFullscreenForAndroid6() {
-        // Option 1: Hide navigation bar completely (user can swipe to show it)
-        hideNavigationBar()
-
-        // Option 2: Navigation bar with padding
-        // setupWindowInsets()
     }
 
     @SuppressLint("ObsoleteSdkInt")
@@ -100,16 +94,6 @@ class MainActivity : ComponentActivity() {
                             View.SYSTEM_UI_FLAG_FULLSCREEN or
                             View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                     )
-        }
-    }
-
-    private fun setupWindowInsets() {
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-
-        ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { view, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            view.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
         }
     }
 
@@ -158,8 +142,6 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun ResponsiveConstraintLayoutTemplate(
-    title: String,
-    onBackClick: () -> Unit,
     onThemeToggle: () -> Unit,
     isDarkTheme: Boolean
 ) {
@@ -171,14 +153,12 @@ fun ResponsiveConstraintLayoutTemplate(
     }
 
     val (headerPercent, footerPercent) = if (isTablet) {
-        0.12f to 0.08f // Tablet: header 12%, footer 8%
+        0.09f to 0.07f // Tablet: header 9%, footer 7%
     } else {
-        0.15f to 0.10f // Phone: header 15%, footer 10%
+        0.10f to 0.08f // Phone: header 10%, footer 8%
     }
 
     LayoutTemplate(
-        title = title,
-        onBackClick = onBackClick,
         onThemeToggle = onThemeToggle,
         isDarkTheme = isDarkTheme,
         headerPercent = headerPercent,

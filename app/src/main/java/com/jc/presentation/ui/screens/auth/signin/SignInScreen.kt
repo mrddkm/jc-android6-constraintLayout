@@ -25,7 +25,6 @@ import com.jc.presentation.ui.screens.shared.FooterSection
 import com.jc.presentation.ui.screens.shared.MainSection
 import com.jc.presentation.ui.theme.ConstraintLayoutTheme
 import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.launch
 
 @Composable
 fun SignInScreen(
@@ -42,7 +41,7 @@ fun SignInScreen(
 
         // MAIN SECTION (90%)
         MainSection(
-            content = {
+            contentMain = {
                 SignInContent(
                     onSignIn = onNavigateToMain
                 )
