@@ -18,6 +18,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,7 +37,6 @@ import com.jc.presentation.ui.screens.shared.FooterSection
 import com.jc.presentation.ui.screens.shared.MainSection
 import com.jc.presentation.ui.theme.ConstraintLayoutTheme
 import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.launch
 
 @Composable
 fun ActivationScreen(
@@ -90,6 +90,16 @@ fun ActivationContent(
 ) {
     var userId by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
+    var shouldActivate by remember { mutableStateOf(false) }
+
+    if (shouldActivate) {
+        LaunchedEffect(Unit) {
+            kotlinx.coroutines.delay(1500)
+            isLoading = false
+            onActivate()
+            shouldActivate = false
+        }
+    }
 
     ConstraintLayout(
         modifier = Modifier.fillMaxSize()
@@ -146,11 +156,7 @@ fun ActivationContent(
             onClick = {
                 if (userId.isNotBlank()) {
                     isLoading = true
-                    // Simulate loading delay
-                    kotlinx.coroutines.GlobalScope.launch {
-                        kotlinx.coroutines.delay(1500)
-                        onActivate()
-                    }
+                    shouldActivate = true
                 }
             },
             enabled = userId.isNotBlank() && !isLoading,

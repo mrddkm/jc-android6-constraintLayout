@@ -82,6 +82,16 @@ fun SignInContent(
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(false) }
+    var shouldSignIn by remember { mutableStateOf(false) }
+
+    if (shouldSignIn) {
+        LaunchedEffect(Unit) {
+            kotlinx.coroutines.delay(1500)
+            isLoading = false
+            onSignIn()
+            shouldSignIn = false
+        }
+    }
 
     ConstraintLayout(
         modifier = Modifier.fillMaxSize()
@@ -167,11 +177,7 @@ fun SignInContent(
             onClick = {
                 if (userId.isNotBlank() && password.isNotBlank()) {
                     isLoading = true
-                    // Simulate loading delay
-                    kotlinx.coroutines.GlobalScope.launch {
-                        kotlinx.coroutines.delay(1500)
-                        onSignIn()
-                    }
+                    shouldSignIn = true
                 }
             },
             enabled = userId.isNotBlank() && password.isNotBlank() && !isLoading,
