@@ -42,19 +42,21 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 fun ActivationScreen(
     onNavigateToSignIn: () -> Unit = {},
     onThemeToggle: () -> Unit = {},
-    isDarkTheme: Boolean = false
+    isDarkTheme: Boolean = false,
+    footerPercent: Float = 0.08f,
+    isTablet: Boolean = false
 ) {
     ConstraintLayout(
         modifier = Modifier.fillMaxSize()
     ) {
         val (main, footer) = createRefs()
-        val bottomGuideline = createGuidelineFromBottom(0.10f)
+        val bottomGuideline = createGuidelineFromBottom(footerPercent)
 
-        // MAIN SECTION (90%)
         MainSection(
             contentMain = {
                 ActivationContent(
-                    onActivate = onNavigateToSignIn
+                    onActivate = onNavigateToSignIn,
+                    isTablet = isTablet
                 )
             },
             isDarkTheme = isDarkTheme,
@@ -86,7 +88,8 @@ fun ActivationScreen(
 
 @Composable
 fun ActivationContent(
-    onActivate: () -> Unit = {}
+    onActivate: () -> Unit = {},
+    isTablet: Boolean = false
 ) {
     var userId by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
@@ -101,6 +104,14 @@ fun ActivationContent(
         }
     }
 
+    // Responsive sizing based on device type
+    val titleSize = if (isTablet) 32.sp else 28.sp
+    val subtitleSize = if (isTablet) 18.sp else 16.sp
+    val buttonTextSize = if (isTablet) 18.sp else 16.sp
+    val horizontalPadding = if (isTablet) 32.dp else 16.dp
+    val topMargin = if (isTablet) 48.dp else 32.dp
+    val fieldSpacing = if (isTablet) 40.dp else 32.dp
+
     ConstraintLayout(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -109,11 +120,11 @@ fun ActivationContent(
         // Title
         Text(
             text = "Activation",
-            fontSize = 28.sp,
+            fontSize = titleSize,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
             modifier = Modifier.constrainAs(title) {
-                top.linkTo(parent.top, margin = 32.dp)
+                top.linkTo(parent.top, margin = topMargin)
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
             }
@@ -122,10 +133,10 @@ fun ActivationContent(
         // Subtitle
         Text(
             text = "Please enter your User ID to activate your account",
-            fontSize = 16.sp,
+            fontSize = subtitleSize,
             textAlign = TextAlign.Center,
             modifier = Modifier
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = horizontalPadding)
                 .constrainAs(subtitle) {
                     top.linkTo(title.bottom, margin = 16.dp)
                     start.linkTo(parent.start)
@@ -143,9 +154,9 @@ fun ActivationContent(
             enabled = !isLoading,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = horizontalPadding)
                 .constrainAs(userIdField) {
-                    top.linkTo(subtitle.bottom, margin = 32.dp)
+                    top.linkTo(subtitle.bottom, margin = fieldSpacing)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                 }
@@ -162,8 +173,8 @@ fun ActivationContent(
             enabled = userId.isNotBlank() && !isLoading,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(48.dp)
-                .padding(horizontal = 16.dp)
+                .height(if (isTablet) 56.dp else 48.dp)
+                .padding(horizontal = horizontalPadding)
                 .constrainAs(activateButton) {
                     top.linkTo(userIdField.bottom, margin = 24.dp)
                     start.linkTo(parent.start)
@@ -172,13 +183,13 @@ fun ActivationContent(
         ) {
             if (isLoading) {
                 CircularProgressIndicator(
-                    modifier = Modifier.size(20.dp),
+                    modifier = Modifier.size(if (isTablet) 24.dp else 20.dp),
                     color = MaterialTheme.colorScheme.onPrimary
                 )
             } else {
                 Text(
                     text = "Activate Account",
-                    fontSize = 16.sp,
+                    fontSize = buttonTextSize,
                     fontWeight = FontWeight.Medium
                 )
             }
@@ -188,7 +199,7 @@ fun ActivationContent(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(horizontalPadding)
                 .constrainAs(loadingIndicator) {
                     top.linkTo(activateButton.bottom, margin = 24.dp)
                     start.linkTo(parent.start)
@@ -199,18 +210,18 @@ fun ActivationContent(
             )
         ) {
             Column(
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier.padding(if (isTablet) 20.dp else 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
                     text = "Need Help?",
-                    fontSize = 14.sp,
+                    fontSize = if (isTablet) 16.sp else 14.sp,
                     fontWeight = FontWeight.Medium
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = "Contact your administrator to get your User ID",
-                    fontSize = 12.sp,
+                    fontSize = if (isTablet) 14.sp else 12.sp,
                     textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -232,5 +243,16 @@ fun ActivationScreenPreview() {
 fun ActivationScreenDarkPreview() {
     ConstraintLayoutTheme(darkTheme = true) {
         ActivationScreen(isDarkTheme = true)
+    }
+}
+
+@Preview(showBackground = true, widthDp = 800, heightDp = 1200)
+@Composable
+fun ActivationScreenTabletPreview() {
+    ConstraintLayoutTheme {
+        ActivationScreen(
+            isTablet = true,
+            footerPercent = 0.07f
+        )
     }
 }

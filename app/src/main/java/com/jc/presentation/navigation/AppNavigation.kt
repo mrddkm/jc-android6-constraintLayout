@@ -1,72 +1,63 @@
 package com.jc.presentation.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import com.jc.presentation.ui.screens.auth.activation.ActivationScreen
 import com.jc.presentation.ui.screens.auth.signin.SignInScreen
 import com.jc.presentation.ui.screens.main.MainScreen
 
 @Composable
 fun AppNavigation(
-    navController: NavHostController = rememberNavController(),
-    startDestination: String = Screen.Activation.route
+    navController: NavHostController,
+    onThemeToggle: () -> Unit = {},
+    isDarkTheme: Boolean = false,
+    headerPercent: Float = 0.10f,
+    footerPercent: Float = 0.08f,
+    isTablet: Boolean = false
 ) {
-    var isDarkTheme by remember { mutableStateOf(false) }
-
     NavHost(
         navController = navController,
-        startDestination = startDestination
+        startDestination = "activation"
     ) {
-        composable(Screen.Activation.route) {
+        composable("activation") {
             ActivationScreen(
                 onNavigateToSignIn = {
-                    navController.navigate(Screen.SignIn.route) {
-                        popUpTo(Screen.Activation.route) { inclusive = true }
+                    navController.navigate("signIn") {
+                        popUpTo("activation") { inclusive = true }
                     }
                 },
-                onThemeToggle = { isDarkTheme = !isDarkTheme },
-                isDarkTheme = isDarkTheme
+                onThemeToggle = onThemeToggle,
+                isDarkTheme = isDarkTheme,
+                footerPercent = footerPercent,
+                isTablet = isTablet
             )
         }
 
-        composable(Screen.SignIn.route) {
+        composable("signIn") {
             SignInScreen(
                 onNavigateToMain = {
-                    navController.navigate(Screen.Main.route) {
-                        popUpTo(Screen.SignIn.route) { inclusive = true }
+                    navController.navigate("main") {
+                        popUpTo("signIn") { inclusive = true }
                     }
                 },
-                onBackClick = {
-                    navController.navigateUp()
-                },
-                onThemeToggle = { isDarkTheme = !isDarkTheme },
-                isDarkTheme = isDarkTheme
+                onThemeToggle = onThemeToggle,
+                isDarkTheme = isDarkTheme,
+                footerPercent = footerPercent,
+                isTablet = isTablet
             )
         }
 
-        composable(Screen.Main.route) {
-            MainScreen(
-                onNavigateToPayment = {
-                    navController.navigate(Screen.Payment.route)
-                },
-                onSignOut = {
-                    navController.navigateUp()
-                },
-                onThemeToggle = { isDarkTheme = !isDarkTheme },
-                isDarkTheme = isDarkTheme
-            )
+        // Add other screens here with responsive parameters
+        composable("main") {
+             MainScreen(
+                 onThemeToggle = onThemeToggle,
+                 isDarkTheme = isDarkTheme,
+                 headerPercent = headerPercent,
+                 footerPercent = footerPercent,
+                 isTablet = isTablet
+             )
         }
     }
 }
-
-
-
-
-

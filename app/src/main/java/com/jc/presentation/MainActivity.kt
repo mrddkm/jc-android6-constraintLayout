@@ -26,7 +26,6 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.compose.rememberNavController
 import com.jc.presentation.navigation.AppNavigation
-import com.jc.presentation.ui.screens.shared.LayoutTemplate
 import com.jc.presentation.ui.theme.ConstraintLayoutTheme
 
 @Suppress("DEPRECATION")
@@ -46,12 +45,12 @@ class MainActivity : ComponentActivity() {
                         .systemBarsPadding(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    ResponsiveConstraintLayoutTemplate(
+                    val navController = rememberNavController()
+                    ResponsiveApp(
+                        navController = navController,
                         onThemeToggle = { isDarkTheme = !isDarkTheme },
                         isDarkTheme = isDarkTheme
                     )
-                    val navController = rememberNavController()
-                    AppNavigation(navController = navController)
                 }
             }
         }
@@ -141,7 +140,8 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun ResponsiveConstraintLayoutTemplate(
+fun ResponsiveApp(
+    navController: androidx.navigation.NavHostController,
     onThemeToggle: () -> Unit,
     isDarkTheme: Boolean
 ) {
@@ -158,10 +158,13 @@ fun ResponsiveConstraintLayoutTemplate(
         0.10f to 0.08f // Phone: header 10%, footer 8%
     }
 
-    LayoutTemplate(
+    // Pass responsive parameters to AppNavigation
+    AppNavigation(
+        navController = navController,
         onThemeToggle = onThemeToggle,
         isDarkTheme = isDarkTheme,
         headerPercent = headerPercent,
-        footerPercent = footerPercent
+        footerPercent = footerPercent,
+        isTablet = isTablet
     )
 }

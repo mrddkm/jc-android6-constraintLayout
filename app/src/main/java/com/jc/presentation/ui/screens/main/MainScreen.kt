@@ -44,15 +44,18 @@ fun MainScreen(
     onNavigateToPayment: (String) -> Unit = {},
     onSignOut: () -> Unit = {},
     onThemeToggle: () -> Unit = {},
-    isDarkTheme: Boolean = false
+    isDarkTheme: Boolean = false,
+    headerPercent: Float = 0.10f,
+    footerPercent: Float = 0.08f,
+    isTablet: Boolean = false
 ) {
     ConstraintLayout(
         modifier = Modifier.fillMaxSize()
     ) {
         val (header, main, footer) = createRefs()
 
-        val topGuideline = createGuidelineFromTop(0.15f)
-        val bottomGuideline = createGuidelineFromBottom(0.10f)
+        val topGuideline = createGuidelineFromTop(headerPercent)
+        val bottomGuideline = createGuidelineFromBottom(footerPercent)
 
         HeaderSection(
             contentHeader = {
@@ -76,7 +79,8 @@ fun MainScreen(
         MainSection(
             contentMain = {
                 MainContent(
-                    onNavigateToPayment = onNavigateToPayment
+                    onNavigateToPayment = onNavigateToPayment,
+                    isTablet = isTablet
                 )
             },
             isDarkTheme = isDarkTheme,
@@ -158,11 +162,19 @@ fun MainHeaderSection(
 
 @Composable
 fun MainContent(
-    onNavigateToPayment: (String) -> Unit
+    onNavigateToPayment: (String) -> Unit,
+    isTablet: Boolean = false
 ) {
     var platNumber by remember { mutableStateOf("") }
     var showVehicleDetail by remember { mutableStateOf(false) }
     var vehicleData by remember { mutableStateOf<VehicleData?>(null) }
+
+    // Responsive sizing based on device type
+    val titleSize = if (isTablet) 32.sp else 28.sp
+    val buttonTextSize = if (isTablet) 18.sp else 16.sp
+    val horizontalPadding = if (isTablet) 32.dp else 16.dp
+    val topMargin = if (isTablet) 48.dp else 32.dp
+    val fieldSpacing = if (isTablet) 40.dp else 32.dp
 
     ConstraintLayout(
         modifier = Modifier
@@ -174,11 +186,13 @@ fun MainContent(
         // Title
         Text(
             text = "Cek Kendaraan",
-            fontSize = 24.sp,
+            fontSize = titleSize,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
-            modifier = Modifier.constrainAs(title) {
-                top.linkTo(parent.top, margin = 16.dp)
+            modifier = Modifier
+                .padding(horizontal = horizontalPadding)
+                .constrainAs(title) {
+                top.linkTo(parent.top, margin = topMargin)
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
             }
@@ -194,8 +208,9 @@ fun MainContent(
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(horizontal = horizontalPadding)
                 .constrainAs(platField) {
-                    top.linkTo(title.bottom, margin = 24.dp)
+                    top.linkTo(title.bottom, margin = fieldSpacing)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                 }
@@ -219,6 +234,7 @@ fun MainContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp)
+                .padding(horizontal = horizontalPadding)
                 .constrainAs(checkButton) {
                     top.linkTo(platField.bottom, margin = 16.dp)
                     start.linkTo(parent.start)
@@ -227,7 +243,7 @@ fun MainContent(
         ) {
             Text(
                 text = "Cek",
-                fontSize = 18.sp,
+                fontSize = buttonTextSize,
                 fontWeight = FontWeight.Medium
             )
         }

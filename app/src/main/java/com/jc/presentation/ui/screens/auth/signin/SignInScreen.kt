@@ -29,21 +29,22 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 @Composable
 fun SignInScreen(
     onNavigateToMain: () -> Unit = {},
-    onBackClick: () -> Unit = {},
     onThemeToggle: () -> Unit = {},
-    isDarkTheme: Boolean = false
+    isDarkTheme: Boolean = false,
+    footerPercent: Float = 0.08f,
+    isTablet: Boolean = false
 ) {
     ConstraintLayout(
         modifier = Modifier.fillMaxSize()
     ) {
         val (main, footer) = createRefs()
-        val bottomGuideline = createGuidelineFromBottom(0.10f)
+        val bottomGuideline = createGuidelineFromBottom(footerPercent)
 
-        // MAIN SECTION (90%)
         MainSection(
             contentMain = {
                 SignInContent(
-                    onSignIn = onNavigateToMain
+                    onSignIn = onNavigateToMain,
+                    isTablet = isTablet
                 )
             },
             isDarkTheme = isDarkTheme,
@@ -75,7 +76,8 @@ fun SignInScreen(
 
 @Composable
 fun SignInContent(
-    onSignIn: () -> Unit = {}
+    onSignIn: () -> Unit = {},
+    isTablet: Boolean = false
 ) {
     var userId by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -92,6 +94,18 @@ fun SignInContent(
         }
     }
 
+    // Responsive sizing based on device type
+    val titleSize = if (isTablet) 32.sp else 28.sp
+    val subtitleSize = if (isTablet) 18.sp else 16.sp
+    val buttonTextSize = if (isTablet) 18.sp else 16.sp
+    val helpTextSize = if (isTablet) 16.sp else 14.sp
+    val smallTextSize = if (isTablet) 14.sp else 12.sp
+    val horizontalPadding = if (isTablet) 32.dp else 16.dp
+    val topMargin = if (isTablet) 48.dp else 32.dp
+    val fieldSpacing = if (isTablet) 40.dp else 32.dp
+    val buttonHeight = if (isTablet) 56.dp else 48.dp
+    val iconSize = if (isTablet) 24.dp else 20.dp
+
     ConstraintLayout(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -100,11 +114,11 @@ fun SignInContent(
         // Title
         Text(
             text = "Sign In",
-            fontSize = 28.sp,
+            fontSize = titleSize,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
             modifier = Modifier.constrainAs(title) {
-                top.linkTo(parent.top, margin = 32.dp)
+                top.linkTo(parent.top, margin = topMargin)
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
             }
@@ -113,10 +127,10 @@ fun SignInContent(
         // Subtitle
         Text(
             text = "Welcome back! Please sign in to your account",
-            fontSize = 16.sp,
+            fontSize = subtitleSize,
             textAlign = TextAlign.Center,
             modifier = Modifier
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = horizontalPadding)
                 .constrainAs(subtitle) {
                     top.linkTo(title.bottom, margin = 16.dp)
                     start.linkTo(parent.start)
@@ -134,9 +148,9 @@ fun SignInContent(
             enabled = !isLoading,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = horizontalPadding)
                 .constrainAs(userIdField) {
-                    top.linkTo(subtitle.bottom, margin = 32.dp)
+                    top.linkTo(subtitle.bottom, margin = fieldSpacing)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                 }
@@ -163,7 +177,7 @@ fun SignInContent(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = horizontalPadding)
                 .constrainAs(passwordField) {
                     top.linkTo(userIdField.bottom, margin = 16.dp)
                     start.linkTo(parent.start)
@@ -182,8 +196,8 @@ fun SignInContent(
             enabled = userId.isNotBlank() && password.isNotBlank() && !isLoading,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(48.dp)
-                .padding(horizontal = 16.dp)
+                .height(buttonHeight)
+                .padding(horizontal = horizontalPadding)
                 .constrainAs(signInButton) {
                     top.linkTo(passwordField.bottom, margin = 24.dp)
                     start.linkTo(parent.start)
@@ -192,13 +206,13 @@ fun SignInContent(
         ) {
             if (isLoading) {
                 CircularProgressIndicator(
-                    modifier = Modifier.size(20.dp),
+                    modifier = Modifier.size(iconSize),
                     color = MaterialTheme.colorScheme.onPrimary
                 )
             } else {
                 Text(
                     text = "Sign In",
-                    fontSize = 16.sp,
+                    fontSize = buttonTextSize,
                     fontWeight = FontWeight.Medium
                 )
             }
@@ -216,7 +230,7 @@ fun SignInContent(
         ) {
             Text(
                 text = "Forgot Password?",
-                fontSize = 14.sp
+                fontSize = helpTextSize
             )
         }
 
@@ -224,7 +238,7 @@ fun SignInContent(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(horizontalPadding)
                 .constrainAs(helpCard) {
                     top.linkTo(forgotPassword.bottom, margin = 16.dp)
                     start.linkTo(parent.start)
@@ -235,18 +249,18 @@ fun SignInContent(
             )
         ) {
             Column(
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier.padding(if (isTablet) 20.dp else 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
                     text = "Having trouble signing in?",
-                    fontSize = 14.sp,
+                    fontSize = helpTextSize,
                     fontWeight = FontWeight.Medium
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = "Make sure your User ID is activated and your password is correct",
-                    fontSize = 12.sp,
+                    fontSize = smallTextSize,
                     textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -268,5 +282,16 @@ fun SignInScreenPreview() {
 fun SignInScreenDarkPreview() {
     ConstraintLayoutTheme(darkTheme = true) {
         SignInScreen(isDarkTheme = true)
+    }
+}
+
+@Preview(showBackground = true, widthDp = 800, heightDp = 1200)
+@Composable
+fun SignInScreenTabletPreview() {
+    ConstraintLayoutTheme {
+        SignInScreen(
+            isTablet = true,
+            footerPercent = 0.07f
+        )
     }
 }
