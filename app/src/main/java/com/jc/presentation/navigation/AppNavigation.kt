@@ -53,7 +53,10 @@ fun AppNavigation(
 
         composable(Screen.Main.route) {
             MainScreen(
-                onBackClick = {
+                onNavigateToPayment = {
+                    navController.navigate(Screen.Payment.route)
+                },
+                onSignOut = {
                     navController.navigateUp()
                 },
                 onThemeToggle = { isDarkTheme = !isDarkTheme },
