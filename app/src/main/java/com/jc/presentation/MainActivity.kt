@@ -25,6 +25,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.navigation.compose.rememberNavController
+import com.jc.presentation.navigation.AppNavigation
 import com.jc.presentation.ui.screens.shared.LayoutTemplate
 import com.jc.presentation.ui.theme.ConstraintLayoutTheme
 
@@ -45,16 +47,8 @@ class MainActivity : ComponentActivity() {
                         .systemBarsPadding(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    ResponsiveConstraintLayoutTemplate(
-                        title = "Dashboard",
-                        onBackClick = {
-                            onBackPressed()
-                        },
-                        onThemeToggle = {
-                            isDarkTheme = !isDarkTheme
-                        },
-                        isDarkTheme = isDarkTheme
-                    )
+                    val navController = rememberNavController()
+                    AppNavigation(navController = navController)
                 }
             }
         }
