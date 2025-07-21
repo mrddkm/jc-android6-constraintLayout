@@ -19,13 +19,13 @@ fun AppNavigation(
 ) {
     NavHost(
         navController = navController,
-        startDestination = "activation"
+        startDestination = Screen.Activation.route
     ) {
-        composable("activation") {
+        composable(Screen.Activation.route) {
             ActivationScreen(
                 onNavigateToSignIn = {
-                    navController.navigate("signIn") {
-                        popUpTo("activation") { inclusive = true }
+                    navController.navigate(Screen.SignIn.route) {
+                        popUpTo(Screen.Activation.route) { inclusive = true }
                     }
                 },
                 onThemeToggle = onThemeToggle,
@@ -35,11 +35,11 @@ fun AppNavigation(
             )
         }
 
-        composable("signIn") {
+        composable(Screen.SignIn.route) {
             SignInScreen(
                 onNavigateToMain = {
-                    navController.navigate("main") {
-                        popUpTo("signIn") { inclusive = true }
+                    navController.navigate(Screen.Main.route) {
+                        popUpTo(Screen.SignIn.route) { inclusive = true }
                     }
                 },
                 onThemeToggle = onThemeToggle,
@@ -50,14 +50,25 @@ fun AppNavigation(
         }
 
         // Add other screens here with responsive parameters
-        composable("main") {
-             MainScreen(
-                 onThemeToggle = onThemeToggle,
-                 isDarkTheme = isDarkTheme,
-                 headerPercent = headerPercent,
-                 footerPercent = footerPercent,
-                 isTablet = isTablet
-             )
+        composable(Screen.Main.route) {
+            MainScreen(
+                onNavigateToPayment = {
+                    navController.navigate(Screen.Payment.route)
+                },
+                onThemeToggle = onThemeToggle,
+                isDarkTheme = isDarkTheme,
+                headerPercent = headerPercent,
+                footerPercent = footerPercent,
+                isTablet = isTablet,
+            )
+        }
+
+        composable(Screen.Payment.route) {
+            // TODO:: PaymentScreen implementation
+        }
+
+        composable(Screen.Print.route) {
+            // TODO:: PrintScreen implementation
         }
     }
 }
