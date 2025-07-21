@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.jc.presentation.ui.screens.shared.FooterSection
+import com.jc.presentation.ui.screens.shared.HeaderSection
 import com.jc.presentation.ui.screens.shared.MainSection
 
 @Composable
@@ -53,9 +54,14 @@ fun MainScreen(
         val topGuideline = createGuidelineFromTop(0.15f)
         val bottomGuideline = createGuidelineFromBottom(0.10f)
 
-        // HEADER SECTION (15%)
-        MainHeaderSection(
-            onSignOut = onSignOut,
+        HeaderSection(
+            contentHeader = {
+                MainHeaderSection(
+                    onSignOut = onSignOut,
+                    isDarkTheme = isDarkTheme,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
             isDarkTheme = isDarkTheme,
             modifier = Modifier.constrainAs(header) {
                 top.linkTo(parent.top)
@@ -67,7 +73,6 @@ fun MainScreen(
             }
         )
 
-        // MAIN SECTION (75%)
         MainSection(
             contentMain = {
                 MainContent(
@@ -85,7 +90,6 @@ fun MainScreen(
             }
         )
 
-        // FOOTER SECTION (10%)
         FooterSection(
             onThemeToggle = onThemeToggle,
             isDarkTheme = isDarkTheme,
