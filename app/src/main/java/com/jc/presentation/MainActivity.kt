@@ -26,7 +26,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.compose.rememberNavController
 import com.jc.presentation.navigation.AppNavigation
-import com.jc.presentation.ui.theme.ConstraintLayoutTheme
+import com.jc.presentation.ui.theme.AppTheme
 
 @Suppress("DEPRECATION")
 class MainActivity : ComponentActivity() {
@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             var isDarkTheme by remember { mutableStateOf(false) }
 
-            ConstraintLayoutTheme(darkTheme = isDarkTheme) {
+            AppTheme(darkTheme = isDarkTheme) {
                 Surface(
                     modifier = Modifier
                         .fillMaxSize()

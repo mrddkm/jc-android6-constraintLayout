@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import com.jc.presentation.ui.theme.AppTheme
 
 @Composable
 fun LayoutTemplate(
@@ -42,7 +43,6 @@ fun LayoutTemplate(
         val topGuideline = createGuidelineFromTop(headerPercent)
         val bottomGuideline = createGuidelineFromBottom(footerPercent)
 
-        // HEADER SECTION (flexible %)
         HeaderSection(
             contentHeader = contentHeader,
             isDarkTheme = isDarkTheme,
@@ -56,7 +56,6 @@ fun LayoutTemplate(
             }
         )
 
-        // MAIN SECTION (flexible %)
         MainSection(
             contentMain = contentMain,
             isDarkTheme = isDarkTheme,
@@ -70,7 +69,6 @@ fun LayoutTemplate(
             }
         )
 
-        // FOOTER SECTION (flexible %)
         FooterSection(
             onThemeToggle = onThemeToggle,
             isDarkTheme = isDarkTheme,
@@ -93,12 +91,12 @@ fun HeaderSection(
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier.padding(8.dp),
+        modifier = modifier.padding(4.dp),
         colors = CardDefaults.cardColors(
             containerColor = if (isDarkTheme) Color(0xFF1E1E1E)
             else Color(0xFFFFFFFF)
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         ConstraintLayout(
             modifier = Modifier
@@ -117,7 +115,7 @@ fun MainSection(
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier.padding(horizontal = 8.dp),
+        modifier = modifier.padding(horizontal = 4.dp),
         colors = CardDefaults.cardColors(
             containerColor = if (isDarkTheme) Color(0xFF1E1E1E)
             else Color(0xFFFFFFFF)
@@ -127,7 +125,7 @@ fun MainSection(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
+                .padding(4.dp)
         ) {
             contentMain()
         }
@@ -141,23 +139,23 @@ fun FooterSection(
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier.padding(8.dp),
+        modifier = modifier.padding(4.dp),
         colors = CardDefaults.cardColors(
             containerColor = if (isDarkTheme) Color(0xFF1E1E1E)
             else Color(0xFFFFFFFF)
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .padding(horizontal = 8.dp, vertical = 4.dp)
         ) {
             val (appInfo, themeButton, versionText) = createRefs()
 
             Text(
-                text = "MyApp © 2024",
-                fontSize = 12.sp,
+                text = "Gaenta © 2025",
+                fontSize = 10.sp,
                 color = if (isDarkTheme) Color.Gray else Color.DarkGray,
                 modifier = Modifier.constrainAs(appInfo) {
                     start.linkTo(parent.start)
@@ -166,7 +164,6 @@ fun FooterSection(
                 }
             )
 
-            // Theme Toggle Button
             IconButton(
                 onClick = onThemeToggle,
                 modifier = Modifier.constrainAs(themeButton) {
@@ -185,7 +182,7 @@ fun FooterSection(
 
             Text(
                 text = "v1.0.0",
-                fontSize = 12.sp,
+                fontSize = 10.sp,
                 color = if (isDarkTheme) Color.Gray else Color.DarkGray,
                 modifier = Modifier.constrainAs(versionText) {
                     end.linkTo(parent.end)
@@ -199,41 +196,36 @@ fun FooterSection(
 
 @Composable
 fun DefaultHeaderContent() {
-    Card(
-        modifier = Modifier.padding(2.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ConstraintLayout(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(2.dp)
     ) {
-        ConstraintLayout(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(2.dp)
-        ) {
-            val (appName, signOutButton) = createRefs()
+        val (appName, signOutButton) = createRefs()
 
-            Text(
-                text = "Parkir App",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.constrainAs(appName) {
-                    start.linkTo(parent.start)
-                    top.linkTo(parent.top)
-                    bottom.linkTo(parent.bottom)
-                }
-            )
-
-            IconButton(
-                onClick = {},
-                modifier = Modifier.constrainAs(signOutButton) {
-                    end.linkTo(parent.end)
-                    top.linkTo(parent.top)
-                    bottom.linkTo(parent.bottom)
-                }
-            ) {
-                Icon(
-                    Icons.AutoMirrored.Filled.ExitToApp,
-                    contentDescription = "Sign Out"
-                )
+        Text(
+            text = "Parkir App",
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.constrainAs(appName) {
+                start.linkTo(parent.start)
+                top.linkTo(parent.top)
+                bottom.linkTo(parent.bottom)
             }
+        )
+
+        IconButton(
+            onClick = {},
+            modifier = Modifier.constrainAs(signOutButton) {
+                end.linkTo(parent.end)
+                top.linkTo(parent.top)
+                bottom.linkTo(parent.bottom)
+            }
+        ) {
+            Icon(
+                Icons.AutoMirrored.Filled.ExitToApp,
+                contentDescription = "Sign Out"
+            )
         }
     }
 }
@@ -296,18 +288,26 @@ fun DefaultMainContent() {
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, widthDp = 360, heightDp = 640)
 @Composable
-fun ConstraintLayoutTemplatePreview() {
-    MaterialTheme {
+fun LayoutLightPreview() {
+    AppTheme {
         LayoutTemplate()
+    }
+}
+
+@Preview(showBackground = true, widthDp = 360, heightDp = 640)
+@Composable
+fun LayoutDarkPreview() {
+    AppTheme(darkTheme = true) {
+        LayoutTemplate(isDarkTheme = true)
     }
 }
 
 @Preview(showBackground = true, widthDp = 600, heightDp = 800)
 @Composable
 fun ConstraintLayoutTemplateTabletPreview() {
-    MaterialTheme {
+    AppTheme {
         LayoutTemplate(
             isDarkTheme = true
         )
