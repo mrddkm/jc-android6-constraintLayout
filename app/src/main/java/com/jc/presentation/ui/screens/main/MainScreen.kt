@@ -1,6 +1,9 @@
 package com.jc.presentation.ui.screens.main
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -8,26 +11,40 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.outlined.CheckCircleOutline
+import androidx.compose.material.icons.outlined.QrCode
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,9 +52,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import com.jc.constraintlayout.R
+import com.jc.presentation.ui.components.SourceCodePro
 import com.jc.presentation.ui.screens.shared.FooterSection
 import com.jc.presentation.ui.screens.shared.HeaderSection
 import com.jc.presentation.ui.screens.shared.MainSection
+import com.jc.presentation.ui.theme.AppTheme
 
 @Composable
 fun MainScreen(
@@ -117,47 +137,52 @@ fun MainHeaderSection(
     isDarkTheme: Boolean,
     modifier: Modifier = Modifier
 ) {
-    Card(
-        modifier = modifier.padding(8.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = if (isDarkTheme) Color(0xFF1E1E1E)
-            else Color(0xFFFFFFFF)
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ConstraintLayout(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(4.dp)
     ) {
-        ConstraintLayout(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-        ) {
-            val (appName, signOutButton) = createRefs()
+        val (clientName, signOutButton) = createRefs()
 
-            Text(
-                text = "Parkir App",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                color = if (isDarkTheme) Color.White else Color.Black,
-                modifier = Modifier.constrainAs(appName) {
-                    start.linkTo(parent.start)
-                    top.linkTo(parent.top)
-                    bottom.linkTo(parent.bottom)
-                }
-            )
-
-            IconButton(
-                onClick = onSignOut,
-                modifier = Modifier.constrainAs(signOutButton) {
-                    end.linkTo(parent.end)
-                    top.linkTo(parent.top)
-                    bottom.linkTo(parent.bottom)
-                }
-            ) {
-                Icon(
-                    Icons.AutoMirrored.Filled.ExitToApp,
-                    contentDescription = "Sign Out",
-                    tint = if (isDarkTheme) Color.White else Color.Black
-                )
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.constrainAs(clientName) {
+                start.linkTo(parent.start)
+                top.linkTo(parent.top)
+                bottom.linkTo(parent.bottom)
             }
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.client_dishub_ic),
+                contentDescription = "Client",
+                modifier = Modifier
+                    .size(32.dp)
+                    .padding(2.dp),
+                contentScale = ContentScale.Fit
+            )
+            Text(
+                "Dinas Perhubungan",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier
+                    .padding(start = 1.dp)
+            )
+        }
+
+        IconButton(
+            onClick = onSignOut,
+            modifier = Modifier.constrainAs(signOutButton) {
+                end.linkTo(parent.end)
+                top.linkTo(parent.top)
+                bottom.linkTo(parent.bottom)
+            }
+        ) {
+            Icon(
+                Icons.AutoMirrored.Filled.ExitToApp,
+                contentDescription = "Sign Out",
+                tint = if (isDarkTheme) Color.White else Color.Black
+            )
         }
     }
 }
@@ -168,47 +193,71 @@ fun MainContent(
     onNavigateToPaymentCash: (String) -> Unit,
     isTablet: Boolean = false
 ) {
-    var platNumber by remember { mutableStateOf("") }
     var showVehicleDetail by remember { mutableStateOf(false) }
     var vehicleData by remember { mutableStateOf<VehicleData?>(null) }
+    var isLoading by remember { mutableStateOf(false) }
 
-    // Responsive sizing based on device type
-    val titleSize = if (isTablet) 32.sp else 28.sp
+    var areaCode by remember { mutableStateOf("") }
+    var plateNumber by remember { mutableStateOf("") }
+    var seriesCode by remember { mutableStateOf("") }
+    val areaCodeFocusRequester = remember { FocusRequester() }
+
+    val titleSize = if (isTablet) 32.sp else 20.sp
     val buttonTextSize = if (isTablet) 18.sp else 16.sp
-    val horizontalPadding = if (isTablet) 32.dp else 16.dp
-    val topMargin = if (isTablet) 48.dp else 32.dp
-    val fieldSpacing = if (isTablet) 40.dp else 32.dp
+    val horizontalPadding = if (isTablet) 32.dp else 8.dp
+    val topMargin = if (isTablet) 48.dp else 8.dp
+    val fieldSpacing = if (isTablet) 40.dp else 16.dp
 
     ConstraintLayout(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp)
     ) {
-        val (title, platField, checkButton, detailCard) = createRefs()
+        val (headerLogo, title, platField, detailCard) = createRefs()
 
-        // Title
+        Box(
+            modifier = Modifier.constrainAs(headerLogo){
+                top.linkTo(parent.top, margin = 6.dp)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+            }
+        ) {
+            Column(
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.client_kab_cianjur_ic),
+                    contentDescription = "Client",
+                    modifier = Modifier
+                        .size(if (isTablet) 100.dp else 70.dp)
+                        .padding(1.dp),
+                    contentScale = ContentScale.Fit
+                )
+                Text(
+                    "Kabupaten Cianjur",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
+        }
+
         Text(
-            text = "Cek Kendaraan",
+            text = "Parkir Berlangganan",
             fontSize = titleSize,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.primary,
             modifier = Modifier
                 .padding(horizontal = horizontalPadding)
                 .constrainAs(title) {
-                top.linkTo(parent.top, margin = topMargin)
+                top.linkTo(headerLogo.bottom, margin = topMargin)
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
             }
         )
 
-        // Plat Number Input Field
-        OutlinedTextField(
-            value = platNumber,
-            onValueChange = { platNumber = it.uppercase() },
-            label = { Text("Nomor Plat Kendaraan") },
-            placeholder = { Text("Contoh: B 1234 XYZ") },
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+        Card (
+            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = horizontalPadding)
@@ -217,48 +266,223 @@ fun MainContent(
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                 }
-        )
-
-        // Check Button
-        Button(
-            onClick = {
-                if (platNumber.isNotBlank()) {
-                    // Simulate vehicle data
-                    vehicleData = VehicleData(
-                        platNumber = platNumber,
-                        status = "Belum Bayar",
-                        vehicleType = "Mobil",
-                        amount = "100.000"
-                    )
-                    showVehicleDetail = true
-                }
-            },
-            enabled = platNumber.isNotBlank(),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp)
-                .padding(horizontal = horizontalPadding)
-                .constrainAs(checkButton) {
-                    top.linkTo(platField.bottom, margin = 16.dp)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                }
         ) {
-            Text(
-                text = "Cek",
-                fontSize = buttonTextSize,
-                fontWeight = FontWeight.Medium
-            )
+            Column(
+                modifier = Modifier.padding(8.dp)
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Text(
+                        text = "Plat Kendaraan",
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Light,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(45.dp)
+                            .background(
+                                color = Color.White,
+                                shape = RoundedCornerShape(4.dp)
+                            )
+                            .padding(horizontal = 2.dp, vertical = 2.dp),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        BasicTextField(
+                            value = areaCode,
+                            onValueChange = {
+                                if (it.length <= 2) areaCode = it.uppercase()
+                            },
+                            textStyle = TextStyle(
+                                fontSize = 30.sp,
+                                fontWeight = FontWeight.ExtraBold,
+                                color = Color.Black,
+                                textAlign = TextAlign.Center,
+                                fontFamily = SourceCodePro
+                            ),
+                            keyboardOptions = KeyboardOptions(
+                                capitalization = KeyboardCapitalization.Characters,
+                                keyboardType = KeyboardType.Text
+                            ),
+                            singleLine = true,
+                            modifier = Modifier
+                                .width(60.dp)
+                                .focusRequester(areaCodeFocusRequester),
+                            decorationBox = { innerTextField ->
+                                Box(
+                                    modifier = Modifier
+                                        .background(
+                                            color = Color.White,
+                                            shape = RoundedCornerShape(4.dp)
+                                        )
+                                        .padding(horizontal = 1.dp, vertical = 1.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    if (areaCode.isEmpty()) {
+                                        Text(
+                                            text = "F",
+                                            fontSize = 30.sp,
+                                            fontWeight = FontWeight.Light,
+                                            color = Color.LightGray,
+                                            textAlign = TextAlign.Center,
+                                            fontFamily = SourceCodePro
+                                        )
+                                    }
+                                    innerTextField()
+                                }
+                            }
+                        )
+                        Spacer(modifier = Modifier.width(2.dp))
+                        BasicTextField(
+                            value = plateNumber,
+                            onValueChange = {
+                                if (it.length <= 4 && it.all { char -> char.isDigit() })
+                                    plateNumber = it
+                            },
+                            textStyle = TextStyle(
+                                fontSize = 30.sp,
+                                fontWeight = FontWeight.ExtraBold,
+                                color = Color.Black,
+                                textAlign = TextAlign.Center,
+                                fontFamily = SourceCodePro
+                            ),
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Number
+                            ),
+                            singleLine = true,
+                            modifier = Modifier.width(120.dp),
+                            decorationBox = { innerTextField ->
+                                Box(
+                                    modifier = Modifier
+                                        .background(
+                                            color = Color.White,
+                                            shape = RoundedCornerShape(4.dp)
+                                        )
+                                        .padding(horizontal = 1.dp, vertical = 1.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    if (plateNumber.isEmpty()) {
+                                        Text(
+                                            text = "8939",
+                                            fontSize = 30.sp,
+                                            fontWeight = FontWeight.Light,
+                                            color = Color.LightGray,
+                                            textAlign = TextAlign.Center,
+                                            fontFamily = SourceCodePro
+                                        )
+                                    }
+                                    innerTextField()
+                                }
+                            }
+                        )
+                        Spacer(modifier = Modifier.width(2.dp))
+                        BasicTextField(
+                            value = seriesCode,
+                            onValueChange = {
+                                if (it.length <= 3) seriesCode = it.uppercase()
+                            },
+                            textStyle = TextStyle(
+                                fontSize = 30.sp,
+                                fontWeight = FontWeight.ExtraBold,
+                                color = Color.Black,
+                                textAlign = TextAlign.Center,
+                                fontFamily = SourceCodePro
+                            ),
+                            keyboardOptions = KeyboardOptions(
+                                capitalization = KeyboardCapitalization.Characters,
+                                keyboardType = KeyboardType.Text
+                            ),
+                            singleLine = true,
+                            modifier = Modifier
+                                .width(100.dp),
+                            decorationBox = { innerTextField ->
+                                Box(
+                                    modifier = Modifier
+                                        .background(
+                                            color = Color.White,
+                                            shape = RoundedCornerShape(4.dp)
+                                        )
+                                        .padding(horizontal = 1.dp, vertical = 1.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    if (seriesCode.isEmpty()) {
+                                        Text(
+                                            text = "ABC",
+                                            fontSize = 30.sp,
+                                            fontWeight = FontWeight.Light,
+                                            color = Color.LightGray,
+                                            textAlign = TextAlign.Center,
+                                            fontFamily = SourceCodePro
+                                        )
+                                    }
+                                    innerTextField()
+                                }
+                            }
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    IconButton(
+                        onClick = {
+                            areaCode = ""
+                            plateNumber = ""
+                            seriesCode = ""
+                            areaCodeFocusRequester.requestFocus()
+                        },
+                        modifier = Modifier
+                            .weight(0.2f)
+                    ) {
+                        Icon(Icons.Default.Refresh, contentDescription = "Clear")
+                    }
+                    Button(
+                        onClick = {
+                            if (areaCode.isNotEmpty() && plateNumber.isNotEmpty() && seriesCode.isNotEmpty()) {
+                                vehicleData = VehicleData(
+                                    platNumber = "$areaCode $plateNumber $seriesCode",
+                                    status = "Belum Bayar",
+                                    vehicleType = "Mobil",
+                                    amount = "100.000"
+                                )
+                                showVehicleDetail = true
+                            }
+                        },
+                        modifier = Modifier
+                            .weight(0.8f),
+                        shape = RoundedCornerShape(8.dp),
+                        enabled = areaCode.isNotEmpty() && plateNumber.isNotEmpty() && seriesCode.isNotEmpty()
+                    ) {
+                        if (isLoading) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(16.dp),
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+                        } else {
+                            Text(
+                                text = "Check",
+                                fontSize = buttonTextSize,
+                                fontWeight = FontWeight.ExtraBold
+                            )
+                        }
+                    }
+                }
+            }
         }
 
-        // Vehicle Detail Card (shown after check)
         if (showVehicleDetail && vehicleData != null) {
             VehicleDetailCard(
                 vehicleData = vehicleData!!,
                 onQRISClick = { onNavigateToPaymentQris("qris") },
                 onCashClick = { onNavigateToPaymentCash("tunai") },
                 modifier = Modifier.constrainAs(detailCard) {
-                    top.linkTo(checkButton.bottom, margin = 24.dp)
+                    top.linkTo(platField.bottom, margin = 4.dp)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                 }
@@ -275,52 +499,78 @@ fun VehicleDetailCard(
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp, vertical = 4.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(
-            modifier = Modifier.padding(20.dp)
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
         ) {
             Text(
                 text = "Detail Kendaraan",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(bottom = 12.dp)
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Light,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onSurface
             )
 
-            VehicleDetailRow("Plat Nomor", vehicleData.platNumber)
             VehicleDetailRow("Status", vehicleData.status)
             VehicleDetailRow("Jenis Kendaraan", vehicleData.vehicleType)
             VehicleDetailRow("Tagihan", "Rp ${vehicleData.amount}")
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-            // Payment Buttons
+            Text(
+                text = "Metode Pembayaran",
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Light,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Button(
                     onClick = onQRISClick,
                     modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary
                     )
                 ) {
+                    Icon(
+                        modifier = Modifier
+                            .size(30.dp)
+                            .padding(6.dp),
+                        imageVector = Icons.Outlined.QrCode,
+                        contentDescription = "Qris",
+                    )
                     Text("QRIS")
                 }
 
                 Button(
                     onClick = onCashClick,
                     modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.secondary
                     )
                 ) {
-                    Text("Tunai")
+                    Icon(
+                        modifier = Modifier
+                            .size(30.dp)
+                            .padding(6.dp),
+                        imageVector = Icons.Outlined.CheckCircleOutline,
+                        contentDescription = "Qris",
+                    )
+                    Text("Cash")
                 }
             }
         }
@@ -335,7 +585,7 @@ fun VehicleDetailRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp),
+            .padding(vertical = 2.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
@@ -346,22 +596,30 @@ fun VehicleDetailRow(
         Text(
             text = value,
             fontSize = 14.sp,
-            fontWeight = FontWeight.Medium
+            fontWeight = FontWeight.Bold
         )
     }
 }
 
 data class VehicleData(
-    val platNumber: String,
-    val status: String,
-    val vehicleType: String,
-    val amount: String
+    val platNumber: String = "D12345XYZ",
+    val status: String = "Belum Bayar",
+    val vehicleType: String = "Mobil",
+    val amount: String = "100.000"
 )
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, widthDp = 360, heightDp = 640)
 @Composable
 fun MainScreenPreview() {
-    MaterialTheme {
+    AppTheme {
+        MainScreen()
+    }
+}
+
+@Preview(showBackground = true, widthDp = 360, heightDp = 640)
+@Composable
+fun MainDarkScreenPreview() {
+    AppTheme(darkTheme = true) {
         MainScreen()
     }
 }
