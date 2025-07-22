@@ -71,17 +71,10 @@ android {
             jvmTarget.set(JvmTarget.JVM_21)
         }
     }
-//    kotlinOptions {
-//        jvmTarget = "21"
-//        freeCompilerArgs += listOf(
-//            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
-//        )
-//    }
     buildFeatures {
         compose = true
         buildConfig = true
     }
-
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -133,6 +126,9 @@ dependencies {
 
     // DataStore
     implementation(libs.bundles.datastore)
+
+    // ZXing - Barcode/QR Code generation only
+    implementation(libs.bundles.zxing)
 
     // Testing
     testImplementation(libs.junit)

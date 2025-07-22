@@ -51,6 +51,7 @@ kotlinxSerialization = "1.7.3"
 datastore = "1.1.1"
 #noinspection GradleDependency
 navigation = "2.8.5"
+zxing = "3.5.3"
 
 [libraries]
 # Compose BOM
@@ -114,6 +115,9 @@ androidx-datastore-core = { group = "androidx.datastore", name = "datastore-core
 # Navigation
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
 
+# ZXing - Barcode/QR Code generation only
+zxing-core = { group = "com.google.zxing", name = "core", version.ref = "zxing" }
+
 # Testing
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -173,4 +177,8 @@ coroutines = [
 datastore = [
     "androidx-datastore-preferences",
     "androidx-datastore-core"
+]
+
+zxing = [
+    "zxing-core"
 ]
