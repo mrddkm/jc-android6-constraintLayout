@@ -52,8 +52,11 @@ fun AppNavigation(
         // Add other screens here with responsive parameters
         composable(Screen.Main.route) {
             MainScreen(
-                onNavigateToPayment = {
-                    navController.navigate(Screen.Payment.route)
+                onNavigateToPaymentQris = {
+                    navController.navigate(Screen.PaymentQris.route)
+                },
+                onNavigateToPaymentCash = {
+                    navController.navigate(Screen.PaymentCash.route)
                 },
                 onThemeToggle = onThemeToggle,
                 isDarkTheme = isDarkTheme,
@@ -63,7 +66,11 @@ fun AppNavigation(
             )
         }
 
-        composable(Screen.Payment.route) {
+        composable(Screen.PaymentQris.route) {
+            // TODO:: PaymentScreen implementation
+        }
+
+        composable(Screen.PaymentCash.route) {
             // TODO:: PaymentScreen implementation
         }
 

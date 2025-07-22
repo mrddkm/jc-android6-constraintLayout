@@ -41,7 +41,8 @@ import com.jc.presentation.ui.screens.shared.MainSection
 
 @Composable
 fun MainScreen(
-    onNavigateToPayment: (String) -> Unit = {},
+    onNavigateToPaymentQris: (String) -> Unit = {},
+    onNavigateToPaymentCash: (String) -> Unit = {},
     onSignOut: () -> Unit = {},
     onThemeToggle: () -> Unit = {},
     isDarkTheme: Boolean = false,
@@ -79,7 +80,8 @@ fun MainScreen(
         MainSection(
             contentMain = {
                 MainContent(
-                    onNavigateToPayment = onNavigateToPayment,
+                    onNavigateToPaymentQris = onNavigateToPaymentQris,
+                    onNavigateToPaymentCash = onNavigateToPaymentCash,
                     isTablet = isTablet
                 )
             },
@@ -162,7 +164,8 @@ fun MainHeaderSection(
 
 @Composable
 fun MainContent(
-    onNavigateToPayment: (String) -> Unit,
+    onNavigateToPaymentQris: (String) -> Unit,
+    onNavigateToPaymentCash: (String) -> Unit,
     isTablet: Boolean = false
 ) {
     var platNumber by remember { mutableStateOf("") }
@@ -252,8 +255,8 @@ fun MainContent(
         if (showVehicleDetail && vehicleData != null) {
             VehicleDetailCard(
                 vehicleData = vehicleData!!,
-                onQRISClick = { onNavigateToPayment("qris") },
-                onCashClick = { onNavigateToPayment("tunai") },
+                onQRISClick = { onNavigateToPaymentQris("qris") },
+                onCashClick = { onNavigateToPaymentCash("tunai") },
                 modifier = Modifier.constrainAs(detailCard) {
                     top.linkTo(checkButton.bottom, margin = 24.dp)
                     start.linkTo(parent.start)
