@@ -25,7 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.jc.constraintlayout.R
-import com.jc.presentation.ui.theme.ConstraintLayoutTheme
+import com.jc.presentation.ui.theme.AppTheme
 import kotlinx.coroutines.delay
 
 @SuppressLint("CustomSplashScreen")
@@ -34,7 +34,7 @@ class SplashActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            ConstraintLayoutTheme {
+            AppTheme {
                 CustomSplashScreen()
             }
         }
@@ -48,9 +48,9 @@ class SplashActivity : ComponentActivity() {
         LaunchedEffect(key1 = true) {
             alpha.animateTo(
                 targetValue = 1f,
-                animationSpec = tween(1500)
+                animationSpec = tween(6000)
             )
-            delay(timeMillis = 2000)
+            delay(timeMillis = 6000)
             startActivity(
                 Intent(
                     this@SplashActivity,
@@ -84,7 +84,7 @@ class SplashActivity : ComponentActivity() {
     @Preview
     @Composable
     fun SplashPreview() {
-        ConstraintLayoutTheme {
+        AppTheme {
             CustomSplashScreen()
         }
     }
