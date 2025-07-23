@@ -545,14 +545,14 @@ fun VehicleDetailCard(
                         containerColor = MaterialTheme.colorScheme.primary
                     )
                 ) {
-                    Icon(
+                    Image(
+                        painter = painterResource(id = R.drawable.qris_logo_ic),
+                        contentDescription = "Client",
                         modifier = Modifier
                             .size(30.dp)
-                            .padding(6.dp),
-                        imageVector = Icons.Outlined.QrCode,
-                        contentDescription = "Qris",
+                            .padding(1.dp),
+                        contentScale = ContentScale.Fit
                     )
-                    Text("QRIS")
                 }
 
                 Button(
