@@ -8,7 +8,7 @@ import com.jc.presentation.ui.screens.auth.activation.ActivationScreen
 import com.jc.presentation.ui.screens.auth.signin.SignInScreen
 import com.jc.presentation.ui.screens.main.MainScreen
 import com.jc.presentation.ui.screens.payment.PaymentCashScreen
-import com.jc.presentation.ui.screens.payment.PaymentQrisScreen
+import com.jc.presentation.ui.screens.payment.PaymentQRISScreen
 
 @Composable
 fun AppNavigation(
@@ -68,11 +68,10 @@ fun AppNavigation(
         }
 
         composable(Screen.PaymentQris.route) {
-            PaymentQrisScreen(
+            PaymentQRISScreen(
                 onPaymentConfirm = {
                     navController.navigate(Screen.Print.route)
                 },
-                onThemeToggle = onThemeToggle,
                 isDarkTheme = isDarkTheme,
                 headerPercent = headerPercent,
                 footerPercent = footerPercent,
