@@ -219,14 +219,3 @@ fun ActivationScreenDarkPreview() {
         ActivationScreen(isDarkTheme = true)
     }
 }
-
-@Preview(showBackground = true, widthDp = 800, heightDp = 1200)
-@Composable
-fun ActivationScreenTabletPreview() {
-    AppTheme {
-        ActivationScreen(
-            isTablet = true,
-            footerPercent = 0.07f
-        )
-    }
-}

@@ -19,8 +19,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.outlined.CheckCircleOutline
-import androidx.compose.material.icons.outlined.QrCode
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -31,6 +29,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -165,6 +164,7 @@ fun MainHeaderSection(
                 "Dinas Perhubungan",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
                     .padding(start = 1.dp)
             )
@@ -205,18 +205,16 @@ fun MainContent(
     val titleSize = if (isTablet) 32.sp else 20.sp
     val buttonTextSize = if (isTablet) 18.sp else 16.sp
     val horizontalPadding = if (isTablet) 32.dp else 8.dp
-    val topMargin = if (isTablet) 48.dp else 8.dp
-    val fieldSpacing = if (isTablet) 40.dp else 16.dp
+    val topMarginSub = if (isTablet) 8.dp else 4.dp
 
     ConstraintLayout(
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = Modifier.fillMaxSize()
     ) {
         val (headerLogo, title, platField, detailCard) = createRefs()
 
         Box(
-            modifier = Modifier.constrainAs(headerLogo){
-                top.linkTo(parent.top, margin = 6.dp)
+            modifier = Modifier.constrainAs(headerLogo) {
+                top.linkTo(parent.top, margin = topMarginSub)
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
             }
@@ -229,13 +227,14 @@ fun MainContent(
                     painter = painterResource(id = R.drawable.client_kab_cianjur_ic),
                     contentDescription = "Client",
                     modifier = Modifier
-                        .size(if (isTablet) 100.dp else 70.dp)
+                        .size(if (isTablet) 100.dp else 60.dp)
                         .padding(1.dp),
                     contentScale = ContentScale.Fit
                 )
                 Text(
                     "Kabupaten Cianjur",
                     fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold,
                 )
             }
@@ -250,25 +249,25 @@ fun MainContent(
             modifier = Modifier
                 .padding(horizontal = horizontalPadding)
                 .constrainAs(title) {
-                top.linkTo(headerLogo.bottom, margin = topMargin)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-            }
+                    top.linkTo(headerLogo.bottom, margin = topMarginSub)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }
         )
 
-        Card (
+        Card(
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = horizontalPadding)
                 .constrainAs(platField) {
-                    top.linkTo(title.bottom, margin = fieldSpacing)
+                    top.linkTo(title.bottom, margin = topMarginSub)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                 }
         ) {
             Column(
-                modifier = Modifier.padding(8.dp)
+                modifier = Modifier.padding(horizontal = 8.dp, vertical = topMarginSub),
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -425,7 +424,7 @@ fun MainContent(
                         )
                     }
                 }
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(topMarginSub))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
@@ -488,6 +487,22 @@ fun MainContent(
                 }
             )
         }
+
+/*        VehicleDetailCard(
+            vehicleData = vehicleData ?: VehicleData(
+                platNumber = "F1234ABC",
+                status = "Belum Bayar",
+                vehicleType = "Mobil",
+                amount = "100.000"
+            ),
+            onQRISClick = { onNavigateToPaymentQris("qris") },
+            onCashClick = { onNavigateToPaymentCash("tunai") },
+            modifier = Modifier.constrainAs(detailCard) {
+                top.linkTo(platField.bottom, margin = 4.dp)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+            }
+        )*/
     }
 }
 
@@ -498,6 +513,27 @@ fun VehicleDetailCard(
     onCashClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var isLoadingQRISPayment by remember { mutableStateOf(false) }
+    var isLoadingCashPayment by remember { mutableStateOf(false) }
+    var shouldQRISPayment by remember { mutableStateOf(false) }
+    var shouldCashPayment by remember { mutableStateOf(false) }
+
+    if (shouldQRISPayment) {
+        LaunchedEffect(Unit) {
+            kotlinx.coroutines.delay(1500)
+            isLoadingQRISPayment = false
+            onQRISClick()
+            shouldQRISPayment = false
+        }
+    } else if (shouldCashPayment) {
+        LaunchedEffect(Unit) {
+            kotlinx.coroutines.delay(1500)
+            isLoadingCashPayment = false
+            onCashClick()
+            shouldCashPayment = false
+        }
+    }
+
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -509,10 +545,10 @@ fun VehicleDetailCard(
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
         ) {
             Text(
-                text = "Detail Kendaraan",
+                text = "Informasi Tagihan",
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Light,
                 textAlign = TextAlign.Center,
@@ -538,39 +574,57 @@ fun VehicleDetailCard(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Button(
-                    onClick = onQRISClick,
-                    modifier = Modifier.weight(1f),
+                    onClick = {
+                        isLoadingQRISPayment = true
+                        shouldQRISPayment = true
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .size(40.dp),
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary
                     )
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.qris_logo_ic),
-                        contentDescription = "Client",
-                        modifier = Modifier
-                            .size(30.dp)
-                            .padding(1.dp),
-                        contentScale = ContentScale.Fit
-                    )
+                    if (isLoadingQRISPayment) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(20.dp),
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                    } else {
+                        Image(
+                            painter = painterResource(id = R.drawable.qris_logo_ic),
+                            contentDescription = "QRIS Logo",
+                            contentScale = ContentScale.Fit
+                        )
+                    }
                 }
 
                 Button(
-                    onClick = onCashClick,
-                    modifier = Modifier.weight(1f),
+                    onClick = {
+                        isLoadingCashPayment = true
+                        shouldCashPayment = true
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .size(40.dp),
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.secondary
                     )
                 ) {
-                    Icon(
-                        modifier = Modifier
-                            .size(30.dp)
-                            .padding(6.dp),
-                        imageVector = Icons.Outlined.CheckCircleOutline,
-                        contentDescription = "Qris",
-                    )
-                    Text("Cash")
+                    if (isLoadingCashPayment) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(20.dp),
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                    } else {
+                        Text(
+                            text = "Cash",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.ExtraBold
+                        )
+                    }
                 }
             }
         }
@@ -620,6 +674,6 @@ fun MainScreenPreview() {
 @Composable
 fun MainDarkScreenPreview() {
     AppTheme(darkTheme = true) {
-        MainScreen()
+        MainScreen(isDarkTheme = true)
     }
 }

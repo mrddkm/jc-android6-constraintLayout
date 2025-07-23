@@ -38,6 +38,7 @@ import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.QRCodeWriter
 import com.jc.presentation.ui.screens.shared.FooterSection
 import com.jc.presentation.ui.screens.shared.MainSection
+import com.jc.presentation.ui.theme.AppTheme
 
 @Composable
 fun PaymentQrisScreen(
@@ -232,20 +233,19 @@ fun QRCodeImage(
     )
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, widthDp = 360, heightDp = 640)
 @Composable
 fun QRISPaymentPreview() {
-    MaterialTheme {
+    AppTheme {
         PaymentQrisScreen()
     }
 }
 
-@Preview(showBackground = true, widthDp = 600, heightDp = 800)
+@Preview(showBackground = true, widthDp = 360, heightDp = 640)
 @Composable
 fun PaymentQrisScreenTabletPreview() {
-    MaterialTheme {
+    AppTheme(darkTheme = true) {
         PaymentQrisScreen(
-            isTablet = true,
             isDarkTheme = true
         )
     }

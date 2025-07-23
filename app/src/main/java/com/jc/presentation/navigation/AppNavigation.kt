@@ -7,6 +7,8 @@ import androidx.navigation.compose.composable
 import com.jc.presentation.ui.screens.auth.activation.ActivationScreen
 import com.jc.presentation.ui.screens.auth.signin.SignInScreen
 import com.jc.presentation.ui.screens.main.MainScreen
+import com.jc.presentation.ui.screens.payment.PaymentCashScreen
+import com.jc.presentation.ui.screens.payment.PaymentQrisScreen
 
 @Composable
 fun AppNavigation(
@@ -49,7 +51,6 @@ fun AppNavigation(
             )
         }
 
-        // Add other screens here with responsive parameters
         composable(Screen.Main.route) {
             MainScreen(
                 onNavigateToPaymentQris = {
@@ -67,15 +68,33 @@ fun AppNavigation(
         }
 
         composable(Screen.PaymentQris.route) {
-            // TODO:: PaymentScreen implementation
+            PaymentQrisScreen(
+                onPaymentConfirm = {
+                    navController.navigate(Screen.Print.route)
+                },
+                onThemeToggle = onThemeToggle,
+                isDarkTheme = isDarkTheme,
+                headerPercent = headerPercent,
+                footerPercent = footerPercent,
+                isTablet = isTablet,
+            )
         }
 
         composable(Screen.PaymentCash.route) {
-            // TODO:: PaymentScreen implementation
+            PaymentCashScreen(
+                onPaymentConfirm = {
+                    navController.navigate(Screen.Print.route)
+                },
+                onThemeToggle = onThemeToggle,
+                isDarkTheme = isDarkTheme,
+                headerPercent = headerPercent,
+                footerPercent = footerPercent,
+                isTablet = isTablet,
+            )
         }
 
         composable(Screen.Print.route) {
-            // TODO:: PrintScreen implementation
+
         }
     }
 }

@@ -258,14 +258,3 @@ fun SignInScreenDarkPreview() {
         SignInScreen(isDarkTheme = true)
     }
 }
-
-@Preview(showBackground = true, widthDp = 800, heightDp = 1200)
-@Composable
-fun SignInScreenTabletPreview() {
-    AppTheme {
-        SignInScreen(
-            isTablet = true,
-            footerPercent = 0.07f
-        )
-    }
-}
