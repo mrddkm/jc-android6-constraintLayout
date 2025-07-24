@@ -52,6 +52,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.jc.constraintlayout.R
+import com.jc.presentation.navigation.Screen
 import com.jc.presentation.ui.components.SourceCodePro
 import com.jc.presentation.ui.screens.shared.FooterSection
 import com.jc.presentation.ui.screens.shared.HeaderSection
@@ -81,7 +82,6 @@ fun MainScreen(
             contentHeader = {
                 MainHeaderSection(
                     onSignOut = onSignOut,
-                    isDarkTheme = isDarkTheme,
                     modifier = Modifier.fillMaxWidth()
                 )
             },
@@ -133,7 +133,6 @@ fun MainScreen(
 @Composable
 fun MainHeaderSection(
     onSignOut: () -> Unit,
-    isDarkTheme: Boolean,
     modifier: Modifier = Modifier
 ) {
     ConstraintLayout(
@@ -181,7 +180,7 @@ fun MainHeaderSection(
             Icon(
                 Icons.AutoMirrored.Filled.ExitToApp,
                 contentDescription = "Sign Out",
-                tint = if (isDarkTheme) Color.White else Color.Black
+                tint = MaterialTheme.colorScheme.onSurface
             )
         }
     }
@@ -439,7 +438,11 @@ fun MainContent(
                         modifier = Modifier
                             .weight(0.2f)
                     ) {
-                        Icon(Icons.Default.Refresh, contentDescription = "Clear")
+                        Icon(
+                            Icons.Default.Refresh,
+                            contentDescription = "Clear",
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
                     }
                     Button(
                         onClick = {
@@ -478,8 +481,8 @@ fun MainContent(
         if (showVehicleDetail && vehicleData != null) {
             VehicleDetailCard(
                 vehicleData = vehicleData!!,
-                onQRISClick = { onNavigateToPaymentQris("qris") },
-                onCashClick = { onNavigateToPaymentCash("tunai") },
+                onQRISClick = { onNavigateToPaymentQris(Screen.PaymentQris.route) },
+                onCashClick = { onNavigateToPaymentCash(Screen.PaymentCash.route) },
                 modifier = Modifier.constrainAs(detailCard) {
                     top.linkTo(platField.bottom, margin = 4.dp)
                     start.linkTo(parent.start)
@@ -495,8 +498,8 @@ fun MainContent(
                 vehicleType = "Mobil",
                 amount = "100.000"
             ),
-            onQRISClick = { onNavigateToPaymentQris("qris") },
-            onCashClick = { onNavigateToPaymentCash("tunai") },
+                onQRISClick = { onNavigateToPaymentQris(Screen.PaymentQris.route) },
+                onCashClick = { onNavigateToPaymentCash(Screen.PaymentCash.route) },
             modifier = Modifier.constrainAs(detailCard) {
                 top.linkTo(platField.bottom, margin = 4.dp)
                 start.linkTo(parent.start)

@@ -1,5 +1,3 @@
-@file:OptIn(DelicateCoroutinesApi::class)
-
 package com.jc.presentation.ui.screens.auth.activation
 
 import androidx.compose.foundation.Image
@@ -35,7 +33,6 @@ import com.jc.constraintlayout.R
 import com.jc.presentation.ui.screens.shared.FooterSection
 import com.jc.presentation.ui.screens.shared.MainSection
 import com.jc.presentation.ui.theme.AppTheme
-import kotlinx.coroutines.DelicateCoroutinesApi
 
 @Composable
 fun ActivationScreen(
