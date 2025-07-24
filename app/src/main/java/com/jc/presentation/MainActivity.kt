@@ -38,7 +38,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             var isDarkTheme by remember { mutableStateOf(false) }
 
-            AppTheme(darkTheme = isDarkTheme) {
+            AppTheme(
+                darkTheme = isDarkTheme,
+                dynamicColor = false
+            ) {
                 Surface(
                     modifier = Modifier
                         .fillMaxSize()

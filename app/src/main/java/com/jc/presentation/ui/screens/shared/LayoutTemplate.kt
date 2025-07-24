@@ -45,7 +45,6 @@ fun LayoutTemplate(
 
         HeaderSection(
             contentHeader = contentHeader,
-            isDarkTheme = isDarkTheme,
             modifier = Modifier.constrainAs(header) {
                 top.linkTo(parent.top)
                 start.linkTo(parent.start)
@@ -58,7 +57,6 @@ fun LayoutTemplate(
 
         MainSection(
             contentMain = contentMain,
-            isDarkTheme = isDarkTheme,
             modifier = Modifier.constrainAs(main) {
                 top.linkTo(topGuideline)
                 start.linkTo(parent.start)
@@ -87,14 +85,12 @@ fun LayoutTemplate(
 @Composable
 fun HeaderSection(
     contentHeader: @Composable () -> Unit,
-    isDarkTheme: Boolean,
     modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier.padding(4.dp),
         colors = CardDefaults.cardColors(
-            containerColor = if (isDarkTheme) Color(0xFF1E1E1E)
-            else Color(0xFFFFFFFF)
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
@@ -111,14 +107,12 @@ fun HeaderSection(
 @Composable
 fun MainSection(
     contentMain: @Composable () -> Unit,
-    isDarkTheme: Boolean,
     modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier.padding(horizontal = 4.dp),
         colors = CardDefaults.cardColors(
-            containerColor = if (isDarkTheme) Color(0xFF1E1E1E)
-            else Color(0xFFFFFFFF)
+            containerColor = MaterialTheme.colorScheme.surface
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
@@ -141,8 +135,7 @@ fun FooterSection(
     Card(
         modifier = modifier.padding(4.dp),
         colors = CardDefaults.cardColors(
-            containerColor = if (isDarkTheme) Color(0xFF1E1E1E)
-            else Color(0xFFFFFFFF)
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
@@ -156,7 +149,7 @@ fun FooterSection(
             Text(
                 text = "Gaenta © 2025",
                 fontSize = 10.sp,
-                color = if (isDarkTheme) Color.Gray else Color.DarkGray,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.constrainAs(appInfo) {
                     start.linkTo(parent.start)
                     top.linkTo(parent.top)
@@ -174,16 +167,16 @@ fun FooterSection(
                 }
             ) {
                 Icon(
-                    if (isDarkTheme) Icons.Default.LightMode else Icons.Default.DarkMode,
+                    imageVector = if (isDarkTheme) Icons.Default.LightMode else Icons.Default.DarkMode,
                     contentDescription = "Toggle Theme",
-                    tint = if (isDarkTheme) Color.White else Color.Black
+                    tint = MaterialTheme.colorScheme.onSurface,
                 )
             }
 
             Text(
                 text = "v1.0.0",
                 fontSize = 10.sp,
-                color = if (isDarkTheme) Color.Gray else Color.DarkGray,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.constrainAs(versionText) {
                     end.linkTo(parent.end)
                     top.linkTo(parent.top)
