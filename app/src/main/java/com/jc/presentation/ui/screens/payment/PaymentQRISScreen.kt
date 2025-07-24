@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.jc.presentation.ui.screens.payment.ext.QRISPaymentContent
+import com.jc.presentation.ui.screens.payment.ext.QRISSimple
 import com.jc.presentation.ui.screens.shared.MainSection
 import com.jc.presentation.ui.theme.AppTheme
 
@@ -86,8 +86,10 @@ fun QRISMainSection(
             .padding(horizontal = horizontalPadding),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        QRISPaymentContent(
-            isTablet = isTablet
+        QRISSimple(
+            isTablet = isTablet,
+            merchantName = "NAMA MERCHANT",
+            nmid = "IDXXXXXXXXX"
         )
         Column(
             modifier = Modifier
