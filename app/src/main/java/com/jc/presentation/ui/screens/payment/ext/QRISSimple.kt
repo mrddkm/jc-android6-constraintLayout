@@ -8,11 +8,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,8 +22,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.set
@@ -29,6 +35,7 @@ import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.QRCodeWriter
 import com.jc.constraintlayout.R
+import com.jc.presentation.ui.components.OpenSans
 import com.jc.presentation.ui.theme.AppTheme
 
 @Composable
@@ -42,7 +49,6 @@ fun QRISSimple(
 
     val horizontalPadding = if (isTablet) 32.dp else 4.dp
 
-    // Card size with ratio background 400x550 (~0.73:1)
     val cardWidth = if (isTablet) 400.dp else 280.dp
     val cardHeight = if (isTablet) 550.dp else 385.dp
 
@@ -56,12 +62,12 @@ fun QRISSimple(
             modifier = Modifier
                 .width(cardWidth)
                 .height(cardHeight)
-                .padding(4.dp),
+                .padding(0.dp),
             colors = CardDefaults.cardColors(
                 containerColor = Color.White
             ),
             elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-            shape = RoundedCornerShape(4.dp)
+            shape = RoundedCornerShape(2.dp)
         ) {
             Box(
                 modifier = Modifier.fillMaxSize()
@@ -73,24 +79,69 @@ fun QRISSimple(
                     contentScale = ContentScale.FillBounds
                 )
 
-                // Dari background 400x550, QR di position x=25, y=171 with bg 350x330
+                Text(
+                    text = merchantName.take(25),
+                    modifier = Modifier
+                        .offset(
+                            x = 0.dp,
+                            y = cardHeight * (103f / 550f) // 103/550 = 0.187
+                        )
+                        .fillMaxWidth(),
+                    fontFamily = OpenSans,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = (20 * (cardWidth.value / 400f)).sp,
+                    color = Color.Black,
+                    textAlign = TextAlign.Center,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+
+                Text(
+                    text = "NMID: $nmid",
+                    modifier = Modifier
+                        .offset(
+                            x = 0.dp,
+                            y = cardHeight * (131f / 550f) // 131/550 = 0.238
+                        )
+                        .fillMaxWidth(),
+                    fontFamily = OpenSans,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = (14 * (cardWidth.value / 400f)).sp,
+                    color = Color.Black,
+                    textAlign = TextAlign.Center,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+
                 Box(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(
-                            start = cardWidth * 0.0625f, // 25/400 = 0.0625
-                            top = cardHeight * 0.311f,   // 171/550 = 0.311
-                            end = cardWidth * 0.0625f,   // 25/400 = 0.0625
-                            bottom = cardHeight * 0.091f  // 50/550 = 0.091
-                        ),
+                        .offset(
+                            x = cardWidth * (30f / 400f),
+                            y = cardHeight * (164f / 550f)
+                        )
+                        .width(cardWidth * (340f / 400f))
+                        .height(cardHeight * (340f / 550f)),
                     contentAlignment = Alignment.Center
                 ) {
                     QRCodeSimpleImage(
                         qrContent = qrisCode,
-                        width = (cardWidth.value * 0.875).toInt(), // 350/400 = 0.875
-                        height = (cardHeight.value * 0.6).toInt()   // 330/550 = 0.6
+                        width = (cardWidth.value * (340f / 400f)).toInt(),
+                        height = (cardHeight.value * (340f / 550f)).toInt()
                     )
                 }
+
+                Text(
+                    text = "Dicetak oleh: (Kode NNS)",
+                    modifier = Modifier
+                        .offset(
+                            x = cardWidth * (30f / 400f),
+                            y = cardHeight * (504f / 550f)
+                        ),
+                    fontFamily = OpenSans,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = (12 * (cardWidth.value / 400f)).sp,
+                    color = Color.Black
+                )
             }
         }
     }
@@ -146,7 +197,7 @@ fun QRISSimplePreview() {
     AppTheme {
         QRISSimple(
             isTablet = false,
-            merchantName = "PARKIR BERLANGGANAN",
+            merchantName = "Gaenta Sinergi Sukses, PT",
             nmid = "ID10221796982980"
         )
     }
