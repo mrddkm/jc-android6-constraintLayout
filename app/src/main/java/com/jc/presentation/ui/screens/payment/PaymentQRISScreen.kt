@@ -35,7 +35,6 @@ import com.jc.presentation.ui.theme.AppTheme
 @Composable
 fun PaymentQRISScreen(
     onPaymentConfirm: () -> Unit = {},
-    isDarkTheme: Boolean = false,
     headerPercent: Float = 0.00f,
     footerPercent: Float = 0.00f,
     isTablet: Boolean = false
@@ -55,7 +54,6 @@ fun PaymentQRISScreen(
                     isTablet = isTablet
                 )
             },
-            isDarkTheme = isDarkTheme,
             modifier = Modifier.constrainAs(main) {
                 top.linkTo(topGuideline)
                 start.linkTo(parent.start)
@@ -161,8 +159,6 @@ fun QRISPaymentPreview() {
 @Composable
 fun PaymentQrisScreenTabletPreview() {
     AppTheme(darkTheme = true) {
-        PaymentQRISScreen(
-            isDarkTheme = true
-        )
+        PaymentQRISScreen()
     }
 }

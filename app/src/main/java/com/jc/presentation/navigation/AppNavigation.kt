@@ -72,7 +72,6 @@ fun AppNavigation(
                 onPaymentConfirm = {
                     navController.navigate(Screen.Print.route)
                 },
-                isDarkTheme = isDarkTheme,
                 headerPercent = headerPercent,
                 footerPercent = footerPercent,
                 isTablet = isTablet,

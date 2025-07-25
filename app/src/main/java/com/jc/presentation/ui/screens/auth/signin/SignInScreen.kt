@@ -65,7 +65,6 @@ fun SignInScreen(
                     isTablet = isTablet
                 )
             },
-            isDarkTheme = isDarkTheme,
             modifier = Modifier.constrainAs(main) {
                 top.linkTo(parent.top)
                 start.linkTo(parent.start)

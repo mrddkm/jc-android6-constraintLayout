@@ -85,7 +85,6 @@ fun MainScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
             },
-            isDarkTheme = isDarkTheme,
             modifier = Modifier.constrainAs(header) {
                 top.linkTo(parent.top)
                 start.linkTo(parent.start)
@@ -104,7 +103,6 @@ fun MainScreen(
                     isTablet = isTablet
                 )
             },
-            isDarkTheme = isDarkTheme,
             modifier = Modifier.constrainAs(main) {
                 top.linkTo(topGuideline)
                 start.linkTo(parent.start)
