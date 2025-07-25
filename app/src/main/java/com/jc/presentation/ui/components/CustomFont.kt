@@ -15,3 +15,14 @@ val SourceCodePro = FontFamily(
         weight = FontWeight.Bold
     )
 )
+
+val OpenSans = FontFamily(
+    Font(
+        resId = R.font.open_sans_regular,
+        weight = FontWeight.Normal
+    ),
+    Font(
+        resId = R.font.open_sans_bold,
+        weight = FontWeight.Bold
+    )
+)
