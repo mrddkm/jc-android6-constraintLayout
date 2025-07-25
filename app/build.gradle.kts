@@ -95,6 +95,7 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.material.icons.extended)
+    implementation(libs.androidx.window)
     implementation(libs.google.material)
 
     // Lifecycle
