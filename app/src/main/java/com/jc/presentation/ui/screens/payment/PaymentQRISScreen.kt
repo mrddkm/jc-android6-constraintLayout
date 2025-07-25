@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -24,12 +26,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.jc.presentation.ui.screens.payment.ext.QRISSimple
 import com.jc.presentation.ui.screens.shared.MainSection
+import com.jc.presentation.ui.theme.AppSize
 import com.jc.presentation.ui.theme.AppTheme
 
 @Composable
@@ -54,6 +55,7 @@ fun PaymentQRISScreen(
                     isTablet = isTablet
                 )
             },
+            isTablet = isTablet,
             modifier = Modifier.constrainAs(main) {
                 top.linkTo(topGuideline)
                 start.linkTo(parent.start)
@@ -71,52 +73,54 @@ fun QRISMainSection(
     onPaymentConfirm: () -> Unit,
     isTablet: Boolean = false
 ) {
-    val buttonTextSize = if (isTablet) 18.sp else 16.sp
-    val horizontalPadding = if (isTablet) 32.dp else 8.dp
-    val verticalPadding = if (isTablet) 32.dp else 8.dp
-    val allPadding = if (isTablet) 8.dp else 4.dp
-    val amountSize = if (isTablet) 32.sp else 28.sp
+    val appSize = AppSize(isTablet = isTablet)
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = horizontalPadding),
+            .padding(horizontal = appSize.horizontalPadding),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         QRISSimple(
             isTablet = isTablet,
-            merchantName = "NAMA MERCHANT",
+            merchantName = "Gaenta Sinergi Sukses, PT",
             nmid = "IDXXXXXXXXX"
         )
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(allPadding),
+                .padding(appSize.horizontalPadding / 2),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
                 text = "Nominal Bayar",
-                fontSize = 12.sp,
+                fontSize = appSize.captionTextSize,
                 fontWeight = FontWeight.Light,
                 color = MaterialTheme.colorScheme.onSurface
             )
             Text(
                 text = "Rp100.000",
-                fontSize = amountSize,
+                fontSize = appSize.titleSize,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )
         }
         Card(
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = appSize.cardElevation),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = horizontalPadding, vertical = verticalPadding),
+                .padding(
+                    horizontal = appSize.horizontalPadding,
+                    vertical = appSize.verticalPadding
+                ),
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                horizontalArrangement = Arrangement.spacedBy(
+                    appSize.horizontalPadding / 2,
+                    Alignment.CenterHorizontally
+                ),
             ) {
                 IconButton(
                     onClick = {},
@@ -125,20 +129,23 @@ fun QRISMainSection(
                     Icon(
                         Icons.Default.ArrowBackIosNew,
                         contentDescription = "Back",
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                        modifier = Modifier.size(appSize.iconSize)
                     )
                 }
                 Button(
                     onClick = onPaymentConfirm,
-                    modifier = Modifier.weight(0.8f),
-                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier
+                        .weight(0.8f)
+                        .height(appSize.buttonHeight),
+                    shape = RoundedCornerShape(appSize.roundedCornerShapeSize),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary
                     )
                 ) {
                     Text(
                         text = "Confirmation",
-                        fontSize = buttonTextSize,
+                        fontSize = appSize.buttonTextSize,
                         fontWeight = FontWeight.ExtraBold
                     )
                 }
@@ -147,7 +154,13 @@ fun QRISMainSection(
     }
 }
 
-@Preview(showBackground = true, widthDp = 360, heightDp = 640)
+@Preview(
+    name = "SUNMI V1s",
+    showBackground = true,
+    widthDp = 360,
+    heightDp = 640,
+//    device = "spec:width=360dp,height=640dp,dpi=320"
+)
 @Composable
 fun QRISPaymentPreview() {
     AppTheme {
@@ -155,10 +168,17 @@ fun QRISPaymentPreview() {
     }
 }
 
-@Preview(showBackground = true, widthDp = 360, heightDp = 640)
+/*
+@Preview(
+    name = "SUNMI V1s Dark",
+    widthDp = 360,
+    heightDp = 640,
+    showBackground = true,
+)
 @Composable
 fun PaymentQrisScreenTabletPreview() {
     AppTheme(darkTheme = true) {
         PaymentQRISScreen()
     }
 }
+*/

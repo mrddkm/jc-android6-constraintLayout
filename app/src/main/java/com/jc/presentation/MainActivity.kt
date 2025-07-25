@@ -18,13 +18,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.compose.rememberNavController
+import androidx.window.layout.WindowMetricsCalculator
 import com.jc.presentation.navigation.AppNavigation
 import com.jc.presentation.ui.theme.AppTheme
 
@@ -49,10 +49,20 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val navController = rememberNavController()
+
+                    val windowMetrics = remember(this) {
+                        WindowMetricsCalculator.getOrCreate()
+                            .computeCurrentWindowMetrics(this).bounds
+                    }
+                    val isTablet = with(LocalDensity.current) {
+                        windowMetrics.width().toDp() >= 600.dp
+                    }
+
                     ResponsiveApp(
                         navController = navController,
                         onThemeToggle = { isDarkTheme = !isDarkTheme },
-                        isDarkTheme = isDarkTheme
+                        isDarkTheme = isDarkTheme,
+                        isTablet = isTablet
                     )
                 }
             }
@@ -142,19 +152,14 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@SuppressLint("ConfigurationScreenWidthHeight")
 @Composable
 fun ResponsiveApp(
     navController: androidx.navigation.NavHostController,
     onThemeToggle: () -> Unit,
-    isDarkTheme: Boolean
+    isDarkTheme: Boolean,
+    isTablet: Boolean = false,
 ) {
-    val configuration = LocalConfiguration.current
-    val density = LocalDensity.current
-
-    val isTablet = with(density) {
-        configuration.screenWidthDp.dp >= 600.dp
-    }
-
     val (headerPercent, footerPercent) = if (isTablet) {
         0.09f to 0.07f // Tablet: header 9%, footer 7%
     } else {

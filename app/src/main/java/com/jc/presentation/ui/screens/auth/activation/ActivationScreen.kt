@@ -26,12 +26,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.jc.constraintlayout.R
 import com.jc.presentation.ui.screens.shared.FooterSection
 import com.jc.presentation.ui.screens.shared.MainSection
+import com.jc.presentation.ui.theme.AppSize
 import com.jc.presentation.ui.theme.AppTheme
 
 @Composable
@@ -55,6 +55,7 @@ fun ActivationScreen(
                     isTablet = isTablet
                 )
             },
+            isTablet = isTablet,
             modifier = Modifier.constrainAs(main) {
                 top.linkTo(parent.top)
                 start.linkTo(parent.start)
@@ -68,6 +69,7 @@ fun ActivationScreen(
         FooterSection(
             onThemeToggle = onThemeToggle,
             isDarkTheme = isDarkTheme,
+            isTablet = isTablet,
             modifier = Modifier.constrainAs(footer) {
                 top.linkTo(bottomGuideline)
                 start.linkTo(parent.start)
@@ -98,12 +100,7 @@ fun ActivationContent(
         }
     }
 
-    val titleSize = if (isTablet) 32.sp else 28.sp
-    val subtitleSize = if (isTablet) 18.sp else 16.sp
-    val buttonTextSize = if (isTablet) 18.sp else 16.sp
-    val horizontalPadding = if (isTablet) 32.dp else 16.dp
-    val topMargin = if (isTablet) 48.dp else 16.dp
-    val fieldSpacing = if (isTablet) 40.dp else 16.dp
+    val appSize = AppSize(isTablet = isTablet)
 
     ConstraintLayout(
         modifier = Modifier.fillMaxSize()
@@ -115,21 +112,21 @@ fun ActivationContent(
             contentDescription = "App Logo",
             contentScale = ContentScale.Fit,
             modifier = Modifier.constrainAs(headerLogo){
-                top.linkTo(parent.top, margin = topMargin)
+                top.linkTo(parent.top, margin = appSize.screenTopMargin)
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
             }
-                .size(if (isTablet) 120.dp else 80.dp)
+                .size(appSize.logoSize)
         )
 
         Text(
             text = "Activation",
-            fontSize = titleSize,
+            fontSize = appSize.titleSize,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.constrainAs(title) {
-                top.linkTo(headerLogo.bottom, margin = fieldSpacing)
+                top.linkTo(headerLogo.bottom, margin = appSize.fieldSpacing)
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
             }
@@ -137,11 +134,11 @@ fun ActivationContent(
 
         Text(
             text = "Please enter User ID to activate",
-            fontSize = subtitleSize,
+            fontSize = appSize.subtitleSize,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier
-                .padding(horizontal = horizontalPadding)
+                .padding(horizontal = appSize.horizontalPadding)
                 .constrainAs(subtitle) {
                     top.linkTo(title.bottom, margin = 4.dp)
                     start.linkTo(parent.start)
@@ -158,9 +155,9 @@ fun ActivationContent(
             enabled = !isLoading,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = horizontalPadding)
+                .padding(horizontal = appSize.horizontalPadding)
                 .constrainAs(userIdField) {
-                    top.linkTo(subtitle.bottom, margin = fieldSpacing)
+                    top.linkTo(subtitle.bottom, margin = appSize.fieldSpacing)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                 }
@@ -176,23 +173,23 @@ fun ActivationContent(
             enabled = userId.isNotBlank() && !isLoading,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(if (isTablet) 56.dp else 48.dp)
-                .padding(horizontal = horizontalPadding)
+                .height(appSize.buttonHeight)
+                .padding(horizontal = appSize.horizontalPadding)
                 .constrainAs(activateButton) {
-                    top.linkTo(userIdField.bottom, margin = fieldSpacing)
+                    top.linkTo(userIdField.bottom, margin = appSize.fieldSpacing)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                 }
         ) {
             if (isLoading) {
                 CircularProgressIndicator(
-                    modifier = Modifier.size(if (isTablet) 24.dp else 20.dp),
+                    modifier = Modifier.size(appSize.circularProgressIndicatorSize),
                     color = MaterialTheme.colorScheme.onPrimary
                 )
             } else {
                 Text(
                     text = "Activate Account",
-                    fontSize = buttonTextSize,
+                    fontSize = appSize.buttonTextSize,
                     fontWeight = FontWeight.Medium
                 )
             }
@@ -200,7 +197,12 @@ fun ActivationContent(
     }
 }
 
-@Preview(showBackground = true, widthDp = 360, heightDp = 640)
+@Preview(
+    name = "SUNMI V1s",
+    widthDp = 360,
+    heightDp = 640,
+    showBackground = true,
+)
 @Composable
 fun ActivationScreenPreview() {
     AppTheme {
@@ -208,10 +210,17 @@ fun ActivationScreenPreview() {
     }
 }
 
-@Preview(showBackground = true, widthDp = 360, heightDp = 640)
+/*
+@Preview(
+    name = "SUNMI V1s Dark",
+    widthDp = 360,
+    heightDp = 640,
+    showBackground = true,
+)
 @Composable
 fun ActivationScreenDarkPreview() {
     AppTheme(darkTheme = true) {
         ActivationScreen(isDarkTheme = true)
     }
 }
+*/

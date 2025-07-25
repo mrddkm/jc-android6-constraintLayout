@@ -53,6 +53,7 @@ fun PaymentCashScreen(
                     isTablet = isTablet
                 )
             },
+            isTablet = isTablet,
             modifier = Modifier.constrainAs(main) {
                 top.linkTo(topGuideline)
                 start.linkTo(parent.start)
@@ -66,6 +67,7 @@ fun PaymentCashScreen(
         FooterSection(
             onThemeToggle = onThemeToggle,
             isDarkTheme = isDarkTheme,
+            isTablet = isTablet,
             modifier = Modifier.constrainAs(footer) {
                 top.linkTo(bottomGuideline)
                 start.linkTo(parent.start)

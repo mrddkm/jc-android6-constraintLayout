@@ -1,7 +1,9 @@
 package com.jc.presentation.ui.screens.main
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -48,7 +50,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.jc.constraintlayout.R
@@ -57,6 +58,7 @@ import com.jc.presentation.ui.components.SourceCodePro
 import com.jc.presentation.ui.screens.shared.FooterSection
 import com.jc.presentation.ui.screens.shared.HeaderSection
 import com.jc.presentation.ui.screens.shared.MainSection
+import com.jc.presentation.ui.theme.AppSize
 import com.jc.presentation.ui.theme.AppTheme
 
 @Composable
@@ -85,6 +87,7 @@ fun MainScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
             },
+            isTablet = isTablet,
             modifier = Modifier.constrainAs(header) {
                 top.linkTo(parent.top)
                 start.linkTo(parent.start)
@@ -103,6 +106,7 @@ fun MainScreen(
                     isTablet = isTablet
                 )
             },
+            isTablet = isTablet,
             modifier = Modifier.constrainAs(main) {
                 top.linkTo(topGuideline)
                 start.linkTo(parent.start)
@@ -116,6 +120,7 @@ fun MainScreen(
         FooterSection(
             onThemeToggle = onThemeToggle,
             isDarkTheme = isDarkTheme,
+            isTablet = isTablet,
             modifier = Modifier.constrainAs(footer) {
                 top.linkTo(bottomGuideline)
                 start.linkTo(parent.start)
@@ -131,12 +136,14 @@ fun MainScreen(
 @Composable
 fun MainHeaderSection(
     onSignOut: () -> Unit,
-    modifier: Modifier = Modifier
+    isTablet: Boolean = false,
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
 ) {
+    val appSize = AppSize(isTablet = isTablet)
     ConstraintLayout(
         modifier = modifier
             .fillMaxSize()
-            .padding(4.dp)
+            .padding(appSize.horizontalPadding / 4)
     ) {
         val (clientName, signOutButton) = createRefs()
 
@@ -153,13 +160,13 @@ fun MainHeaderSection(
                 painter = painterResource(id = R.drawable.client_dishub_ic),
                 contentDescription = "Client",
                 modifier = Modifier
-                    .size(32.dp)
-                    .padding(2.dp),
+                    .size(appSize.iconSize)
+                    .padding(appSize.horizontalPadding / 8),
                 contentScale = ContentScale.Fit
             )
             Text(
-                "Dinas Perhubungan",
-                fontSize = 14.sp,
+                text = "Dinas Perhubungan",
+                fontSize = appSize.bodyTextSize,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
@@ -178,7 +185,8 @@ fun MainHeaderSection(
             Icon(
                 Icons.AutoMirrored.Filled.ExitToApp,
                 contentDescription = "Sign Out",
-                tint = MaterialTheme.colorScheme.onSurface
+                tint = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.size(appSize.iconSize)
             )
         }
     }
@@ -199,10 +207,7 @@ fun MainContent(
     var seriesCode by remember { mutableStateOf("") }
     val areaCodeFocusRequester = remember { FocusRequester() }
 
-    val titleSize = if (isTablet) 32.sp else 20.sp
-    val buttonTextSize = if (isTablet) 18.sp else 16.sp
-    val horizontalPadding = if (isTablet) 32.dp else 8.dp
-    val topMarginSub = if (isTablet) 8.dp else 4.dp
+    val appSize = AppSize(isTablet = isTablet)
 
     ConstraintLayout(
         modifier = Modifier.fillMaxSize()
@@ -211,7 +216,7 @@ fun MainContent(
 
         Box(
             modifier = Modifier.constrainAs(headerLogo) {
-                top.linkTo(parent.top, margin = topMarginSub)
+                top.linkTo(parent.top, margin = appSize.verticalPadding / 2)
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
             }
@@ -224,13 +229,13 @@ fun MainContent(
                     painter = painterResource(id = R.drawable.client_kab_cianjur_ic),
                     contentDescription = "Client",
                     modifier = Modifier
-                        .size(if (isTablet) 100.dp else 60.dp)
-                        .padding(1.dp),
+                        .size(appSize.logoSize)
+                        .padding(appSize.horizontalPadding / 8),
                     contentScale = ContentScale.Fit
                 )
                 Text(
                     "Kabupaten Cianjur",
-                    fontSize = 14.sp,
+                    fontSize = appSize.bodyTextSize,
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold,
                 )
@@ -239,32 +244,35 @@ fun MainContent(
 
         Text(
             text = "Parkir Berlangganan",
-            fontSize = titleSize,
+            fontSize = appSize.titleSize,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier
-                .padding(horizontal = horizontalPadding)
+                .padding(horizontal = appSize.horizontalPadding)
                 .constrainAs(title) {
-                    top.linkTo(headerLogo.bottom, margin = topMarginSub)
+                    top.linkTo(headerLogo.bottom, margin = appSize.verticalPadding / 2)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                 }
         )
 
         Card(
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = appSize.cardElevation),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = horizontalPadding)
+                .padding(horizontal = appSize.horizontalPadding)
                 .constrainAs(platField) {
-                    top.linkTo(title.bottom, margin = topMarginSub)
+                    top.linkTo(title.bottom, margin = appSize.verticalPadding / 2)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                 }
         ) {
             Column(
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = topMarginSub),
+                modifier = Modifier.padding(
+                    horizontal = appSize.horizontalPadding / 2,
+                    vertical = appSize.verticalPadding / 2
+                ),
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -272,19 +280,24 @@ fun MainContent(
                 ) {
                     Text(
                         text = "Plat Kendaraan",
-                        fontSize = 12.sp,
+                        fontSize = appSize.captionTextSize,
                         fontWeight = FontWeight.Light,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(45.dp)
+                            .height(appSize.buttonHeight)
                             .background(
                                 color = Color.White,
-                                shape = RoundedCornerShape(4.dp)
+                                shape = RoundedCornerShape(appSize.roundedCornerShapeSize)
                             )
-                            .padding(horizontal = 2.dp, vertical = 2.dp),
+                            .padding(horizontal = 2.dp, vertical = 2.dp)
+                            .border(
+                                width = 1.dp,
+                                color = Color.Black,
+                                shape = RoundedCornerShape(appSize.roundedCornerShapeSize)
+                            ),
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -294,7 +307,7 @@ fun MainContent(
                                 if (it.length <= 2) areaCode = it.uppercase()
                             },
                             textStyle = TextStyle(
-                                fontSize = 30.sp,
+                                fontSize = appSize.titleSize,
                                 fontWeight = FontWeight.ExtraBold,
                                 color = Color.Black,
                                 textAlign = TextAlign.Center,
@@ -306,14 +319,14 @@ fun MainContent(
                             ),
                             singleLine = true,
                             modifier = Modifier
-                                .width(60.dp)
+                                .width(if (isTablet) 80.dp else 60.dp)
                                 .focusRequester(areaCodeFocusRequester),
                             decorationBox = { innerTextField ->
                                 Box(
                                     modifier = Modifier
                                         .background(
                                             color = Color.White,
-                                            shape = RoundedCornerShape(4.dp)
+                                            shape = RoundedCornerShape(appSize.roundedCornerShapeSize)
                                         )
                                         .padding(horizontal = 1.dp, vertical = 1.dp),
                                     contentAlignment = Alignment.Center
@@ -321,7 +334,7 @@ fun MainContent(
                                     if (areaCode.isEmpty()) {
                                         Text(
                                             text = "F",
-                                            fontSize = 30.sp,
+                                            fontSize = appSize.titleSize,
                                             fontWeight = FontWeight.Light,
                                             color = Color.LightGray,
                                             textAlign = TextAlign.Center,
@@ -340,7 +353,7 @@ fun MainContent(
                                     plateNumber = it
                             },
                             textStyle = TextStyle(
-                                fontSize = 30.sp,
+                                fontSize = appSize.titleSize,
                                 fontWeight = FontWeight.ExtraBold,
                                 color = Color.Black,
                                 textAlign = TextAlign.Center,
@@ -350,13 +363,13 @@ fun MainContent(
                                 keyboardType = KeyboardType.Number
                             ),
                             singleLine = true,
-                            modifier = Modifier.width(120.dp),
+                            modifier = Modifier.width(if (isTablet) 160.dp else 120.dp),
                             decorationBox = { innerTextField ->
                                 Box(
                                     modifier = Modifier
                                         .background(
                                             color = Color.White,
-                                            shape = RoundedCornerShape(4.dp)
+                                            shape = RoundedCornerShape(appSize.roundedCornerShapeSize)
                                         )
                                         .padding(horizontal = 1.dp, vertical = 1.dp),
                                     contentAlignment = Alignment.Center
@@ -364,7 +377,7 @@ fun MainContent(
                                     if (plateNumber.isEmpty()) {
                                         Text(
                                             text = "8939",
-                                            fontSize = 30.sp,
+                                            fontSize = appSize.titleSize,
                                             fontWeight = FontWeight.Light,
                                             color = Color.LightGray,
                                             textAlign = TextAlign.Center,
@@ -382,7 +395,7 @@ fun MainContent(
                                 if (it.length <= 3) seriesCode = it.uppercase()
                             },
                             textStyle = TextStyle(
-                                fontSize = 30.sp,
+                                fontSize = appSize.titleSize,
                                 fontWeight = FontWeight.ExtraBold,
                                 color = Color.Black,
                                 textAlign = TextAlign.Center,
@@ -394,13 +407,13 @@ fun MainContent(
                             ),
                             singleLine = true,
                             modifier = Modifier
-                                .width(100.dp),
+                                .width(if (isTablet) 120.dp else 100.dp),
                             decorationBox = { innerTextField ->
                                 Box(
                                     modifier = Modifier
                                         .background(
                                             color = Color.White,
-                                            shape = RoundedCornerShape(4.dp)
+                                            shape = RoundedCornerShape(appSize.roundedCornerShapeSize)
                                         )
                                         .padding(horizontal = 1.dp, vertical = 1.dp),
                                     contentAlignment = Alignment.Center
@@ -408,7 +421,7 @@ fun MainContent(
                                     if (seriesCode.isEmpty()) {
                                         Text(
                                             text = "ABC",
-                                            fontSize = 30.sp,
+                                            fontSize = appSize.titleSize,
                                             fontWeight = FontWeight.Light,
                                             color = Color.LightGray,
                                             textAlign = TextAlign.Center,
@@ -421,7 +434,7 @@ fun MainContent(
                         )
                     }
                 }
-                Spacer(modifier = Modifier.height(topMarginSub))
+                Spacer(modifier = Modifier.height(appSize.verticalPadding / 2))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
@@ -439,7 +452,8 @@ fun MainContent(
                         Icon(
                             Icons.Default.Refresh,
                             contentDescription = "Clear",
-                            tint = MaterialTheme.colorScheme.onSurface
+                            tint = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.size(appSize.iconSize)
                         )
                     }
                     Button(
@@ -455,19 +469,20 @@ fun MainContent(
                             }
                         },
                         modifier = Modifier
-                            .weight(0.8f),
+                            .weight(0.8f)
+                            .height(appSize.buttonHeight),
                         shape = RoundedCornerShape(8.dp),
                         enabled = areaCode.isNotEmpty() && plateNumber.isNotEmpty() && seriesCode.isNotEmpty()
                     ) {
                         if (isLoading) {
                             CircularProgressIndicator(
-                                modifier = Modifier.size(16.dp),
+                                modifier = Modifier.size(appSize.circularProgressIndicatorSize),
                                 color = MaterialTheme.colorScheme.onPrimary
                             )
                         } else {
                             Text(
                                 text = "Check",
-                                fontSize = buttonTextSize,
+                                fontSize = appSize.buttonTextSize,
                                 fontWeight = FontWeight.ExtraBold
                             )
                         }
@@ -481,29 +496,30 @@ fun MainContent(
                 vehicleData = vehicleData!!,
                 onQRISClick = { onNavigateToPaymentQris(Screen.PaymentQris.route) },
                 onCashClick = { onNavigateToPaymentCash(Screen.PaymentCash.route) },
+                isTablet = isTablet,
                 modifier = Modifier.constrainAs(detailCard) {
-                    top.linkTo(platField.bottom, margin = 4.dp)
+                    top.linkTo(platField.bottom, margin = appSize.verticalPadding / 2)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                 }
             )
         }
 
-/*        VehicleDetailCard(
-            vehicleData = vehicleData ?: VehicleData(
-                platNumber = "F1234ABC",
-                status = "Belum Bayar",
-                vehicleType = "Mobil",
-                amount = "100.000"
-            ),
-                onQRISClick = { onNavigateToPaymentQris(Screen.PaymentQris.route) },
-                onCashClick = { onNavigateToPaymentCash(Screen.PaymentCash.route) },
-            modifier = Modifier.constrainAs(detailCard) {
-                top.linkTo(platField.bottom, margin = 4.dp)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-            }
-        )*/
+        /*        VehicleDetailCard(
+                    vehicleData = vehicleData ?: VehicleData(
+                        platNumber = "F1234ABC",
+                        status = "Belum Bayar",
+                        vehicleType = "Mobil",
+                        amount = "100.000"
+                    ),
+                        onQRISClick = { onNavigateToPaymentQris(Screen.PaymentQris.route) },
+                        onCashClick = { onNavigateToPaymentCash(Screen.PaymentCash.route) },
+                    modifier = Modifier.constrainAs(detailCard) {
+                        top.linkTo(platField.bottom, margin = 4.dp)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    }
+                )*/
     }
 }
 
@@ -512,6 +528,7 @@ fun VehicleDetailCard(
     vehicleData: VehicleData,
     onQRISClick: () -> Unit,
     onCashClick: () -> Unit,
+    isTablet: Boolean,
     modifier: Modifier = Modifier
 ) {
     var isLoadingQRISPayment by remember { mutableStateOf(false) }
@@ -535,36 +552,44 @@ fun VehicleDetailCard(
         }
     }
 
+    val appSize = AppSize(isTablet = isTablet)
+
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp, vertical = 4.dp),
+            .padding(
+                horizontal = appSize.horizontalPadding / 2,
+                vertical = appSize.verticalPadding / 4
+            ),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = appSize.cardElevation)
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+            modifier = Modifier.padding(
+                horizontal = appSize.horizontalPadding,
+                vertical = appSize.verticalPadding / 2
+            )
         ) {
             Text(
                 text = "Informasi Tagihan",
-                fontSize = 12.sp,
+                fontSize = appSize.captionTextSize,
                 fontWeight = FontWeight.Light,
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onSurface
             )
 
-            VehicleDetailRow("Status", vehicleData.status)
-            VehicleDetailRow("Jenis Kendaraan", vehicleData.vehicleType)
-            VehicleDetailRow("Tagihan", "Rp ${vehicleData.amount}")
+            VehicleDetailRow("Status", vehicleData.status, isTablet)
+            VehicleDetailRow("Jenis Kendaraan", vehicleData.vehicleType, isTablet)
+            VehicleDetailRow("Tagihan", "Rp ${vehicleData.amount}", isTablet)
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(appSize.verticalPadding / 2))
 
             Text(
                 text = "Metode Pembayaran",
-                fontSize = 12.sp,
+                fontSize = appSize.captionTextSize,
                 fontWeight = FontWeight.Light,
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onSurface
@@ -572,7 +597,7 @@ fun VehicleDetailCard(
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(appSize.horizontalPadding / 2),
             ) {
                 Button(
                     onClick = {
@@ -581,22 +606,23 @@ fun VehicleDetailCard(
                     },
                     modifier = Modifier
                         .weight(1f)
-                        .size(40.dp),
-                    shape = RoundedCornerShape(8.dp),
+                        .size(appSize.buttonHeight),
+                    shape = RoundedCornerShape(appSize.roundedCornerShapeSize),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary
                     )
                 ) {
                     if (isLoadingQRISPayment) {
                         CircularProgressIndicator(
-                            modifier = Modifier.size(20.dp),
+                            modifier = Modifier.size(appSize.circularProgressIndicatorSize),
                             color = MaterialTheme.colorScheme.onPrimary
                         )
                     } else {
                         Image(
                             painter = painterResource(id = R.drawable.qris_logo_ic),
                             contentDescription = "QRIS Logo",
-                            contentScale = ContentScale.Fit
+                            contentScale = ContentScale.Fit,
+                            modifier = Modifier.size(appSize.iconSize)
                         )
                     }
                 }
@@ -608,21 +634,21 @@ fun VehicleDetailCard(
                     },
                     modifier = Modifier
                         .weight(1f)
-                        .size(40.dp),
-                    shape = RoundedCornerShape(8.dp),
+                        .size(appSize.buttonHeight),
+                    shape = RoundedCornerShape(appSize.roundedCornerShapeSize),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.secondary
                     )
                 ) {
                     if (isLoadingCashPayment) {
                         CircularProgressIndicator(
-                            modifier = Modifier.size(20.dp),
+                            modifier = Modifier.size(appSize.circularProgressIndicatorSize),
                             color = MaterialTheme.colorScheme.onPrimary
                         )
                     } else {
                         Text(
                             text = "Cash",
-                            fontSize = 16.sp,
+                            fontSize = appSize.buttonTextSize,
                             fontWeight = FontWeight.ExtraBold
                         )
                     }
@@ -635,22 +661,24 @@ fun VehicleDetailCard(
 @Composable
 fun VehicleDetailRow(
     label: String,
-    value: String
+    value: String,
+    isTablet: Boolean
 ) {
+    val appSize = AppSize(isTablet = isTablet)
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 2.dp),
+            .padding(vertical = appSize.verticalPadding / 8),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
             text = label,
-            fontSize = 14.sp,
+            fontSize = appSize.bodyTextSize,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Text(
             text = value,
-            fontSize = 14.sp,
+            fontSize = appSize.bodyTextSize,
             fontWeight = FontWeight.Bold
         )
     }
@@ -663,7 +691,12 @@ data class VehicleData(
     val amount: String = "100.000"
 )
 
-@Preview(showBackground = true, widthDp = 360, heightDp = 640)
+@Preview(
+    name = "SUNMI V1s",
+    widthDp = 360,
+    heightDp = 640,
+    showBackground = true,
+)
 @Composable
 fun MainScreenPreview() {
     AppTheme {
@@ -671,10 +704,17 @@ fun MainScreenPreview() {
     }
 }
 
-@Preview(showBackground = true, widthDp = 360, heightDp = 640)
+/*
+@Preview(
+    name = "SUNMI V1s Dark",
+    widthDp = 360,
+    heightDp = 640,
+    showBackground = true,
+)
 @Composable
 fun MainDarkScreenPreview() {
     AppTheme(darkTheme = true) {
         MainScreen(isDarkTheme = true)
     }
 }
+*/
