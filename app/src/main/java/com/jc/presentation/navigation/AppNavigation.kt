@@ -72,8 +72,6 @@ fun AppNavigation(
                 onPaymentConfirm = {
                     navController.navigate(Screen.Print.route)
                 },
-                headerPercent = headerPercent,
-                footerPercent = footerPercent,
                 isTablet = isTablet,
             )
         }

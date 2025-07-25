@@ -1,6 +1,8 @@
 package com.jc.presentation.ui.screens.auth.activation
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -8,8 +10,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -20,6 +28,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -91,6 +101,7 @@ fun ActivationContent(
     var userId by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
     var shouldActivate by remember { mutableStateOf(false) }
+    val userIdFocusRequester = remember { FocusRequester() }
 
     if (shouldActivate) {
         LaunchedEffect(Unit) {
@@ -112,11 +123,12 @@ fun ActivationContent(
             painter = painterResource(id = R.drawable.app_ic),
             contentDescription = "App Logo",
             contentScale = ContentScale.Fit,
-            modifier = Modifier.constrainAs(headerLogo){
-                top.linkTo(parent.top, margin = appSize.screenTopMargin)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-            }
+            modifier = Modifier
+                .constrainAs(headerLogo) {
+                    top.linkTo(parent.top, margin = appSize.screenTopMargin)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }
                 .size(appSize.logoSize)
         )
 
@@ -157,6 +169,7 @@ fun ActivationContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = appSize.horizontalPadding)
+                .focusRequester(userIdFocusRequester)
                 .constrainAs(userIdField) {
                     top.linkTo(subtitle.bottom, margin = appSize.fieldSpacing)
                     start.linkTo(parent.start)
@@ -164,36 +177,67 @@ fun ActivationContent(
                 }
         )
 
-        Button(
-            onClick = {
-                if (userId.isNotBlank()) {
-                    isLoading = true
-                    shouldActivate = true
-                }
-            },
-            enabled = userId.isNotBlank() && !isLoading,
+        Card(
+            elevation = CardDefaults.cardElevation(defaultElevation = appSize.cardElevation),
             modifier = Modifier
                 .fillMaxWidth()
-                .height(appSize.buttonHeight)
                 .padding(horizontal = appSize.horizontalPadding)
                 .constrainAs(activateButton) {
                     top.linkTo(userIdField.bottom, margin = appSize.fieldSpacing)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                 },
-            shape = RoundedCornerShape(appSize.roundedCornerShapeSize),
         ) {
-            if (isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(appSize.circularProgressIndicatorSize),
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
-            } else {
-                Text(
-                    text = "Activate Account",
-                    fontSize = appSize.buttonTextSize,
-                    fontWeight = FontWeight.Medium
-                )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                IconButton(
+                    onClick = {
+                        userId = ""
+                        userIdFocusRequester.requestFocus()
+                    },
+                    modifier = Modifier
+                        .weight(0.2f)
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Refresh,
+                        contentDescription = "Clear",
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                        modifier = Modifier.size(appSize.iconSize)
+                    )
+                }
+                Button(
+                    onClick = {
+                        if (userId.isNotBlank()) {
+                            isLoading = true
+                            shouldActivate = true
+                        }
+                    },
+                    enabled = userId.isNotBlank() && !isLoading,
+                    modifier = Modifier
+                        .weight(0.8f)
+                        .height(appSize.buttonHeight),
+                    shape = RoundedCornerShape(
+                        topStart = 0.dp,
+                        topEnd = appSize.roundedCornerShapeSize,
+                        bottomStart = 0.dp,
+                        bottomEnd = appSize.roundedCornerShapeSize
+                    ),
+                ) {
+                    if (isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(appSize.circularProgressIndicatorSize),
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                    } else {
+                        Text(
+                            text = "Activate Account",
+                            fontSize = appSize.buttonTextSize,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                }
             }
         }
     }

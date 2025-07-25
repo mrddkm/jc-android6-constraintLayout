@@ -15,12 +15,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ExitToApp
-import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.outlined.Lock
+import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -85,6 +87,7 @@ fun MainScreen(
             contentHeader = {
                 MainHeaderSection(
                     onSignOut = onSignOut,
+                    isTablet = isTablet,
                     modifier = Modifier.fillMaxWidth()
                 )
             },
@@ -184,7 +187,7 @@ fun MainHeaderSection(
             }
         ) {
             Icon(
-                Icons.AutoMirrored.Filled.ExitToApp,
+                imageVector = Icons.Outlined.Lock,
                 contentDescription = "Sign Out",
                 tint = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.size(appSize.iconSize)
@@ -210,21 +213,22 @@ fun MainContent(
 
     val appSize = AppSize(isTablet = isTablet)
 
-    ConstraintLayout(
-        modifier = Modifier.fillMaxSize()
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top
     ) {
-        val (headerLogo, title, platField, detailCard) = createRefs()
-
         Box(
-            modifier = Modifier.constrainAs(headerLogo) {
-                top.linkTo(parent.top, margin = appSize.verticalPadding / 4)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-            }
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = appSize.verticalPadding / 4)
         ) {
             Column(
                 verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.client_kab_cianjur_ic),
@@ -250,12 +254,8 @@ fun MainContent(
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier
-                .padding(horizontal = appSize.horizontalPadding)
-                .constrainAs(title) {
-                    top.linkTo(headerLogo.bottom, margin = appSize.verticalPadding / 2)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                }
+                .fillMaxWidth()
+                .padding(horizontal = appSize.horizontalPadding, vertical = appSize.verticalPadding / 2)
         )
 
         Card(
@@ -263,11 +263,6 @@ fun MainContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = appSize.horizontalPadding)
-                .constrainAs(platField) {
-                    top.linkTo(title.bottom, margin = appSize.verticalPadding / 2)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                }
         ) {
             Column(
                 modifier = Modifier.padding(
@@ -454,13 +449,15 @@ fun MainContent(
                                 areaCode = ""
                                 plateNumber = ""
                                 seriesCode = ""
+                                showVehicleDetail = false
+                                vehicleData = null
                                 areaCodeFocusRequester.requestFocus()
                             },
                             modifier = Modifier
                                 .weight(0.2f)
                         ) {
                             Icon(
-                                Icons.Default.Refresh,
+                                imageVector = Icons.Outlined.Refresh,
                                 contentDescription = "Clear",
                                 tint = MaterialTheme.colorScheme.onPrimaryContainer,
                                 modifier = Modifier.size(appSize.iconSize)
@@ -516,31 +513,12 @@ fun MainContent(
                 onQRISClick = { onNavigateToPaymentQris(Screen.PaymentQris.route) },
                 onCashClick = { onNavigateToPaymentCash(Screen.PaymentCash.route) },
                 isTablet = isTablet,
-                modifier = Modifier.constrainAs(detailCard) {
-                    top.linkTo(platField.bottom, margin = appSize.verticalPadding / 2)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                }
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = appSize.horizontalPadding)
+                    .padding(top = appSize.verticalPadding / 2)
             )
         }
-
-        /*        VehicleDetailCard(
-                    vehicleData = vehicleData ?: VehicleData(
-                        platNumber = "F1234ABC",
-                        status = "Belum Bayar",
-                        vehicleType = "Mobil",
-                        amount = "100.000"
-                    ),
-                    onQRISClick = { onNavigateToPaymentQris(Screen.PaymentQris.route) },
-                    onCashClick = { onNavigateToPaymentCash(Screen.PaymentCash.route) },
-                    isTablet = isTablet,
-                    modifier = Modifier.constrainAs(detailCard) {
-                        top.linkTo(platField.bottom, margin = appSize.verticalPadding / 2)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                    }
-                )
-                */
     }
 }
 

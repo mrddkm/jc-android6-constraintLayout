@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -16,10 +17,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -48,7 +49,7 @@ fun LayoutTemplate(
     onThemeToggle: () -> Unit = {},
     isDarkTheme: Boolean = false,
     headerPercent: Float = 0.10f,
-    footerPercent: Float = 0.07f,
+    footerPercent: Float = 0.08f,
     isTablet: Boolean = false,
     contentHeader: @Composable () -> Unit = { DefaultHeaderContent(isTablet = isTablet) },
     contentMain: @Composable () -> Unit = { DefaultMainContent(isTablet = isTablet) }
@@ -145,7 +146,7 @@ fun MainSection(
     ) {
         Box(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxHeight()
                 .padding(appSize.horizontalPadding / 4)
         ) {
             contentMain()
@@ -218,7 +219,7 @@ fun FooterSection(
                 }
             ) {
                 Icon(
-                    imageVector = if (isDarkTheme) Icons.Default.LightMode else Icons.Default.DarkMode,
+                    imageVector = if (isDarkTheme) Icons.Filled.LightMode else Icons.Filled.DarkMode,
                     contentDescription = "Toggle Theme",
                     tint = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.size(appSize.iconSize)
@@ -234,7 +235,7 @@ fun FooterSection(
                 }
             ) {
                 Icon(
-                    imageVector = Icons.Default.Settings,
+                    imageVector = Icons.Filled.Settings,
                     contentDescription = "Settings",
                     tint = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.size(appSize.iconSize / 1.2f)
@@ -291,7 +292,7 @@ fun DefaultHeaderContent(isTablet: Boolean) {
             }
         ) {
             Icon(
-                imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                imageVector = Icons.Outlined.Lock,
                 contentDescription = "Sign Out",
                 modifier = Modifier.size(appSize.iconSize)
             )

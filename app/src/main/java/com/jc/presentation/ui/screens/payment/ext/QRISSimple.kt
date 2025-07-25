@@ -42,7 +42,8 @@ import com.jc.presentation.ui.theme.AppTheme
 fun QRISSimple(
     isTablet: Boolean = false,
     merchantName: String = "NAMA MERCHANT",
-    nmid: String = "IDXXXXXXXXX"
+    nmid: String = "IDXXXXXXXXX",
+    modifier: Modifier = Modifier
 ) {
     val qrisCode =
         "00020101021126610017ID.CO.BANKBJB.WWW0118936001103001278321020713436290303UMI51440014ID.CO.QRIS.WWW0215ID10221796982980303UMI5204546253033605802ID5919PARKIR BERLANGGANAN6007CIANJUR61054321162070703A016304F00C"
@@ -53,7 +54,7 @@ fun QRISSimple(
     val cardHeight = if (isTablet) 550.dp else 385.dp
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = horizontalPadding),
         horizontalAlignment = Alignment.CenterHorizontally

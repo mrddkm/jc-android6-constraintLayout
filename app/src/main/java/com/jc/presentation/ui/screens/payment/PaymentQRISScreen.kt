@@ -17,11 +17,16 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -37,17 +42,12 @@ import com.jc.presentation.ui.theme.AppTheme
 @Composable
 fun PaymentQRISScreen(
     onPaymentConfirm: () -> Unit = {},
-    headerPercent: Float = 0.00f,
-    footerPercent: Float = 0.00f,
     isTablet: Boolean = false
 ) {
     ConstraintLayout(
         modifier = Modifier.fillMaxSize()
     ) {
         val (main) = createRefs()
-
-        val topGuideline = createGuidelineFromTop(headerPercent)
-        val bottomGuideline = createGuidelineFromBottom(footerPercent)
 
         MainSection(
             contentMain = {
@@ -58,10 +58,10 @@ fun PaymentQRISScreen(
             },
             isTablet = isTablet,
             modifier = Modifier.constrainAs(main) {
-                top.linkTo(topGuideline)
+                top.linkTo(parent.top)
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
-                bottom.linkTo(bottomGuideline)
+                bottom.linkTo(parent.bottom)
                 width = Dimension.fillToConstraints
                 height = Dimension.fillToConstraints
             }
@@ -74,6 +74,8 @@ fun QRISMainSection(
     onPaymentConfirm: () -> Unit,
     isTablet: Boolean = false
 ) {
+    var isLoading by remember { mutableStateOf(false) }
+
     val appSize = AppSize(isTablet = isTablet)
 
     Column(
@@ -82,12 +84,13 @@ fun QRISMainSection(
             .verticalScroll(rememberScrollState())
             .padding(horizontal = appSize.horizontalPadding / 8),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
+        verticalArrangement = Arrangement.Center
     ) {
         QRISSimple(
             isTablet = isTablet,
             merchantName = "Gaenta Sinergi Sukses, PT",
-            nmid = "IDXXXXXXXXX"
+            nmid = "IDXXXXXXXXX",
+            modifier = Modifier.fillMaxWidth()
         )
         Column(
             modifier = Modifier
@@ -119,10 +122,7 @@ fun QRISMainSection(
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(
-                    appSize.horizontalPadding / 2,
-                    Alignment.CenterHorizontally
-                ),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 IconButton(
                     onClick = {},
@@ -150,11 +150,18 @@ fun QRISMainSection(
                         containerColor = MaterialTheme.colorScheme.primary
                     )
                 ) {
-                    Text(
-                        text = "Confirmation",
-                        fontSize = appSize.buttonTextSize,
-                        fontWeight = FontWeight.ExtraBold
-                    )
+                    if (isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(appSize.circularProgressIndicatorSize),
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                    } else {
+                        Text(
+                            text = "Confirmation",
+                            fontSize = appSize.buttonTextSize,
+                            fontWeight = FontWeight.ExtraBold
+                        )
+                    }
                 }
             }
         }
