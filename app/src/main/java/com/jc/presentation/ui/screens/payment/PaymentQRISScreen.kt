@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.jc.presentation.ui.screens.payment.ext.QRISSimple
@@ -79,8 +80,9 @@ fun QRISMainSection(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = appSize.horizontalPadding),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(horizontal = appSize.horizontalPadding / 8),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top
     ) {
         QRISSimple(
             isTablet = isTablet,
@@ -138,7 +140,12 @@ fun QRISMainSection(
                     modifier = Modifier
                         .weight(0.8f)
                         .height(appSize.buttonHeight),
-                    shape = RoundedCornerShape(appSize.roundedCornerShapeSize),
+                    shape = RoundedCornerShape(
+                        topStart = 0.dp,
+                        topEnd = appSize.roundedCornerShapeSize,
+                        bottomStart = 0.dp,
+                        bottomEnd = appSize.roundedCornerShapeSize
+                    ),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary
                     )
@@ -163,22 +170,7 @@ fun QRISMainSection(
 )
 @Composable
 fun QRISPaymentPreview() {
-    AppTheme {
+    AppTheme(darkTheme = false) {
         PaymentQRISScreen()
     }
 }
-
-/*
-@Preview(
-    name = "SUNMI V1s Dark",
-    widthDp = 360,
-    heightDp = 640,
-    showBackground = true,
-)
-@Composable
-fun PaymentQrisScreenTabletPreview() {
-    AppTheme(darkTheme = true) {
-        PaymentQRISScreen()
-    }
-}
-*/

@@ -4,18 +4,22 @@ package com.jc.presentation.ui.screens.shared
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,7 +28,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -106,7 +113,7 @@ fun HeaderSection(
 ) {
     val appSize = AppSize(isTablet = isTablet)
     Card(
-        modifier = modifier.padding(appSize.verticalPadding),
+        modifier = modifier.padding(appSize.verticalPadding / 2),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainer
         ),
@@ -115,7 +122,7 @@ fun HeaderSection(
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(appSize.horizontalPadding / 2)
+                .padding(appSize.horizontalPadding / 4)
         ) {
             contentHeader()
         }
@@ -130,7 +137,7 @@ fun MainSection(
 ) {
     val appSize = AppSize(isTablet = isTablet)
     Card(
-        modifier = modifier.padding(horizontal = appSize.horizontalPadding / 2),
+        modifier = modifier.padding(appSize.horizontalPadding / 2.8f, appSize.verticalPadding / 10),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
@@ -139,7 +146,7 @@ fun MainSection(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(appSize.horizontalPadding / 2)
+                .padding(appSize.horizontalPadding / 4)
         ) {
             contentMain()
         }
@@ -155,29 +162,51 @@ fun FooterSection(
 ) {
     val appSize = AppSize(isTablet = isTablet)
     Card(
-        modifier = modifier.padding(appSize.verticalPadding),
+        modifier = modifier.padding(appSize.verticalPadding / 2),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+        ),
+        shape = RoundedCornerShape(
+            topStart = appSize.roundedCornerShapeSize,
+            topEnd = appSize.roundedCornerShapeSize,
+            bottomStart = 0.dp,
+            bottomEnd = 0.dp
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = appSize.cardElevation)
     ) {
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = appSize.horizontalPadding / 2, vertical = appSize.verticalPadding / 2)
+                .padding(appSize.horizontalPadding / 4)
         ) {
             val (appInfo, themeButton, versionText) = createRefs()
 
-            Text(
-                text = "Gaenta © 2025",
-                fontSize = appSize.captionTextSize,
-                color = MaterialTheme.colorScheme.onSurface,
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.constrainAs(appInfo) {
                     start.linkTo(parent.start)
                     top.linkTo(parent.top)
                     bottom.linkTo(parent.bottom)
                 }
-            )
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ae_ic),
+                    contentDescription = "ae_ic",
+                    modifier = Modifier
+                        .size(appSize.iconSize * 1.1f)
+                        .padding(appSize.horizontalPadding / 8),
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
+                    contentScale = ContentScale.Fit
+                )
+                Text(
+                    text = "© 2025 Gaenta",
+                    fontSize = appSize.captionTextSize * 0.8f,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier
+                        .padding(start = 1.dp)
+                )
+            }
 
             IconButton(
                 onClick = onThemeToggle,
@@ -196,16 +225,21 @@ fun FooterSection(
                 )
             }
 
-            Text(
-                text = "v1.0.0",
-                fontSize = appSize.captionTextSize,
-                color = MaterialTheme.colorScheme.onSurface,
+            IconButton(
+                onClick = {},
                 modifier = Modifier.constrainAs(versionText) {
                     end.linkTo(parent.end)
                     top.linkTo(parent.top)
                     bottom.linkTo(parent.bottom)
                 }
-            )
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Settings,
+                    contentDescription = "Settings",
+                    tint = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.size(appSize.iconSize / 1.2f)
+                )
+            }
         }
     }
 }
@@ -220,16 +254,33 @@ fun DefaultHeaderContent(isTablet: Boolean) {
     ) {
         val (appName, signOutButton) = createRefs()
 
-        Text(
-            text = "Parkir App",
-            fontSize = appSize.subtitleSize,
-            fontWeight = FontWeight.Bold,
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.constrainAs(appName) {
                 start.linkTo(parent.start)
                 top.linkTo(parent.top)
                 bottom.linkTo(parent.bottom)
             }
-        )
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.ae_ic),
+                contentDescription = "ae_ic",
+                modifier = Modifier
+                    .size(appSize.iconSize * 1.3f)
+                    .padding(appSize.horizontalPadding / 8),
+                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
+                contentScale = ContentScale.Fit
+            )
+            Text(
+                text = "Gaenta Sinergi Sukses",
+                fontSize = appSize.bodyTextSize * 1.3f,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier
+                    .padding(start = 1.dp)
+            )
+        }
 
         IconButton(
             onClick = {},
@@ -240,7 +291,7 @@ fun DefaultHeaderContent(isTablet: Boolean) {
             }
         ) {
             Icon(
-                Icons.AutoMirrored.Filled.ExitToApp,
+                imageVector = Icons.AutoMirrored.Filled.ExitToApp,
                 contentDescription = "Sign Out",
                 modifier = Modifier.size(appSize.iconSize)
             )
@@ -333,7 +384,7 @@ fun DefaultMainContent(isTablet: Boolean) {
 )
 @Composable
 fun LayoutLightPreview() {
-    AppTheme {
+    AppTheme(darkTheme = false) {
         LayoutTemplate()
     }
 }
@@ -350,5 +401,4 @@ fun LayoutTabletPreview() {
     AppTheme {
         LayoutTemplate(isTablet = true)
     }
-
 }*/

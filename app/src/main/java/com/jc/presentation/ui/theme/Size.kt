@@ -16,13 +16,13 @@ data class AppSize(val isTablet: Boolean) {
 
     // Text Sizes
     val titleSize: TextUnit
-        get() = if (isTablet) 32.sp else 28.sp
+        get() = if (isTablet) 32.sp else 20.sp
     val subtitleSize: TextUnit
         get() = if (isTablet) 18.sp else 16.sp
     val buttonTextSize: TextUnit
         get() = if (isTablet) 18.sp else 16.sp
     val bodyTextSize: TextUnit
-        get() = if (isTablet) 16.sp else 14.sp
+        get() = if (isTablet) 16.sp else 12.sp
     val captionTextSize: TextUnit
         get() = if (isTablet) 14.sp else 12.sp
 
@@ -56,5 +56,5 @@ data class AppSize(val isTablet: Boolean) {
     val imageWidth: Dp
         get() = if (isTablet) 300.dp else 200.dp
     val roundedCornerShapeSize: Dp
-        get() = if (isTablet) 8.dp else 4.dp
+        get() = if (isTablet) 12.dp else 8.dp
 }

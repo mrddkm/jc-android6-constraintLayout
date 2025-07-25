@@ -41,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -160,13 +161,13 @@ fun MainHeaderSection(
                 painter = painterResource(id = R.drawable.client_dishub_ic),
                 contentDescription = "Client",
                 modifier = Modifier
-                    .size(appSize.iconSize)
+                    .size(appSize.iconSize * 1.3f)
                     .padding(appSize.horizontalPadding / 8),
                 contentScale = ContentScale.Fit
             )
             Text(
                 text = "Dinas Perhubungan",
-                fontSize = appSize.bodyTextSize,
+                fontSize = appSize.bodyTextSize * 1.3f,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
@@ -216,7 +217,7 @@ fun MainContent(
 
         Box(
             modifier = Modifier.constrainAs(headerLogo) {
-                top.linkTo(parent.top, margin = appSize.verticalPadding / 2)
+                top.linkTo(parent.top, margin = appSize.verticalPadding / 4)
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
             }
@@ -230,7 +231,7 @@ fun MainContent(
                     contentDescription = "Client",
                     modifier = Modifier
                         .size(appSize.logoSize)
-                        .padding(appSize.horizontalPadding / 8),
+                        .padding(appSize.horizontalPadding / 10),
                     contentScale = ContentScale.Fit
                 )
                 Text(
@@ -290,13 +291,13 @@ fun MainContent(
                             .height(appSize.buttonHeight)
                             .background(
                                 color = Color.White,
-                                shape = RoundedCornerShape(appSize.roundedCornerShapeSize)
+                                shape = RoundedCornerShape(appSize.roundedCornerShapeSize / 2)
                             )
                             .padding(horizontal = 2.dp, vertical = 2.dp)
                             .border(
-                                width = 1.dp,
+                                width = 1.2.dp,
                                 color = Color.Black,
-                                shape = RoundedCornerShape(appSize.roundedCornerShapeSize)
+                                shape = RoundedCornerShape(appSize.roundedCornerShapeSize / 2)
                             ),
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
@@ -435,56 +436,74 @@ fun MainContent(
                     }
                 }
                 Spacer(modifier = Modifier.height(appSize.verticalPadding / 2))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = appSize.cardElevation),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            horizontal = appSize.horizontalPadding,
+                            vertical = appSize.verticalPadding
+                        ),
                 ) {
-                    IconButton(
-                        onClick = {
-                            areaCode = ""
-                            plateNumber = ""
-                            seriesCode = ""
-                            areaCodeFocusRequester.requestFocus()
-                        },
-                        modifier = Modifier
-                            .weight(0.2f)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        Icon(
-                            Icons.Default.Refresh,
-                            contentDescription = "Clear",
-                            tint = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.size(appSize.iconSize)
-                        )
-                    }
-                    Button(
-                        onClick = {
-                            if (areaCode.isNotEmpty() && plateNumber.isNotEmpty() && seriesCode.isNotEmpty()) {
-                                vehicleData = VehicleData(
-                                    platNumber = "$areaCode $plateNumber $seriesCode",
-                                    status = "Belum Bayar",
-                                    vehicleType = "Mobil",
-                                    amount = "100.000"
+                        IconButton(
+                            onClick = {
+                                areaCode = ""
+                                plateNumber = ""
+                                seriesCode = ""
+                                areaCodeFocusRequester.requestFocus()
+                            },
+                            modifier = Modifier
+                                .weight(0.2f)
+                        ) {
+                            Icon(
+                                Icons.Default.Refresh,
+                                contentDescription = "Clear",
+                                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                modifier = Modifier.size(appSize.iconSize)
+                            )
+                        }
+                        Button(
+                            onClick = {
+                                if (areaCode.isNotEmpty() && plateNumber.isNotEmpty() && seriesCode.isNotEmpty()) {
+                                    vehicleData = VehicleData(
+                                        platNumber = "$areaCode $plateNumber $seriesCode",
+                                        status = "Belum Bayar",
+                                        vehicleType = "Mobil",
+                                        amount = "100.000"
+                                    )
+                                    showVehicleDetail = true
+                                }
+                            },
+                            modifier = Modifier
+                                .weight(0.8f)
+                                .height(appSize.buttonHeight),
+                            shape = RoundedCornerShape(
+                                topStart = 0.dp,
+                                topEnd = appSize.roundedCornerShapeSize,
+                                bottomStart = 0.dp,
+                                bottomEnd = appSize.roundedCornerShapeSize
+                            ),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primary
+                            ),
+                            enabled = areaCode.isNotEmpty() && plateNumber.isNotEmpty() && seriesCode.isNotEmpty()
+                        ) {
+                            if (isLoading) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(appSize.circularProgressIndicatorSize),
+                                    color = MaterialTheme.colorScheme.onPrimary
                                 )
-                                showVehicleDetail = true
+                            } else {
+                                Text(
+                                    text = "Check",
+                                    fontSize = appSize.buttonTextSize,
+                                    fontWeight = FontWeight.ExtraBold
+                                )
                             }
-                        },
-                        modifier = Modifier
-                            .weight(0.8f)
-                            .height(appSize.buttonHeight),
-                        shape = RoundedCornerShape(8.dp),
-                        enabled = areaCode.isNotEmpty() && plateNumber.isNotEmpty() && seriesCode.isNotEmpty()
-                    ) {
-                        if (isLoading) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(appSize.circularProgressIndicatorSize),
-                                color = MaterialTheme.colorScheme.onPrimary
-                            )
-                        } else {
-                            Text(
-                                text = "Check",
-                                fontSize = appSize.buttonTextSize,
-                                fontWeight = FontWeight.ExtraBold
-                            )
                         }
                     }
                 }
@@ -512,14 +531,16 @@ fun MainContent(
                         vehicleType = "Mobil",
                         amount = "100.000"
                     ),
-                        onQRISClick = { onNavigateToPaymentQris(Screen.PaymentQris.route) },
-                        onCashClick = { onNavigateToPaymentCash(Screen.PaymentCash.route) },
+                    onQRISClick = { onNavigateToPaymentQris(Screen.PaymentQris.route) },
+                    onCashClick = { onNavigateToPaymentCash(Screen.PaymentCash.route) },
+                    isTablet = isTablet,
                     modifier = Modifier.constrainAs(detailCard) {
-                        top.linkTo(platField.bottom, margin = 4.dp)
+                        top.linkTo(platField.bottom, margin = appSize.verticalPadding / 2)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
                     }
-                )*/
+                )
+                */
     }
 }
 
@@ -619,10 +640,11 @@ fun VehicleDetailCard(
                         )
                     } else {
                         Image(
-                            painter = painterResource(id = R.drawable.qris_logo_ic),
-                            contentDescription = "QRIS Logo",
+                            painter = painterResource(id = R.drawable.qris_ic),
+                            contentDescription = "QRIS",
                             contentScale = ContentScale.Fit,
-                            modifier = Modifier.size(appSize.iconSize)
+                            modifier = Modifier.size(appSize.iconSize * 2),
+                            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary),
                         )
                     }
                 }
@@ -699,22 +721,20 @@ data class VehicleData(
 )
 @Composable
 fun MainScreenPreview() {
-    AppTheme {
-        MainScreen()
+    AppTheme(darkTheme = false) {
+        MainScreen(isDarkTheme = false)
     }
 }
 
-/*
 @Preview(
-    name = "SUNMI V1s Dark",
-    widthDp = 360,
-    heightDp = 640,
+    name = "Tablet Preview",
+    widthDp = 800,
+    heightDp = 1280,
     showBackground = true,
 )
 @Composable
-fun MainDarkScreenPreview() {
-    AppTheme(darkTheme = true) {
-        MainScreen(isDarkTheme = true)
+fun LayoutTabletPreview() {
+    AppTheme {
+        MainScreen(isTablet = true)
     }
 }
-*/
