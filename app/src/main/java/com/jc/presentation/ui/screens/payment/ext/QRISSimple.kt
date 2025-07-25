@@ -67,7 +67,7 @@ fun QRISSimple(
                 modifier = Modifier.fillMaxSize()
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.qris_mpm_ringkas_bg),
+                    painter = painterResource(id = R.drawable.qris_mpm_simple_bg),
                     contentDescription = "QRIS MPM Background",
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.FillBounds
