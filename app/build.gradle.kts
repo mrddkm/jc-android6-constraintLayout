@@ -127,7 +127,7 @@ dependencies {
     // DataStore
     implementation(libs.bundles.datastore)
 
-    // ZXing - Barcode/QR Code generation only
+    // Barcode/QR Code generation only
     implementation(libs.bundles.zxing)
 
     // Testing
