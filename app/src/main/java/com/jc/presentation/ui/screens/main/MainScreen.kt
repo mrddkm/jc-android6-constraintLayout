@@ -72,8 +72,6 @@ fun MainScreen(
     onNavigateToPaymentQris: (String) -> Unit = {},
     onNavigateToPaymentCash: (String) -> Unit = {},
     onSignOut: () -> Unit = {},
-    onThemeToggle: () -> Unit = {},
-    isDarkTheme: Boolean = false,
     headerPercent: Float = 0.10f,
     footerPercent: Float = 0.08f,
     isTablet: Boolean = false
@@ -128,8 +126,6 @@ fun MainScreen(
         )
 
         FooterSection(
-            onThemeToggle = onThemeToggle,
-            isDarkTheme = isDarkTheme,
             isTablet = isTablet,
             onAboutClick = { showAboutDialog = true },
             onSettingsClick = { showSettingsBottomSheet = true },
@@ -736,7 +732,7 @@ data class VehicleData(
 )
 @Composable
 fun MainScreenPreview() {
-    AppTheme(darkTheme = false) {
+    AppTheme {
         MainScreen()
     }
 }

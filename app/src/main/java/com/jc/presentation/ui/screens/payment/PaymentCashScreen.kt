@@ -21,7 +21,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -31,8 +30,6 @@ import com.jc.presentation.ui.screens.shared.MainSection
 @Composable
 fun PaymentCashScreen(
     onPaymentConfirm: () -> Unit = {},
-    onThemeToggle: () -> Unit = {},
-    isDarkTheme: Boolean = false,
     isTablet: Boolean = false
 ) {
     ConstraintLayout(
@@ -158,16 +155,5 @@ fun CashPaymentContent(
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-    }
-}
-
-@Preview(showBackground = true, widthDp = 600, heightDp = 800)
-@Composable
-fun PaymentCashScreenTabletPreview() {
-    MaterialTheme {
-        PaymentCashScreen(
-            isTablet = true,
-            isDarkTheme = true
-        )
     }
 }

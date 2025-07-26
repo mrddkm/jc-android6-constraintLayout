@@ -50,8 +50,6 @@ import com.jc.presentation.ui.theme.AppTheme
 @Composable
 fun ActivationScreen(
     onNavigateToSignIn: () -> Unit = {},
-    onThemeToggle: () -> Unit = {},
-    isDarkTheme: Boolean = false,
     footerPercent: Float = 0.08f,
     isTablet: Boolean = false
 ) {
@@ -83,8 +81,6 @@ fun ActivationScreen(
         )
 
         FooterSection(
-            onThemeToggle = onThemeToggle,
-            isDarkTheme = isDarkTheme,
             isTablet = isTablet,
             onAboutClick = { showAboutDialog = true },
             onSettingsClick = { showSettingsBottomSheet = true },
@@ -278,7 +274,7 @@ fun ActivationContent(
 )
 @Composable
 fun ActivationScreenPreview() {
-    AppTheme(darkTheme = false) {
+    AppTheme {
         ActivationScreen()
     }
 }

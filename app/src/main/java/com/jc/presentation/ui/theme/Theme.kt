@@ -1,20 +1,14 @@
 package com.jc.presentation.ui.theme
 
-import android.annotation.SuppressLint
-import android.app.Activity
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalView
-import androidx.core.view.WindowCompat
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import com.jc.presentation.viewmodel.ThemeViewModel
+import org.koin.androidx.compose.koinViewModel
 
 private val darkScheme = darkColorScheme(
     primary = primaryLight,
@@ -92,40 +86,35 @@ private val lightScheme = lightColorScheme(
     surfaceContainerHighest = surfaceContainerHighestDark,
 )
 
-@Suppress("DEPRECATION")
-@SuppressLint("ObsoleteSdkInt")
 @Composable
 fun AppTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = true,
+    themeViewModel: ThemeViewModel = koinViewModel(),
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
+    val userThemePreference by themeViewModel.isDarkTheme.collectAsState()
+    println("AppTheme: userThemePreference from ViewModel: $userThemePreference")
 
-        darkTheme -> darkScheme
-        else -> lightScheme
+    val useDarkTheme = when (userThemePreference) {
+        true -> true
+        false -> false
+        null -> {
+            val systemTheme = isSystemInDarkTheme()
+            println("AppTheme: userThemePreference null, using theme: ${if (systemTheme) "Dark" else "Light"}") // DEBUG LOG
+            systemTheme
+        }
     }
+    println("AppTheme: Final 'useDarkTheme' : ${if (useDarkTheme) "Dark" else "Light"}")
 
-    val view = LocalView.current
-    if (!view.isInEditMode) {
-        SideEffect {
-            val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars =
-                    !darkTheme
-            }
-        }
+    val colorScheme = if (useDarkTheme) {
+        darkScheme
+    } else {
+        lightScheme
     }
 
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
+        shapes = Shapes,
         content = content
     )
 }

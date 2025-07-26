@@ -96,7 +96,7 @@ fun AboutDialog(
 )
 @Composable
 fun AboutScreenPreview() {
-    AppTheme(darkTheme = false) {
+    AppTheme {
         AboutDialog(
             onDismissRequest = {}
         )

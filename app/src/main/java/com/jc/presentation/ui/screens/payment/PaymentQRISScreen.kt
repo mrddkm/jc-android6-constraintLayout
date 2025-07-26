@@ -177,7 +177,7 @@ fun QRISMainSection(
 )
 @Composable
 fun QRISPaymentPreview() {
-    AppTheme(darkTheme = false) {
+    AppTheme {
         PaymentQRISScreen()
     }
 }

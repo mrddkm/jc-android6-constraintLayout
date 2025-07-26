@@ -13,8 +13,6 @@ import com.jc.presentation.ui.screens.payment.PaymentQRISScreen
 @Composable
 fun AppNavigation(
     navController: NavHostController,
-    onThemeToggle: () -> Unit = {},
-    isDarkTheme: Boolean = false,
     headerPercent: Float = 0.10f,
     footerPercent: Float = 0.08f,
     isTablet: Boolean = false
@@ -30,8 +28,6 @@ fun AppNavigation(
                         popUpTo(Screen.Activation.route) { inclusive = true }
                     }
                 },
-                onThemeToggle = onThemeToggle,
-                isDarkTheme = isDarkTheme,
                 footerPercent = footerPercent,
                 isTablet = isTablet
             )
@@ -44,8 +40,6 @@ fun AppNavigation(
                         popUpTo(Screen.SignIn.route) { inclusive = true }
                     }
                 },
-                onThemeToggle = onThemeToggle,
-                isDarkTheme = isDarkTheme,
                 footerPercent = footerPercent,
                 isTablet = isTablet
             )
@@ -64,8 +58,6 @@ fun AppNavigation(
                         popUpTo(Screen.Main.route) { inclusive = true }
                     }
                 },
-                onThemeToggle = onThemeToggle,
-                isDarkTheme = isDarkTheme,
                 headerPercent = headerPercent,
                 footerPercent = footerPercent,
                 isTablet = isTablet,
@@ -86,8 +78,6 @@ fun AppNavigation(
                 onPaymentConfirm = {
                     navController.navigate(Screen.Print.route)
                 },
-                onThemeToggle = onThemeToggle,
-                isDarkTheme = isDarkTheme,
                 isTablet = isTablet,
             )
         }

@@ -57,8 +57,6 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 @Composable
 fun SignInScreen(
     onNavigateToMain: () -> Unit = {},
-    onThemeToggle: () -> Unit = {},
-    isDarkTheme: Boolean = false,
     footerPercent: Float = 0.08f,
     isTablet: Boolean = false
 ) {
@@ -90,8 +88,6 @@ fun SignInScreen(
         )
 
         FooterSection(
-            onThemeToggle = onThemeToggle,
-            isDarkTheme = isDarkTheme,
             isTablet = isTablet,
             onAboutClick = { showAboutDialog = true },
             onSettingsClick = { showSettingsBottomSheet = true },

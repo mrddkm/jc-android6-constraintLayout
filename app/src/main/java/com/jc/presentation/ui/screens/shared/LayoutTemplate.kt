@@ -2,9 +2,9 @@
 
 package com.jc.presentation.ui.screens.shared
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,6 +31,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
@@ -46,11 +48,11 @@ import com.jc.constraintlayout.R
 import com.jc.presentation.ui.screens.shared.ext.UserProfile
 import com.jc.presentation.ui.theme.AppSize
 import com.jc.presentation.ui.theme.AppTheme
+import com.jc.presentation.viewmodel.ThemeViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun LayoutTemplate(
-    onThemeToggle: () -> Unit = {},
-    isDarkTheme: Boolean = false,
     headerPercent: Float = 0.10f,
     footerPercent: Float = 0.08f,
     isTablet: Boolean = false,
@@ -95,8 +97,6 @@ fun LayoutTemplate(
         )
 
         FooterSection(
-            onThemeToggle = onThemeToggle,
-            isDarkTheme = isDarkTheme,
             isTablet = isTablet,
             onAboutClick = onAboutClick,
             onSettingsClick = { /* Default empty lambda */ },
@@ -164,15 +164,17 @@ fun MainSection(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FooterSection(
-    onThemeToggle: () -> Unit,
-    isDarkTheme: Boolean,
     isTablet: Boolean,
     onAboutClick: () -> Unit,
     onSettingsClick: () -> Unit,
     currentUserProfile: UserProfile? = null,
-    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
+    themeViewModel: ThemeViewModel = koinViewModel(),
+    modifier: Modifier
 ) {
     val appSize = AppSize(isTablet = isTablet)
+
+    val userThemePreference by themeViewModel.isDarkTheme.collectAsState()
+    val isCurrentlyDark = userThemePreference ?: isSystemInDarkTheme()
 
     Card(
         modifier = modifier.padding(appSize.verticalPadding / 2),
@@ -224,7 +226,11 @@ fun FooterSection(
             }
 
             IconButton(
-                onClick = onThemeToggle,
+                onClick = {
+                    val newThemeState = !isCurrentlyDark
+                    println("FooterSection: ${if (newThemeState) "Dark" else "Light"}")
+                    themeViewModel.setTheme(newThemeState)
+                },
                 modifier = Modifier.constrainAs(themeButton) {
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
@@ -232,12 +238,14 @@ fun FooterSection(
                     bottom.linkTo(parent.bottom)
                 }
             ) {
-                Icon(
-                    imageVector = if (isDarkTheme) Icons.Filled.LightMode else Icons.Filled.DarkMode,
-                    contentDescription = "Toggle Theme",
-                    tint = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.size(appSize.iconSize)
-                )
+                IconButton(onClick = { themeViewModel.setTheme(!isCurrentlyDark) }) {
+                    Icon(
+                        imageVector = if (isCurrentlyDark) Icons.Default.LightMode else Icons.Default.DarkMode,
+                        contentDescription = "Toggle Theme",
+                        tint = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.size(appSize.iconSize)
+                    )
+                }
             }
 
             Row(
@@ -413,7 +421,7 @@ fun DefaultMainContent(isTablet: Boolean) {
 )
 @Composable
 fun LayoutLightPreview() {
-    AppTheme(darkTheme = false) {
+    AppTheme {
         LayoutTemplate()
     }
 }
