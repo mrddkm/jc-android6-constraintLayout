@@ -18,14 +18,18 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import com.jc.presentation.ui.theme.AppSize
+import com.jc.presentation.ui.theme.AppTheme
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsBottomSheet(
+fun SettingsProfileBottomSheet(
     onDismissRequest: () -> Unit,
-    isTablet: Boolean
+    isTablet: Boolean,
+    showUserProfile: Boolean = false,
+    onLanguageChange: (String) -> Unit = {}
 ) {
     val appSize = AppSize(isTablet = isTablet)
     val sheetState = rememberModalBottomSheetState()
@@ -41,7 +45,6 @@ fun SettingsBottomSheet(
                     .padding(vertical = appSize.verticalPadding / 2),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // You can add a drag handle indicator here if desired
             }
         }
     ) {
@@ -58,13 +61,12 @@ fun SettingsBottomSheet(
                 modifier = Modifier.padding(bottom = appSize.verticalPadding)
             )
 
-            // Example settings options
-            val settingsOptions = listOf(
-                "Account Settings",
-                "Notification Preferences",
-                "Privacy Policy",
-                "Help & Support"
-            )
+            val settingsOptions = mutableListOf<String>()
+            if (showUserProfile) {
+                settingsOptions.add("User Profile")
+            }
+            settingsOptions.add("Bahasa (Indonesia)")
+            settingsOptions.add("Bahasa (English)")
 
             LazyColumn(
                 modifier = Modifier.fillMaxWidth()
@@ -74,13 +76,17 @@ fun SettingsBottomSheet(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
-                                // Handle setting item click
                                 scope.launch { sheetState.hide() }.invokeOnCompletion {
                                     if (!sheetState.isVisible) {
                                         onDismissRequest()
                                     }
                                 }
-                                // You can add specific actions based on the clicked setting
+                                when (setting) {
+                                    "Bahasa (Indonesia)" -> onLanguageChange("id")
+                                    "Bahasa (English)" -> onLanguageChange("en")
+                                    "User Profile" -> { /* TODO: Add detail user profile */
+                                    }
+                                }
                             }
                             .padding(vertical = appSize.verticalPadding / 2),
                         verticalAlignment = Alignment.CenterVertically
@@ -94,5 +100,23 @@ fun SettingsBottomSheet(
             }
             Spacer(modifier = Modifier.height(appSize.verticalPadding))
         }
+    }
+}
+
+@Preview(
+    name = "SUNMI V1s",
+    widthDp = 360,
+    heightDp = 640,
+    showBackground = true,
+)
+@Composable
+fun ActivationScreenPreview() {
+    AppTheme(darkTheme = false) {
+        SettingsProfileBottomSheet(
+            onDismissRequest = {},
+            isTablet = false,
+            showUserProfile = true,
+            onLanguageChange = {}
+        )
     }
 }

@@ -49,6 +49,7 @@ import com.jc.constraintlayout.R
 import com.jc.presentation.ui.screens.shared.ext.AboutDialog
 import com.jc.presentation.ui.screens.shared.FooterSection
 import com.jc.presentation.ui.screens.shared.MainSection
+import com.jc.presentation.ui.screens.shared.ext.SettingsProfileBottomSheet
 import com.jc.presentation.ui.theme.AppSize
 import com.jc.presentation.ui.theme.AppTheme
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -62,6 +63,7 @@ fun SignInScreen(
     isTablet: Boolean = false
 ) {
     var showAboutDialog by remember { mutableStateOf(false) }
+    var showSettingsBottomSheet by remember { mutableStateOf(false) }
     
     ConstraintLayout(
         modifier = Modifier.fillMaxSize()
@@ -92,6 +94,10 @@ fun SignInScreen(
             isDarkTheme = isDarkTheme,
             isTablet = isTablet,
             onAboutClick = { showAboutDialog = true },
+            onSettingsClick = { showUserProfile, onLanguageChange ->
+                showSettingsBottomSheet = true
+            },
+            userProfileName = null,
             modifier = Modifier.constrainAs(footer) {
                 top.linkTo(bottomGuideline)
                 start.linkTo(parent.start)
@@ -107,6 +113,17 @@ fun SignInScreen(
         AboutDialog(
             onDismissRequest = { showAboutDialog = false },
             isTablet = isTablet
+        )
+    }
+
+    if (showSettingsBottomSheet) {
+        SettingsProfileBottomSheet(
+            onDismissRequest = { showSettingsBottomSheet = false },
+            isTablet = isTablet,
+            showUserProfile = false,
+            onLanguageChange = { language ->
+                println("Language changed to: $language in ActivationScreen")
+            }
         )
     }
 }

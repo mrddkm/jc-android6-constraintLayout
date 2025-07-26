@@ -2,6 +2,7 @@
 
 package com.jc.presentation.ui.screens.shared
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -45,7 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.jc.constraintlayout.R
-import com.jc.presentation.ui.screens.shared.ext.SettingsBottomSheet
+import com.jc.presentation.ui.screens.shared.ext.SettingsProfileBottomSheet
 import com.jc.presentation.ui.theme.AppSize
 import com.jc.presentation.ui.theme.AppTheme
 
@@ -101,6 +102,8 @@ fun LayoutTemplate(
             isDarkTheme = isDarkTheme,
             isTablet = isTablet,
             onAboutClick = onAboutClick,
+            onSettingsClick = { showUserProfile, onLanguageChange -> /* Default empty lambda */ },
+            userProfileName = null,
             modifier = Modifier.constrainAs(footer) {
                 top.linkTo(bottomGuideline)
                 start.linkTo(parent.start)
@@ -161,17 +164,21 @@ fun MainSection(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FooterSection(
     onThemeToggle: () -> Unit,
     isDarkTheme: Boolean,
     isTablet: Boolean,
     onAboutClick: () -> Unit,
-    modifier: Modifier = Modifier
+    onSettingsClick: (Boolean, (String) -> Unit) -> Unit,
+    userProfileName: String? = null,
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
 ) {
     val appSize = AppSize(isTablet = isTablet)
 
     var showSettingsBottomSheet by remember { mutableStateOf(false) }
+    var showUserProfileInBottomSheet by remember { mutableStateOf(false) }
 
     Card(
         modifier = modifier.padding(appSize.verticalPadding / 2),
@@ -191,7 +198,7 @@ fun FooterSection(
                 .fillMaxSize()
                 .padding(appSize.horizontalPadding / 4)
         ) {
-            val (appInfo, themeButton, settingsButton) = createRefs()
+            val (appInfo, themeButton, settingsAndProfile) = createRefs()
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -239,28 +246,52 @@ fun FooterSection(
                 )
             }
 
-            IconButton(
-                onClick = { showSettingsBottomSheet = true },
-                modifier = Modifier.constrainAs(settingsButton) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.constrainAs(settingsAndProfile) {
                     end.linkTo(parent.end)
                     top.linkTo(parent.top)
                     bottom.linkTo(parent.bottom)
                 }
             ) {
-                Icon(
-                    imageVector = Icons.Filled.Settings,
-                    contentDescription = "Settings",
-                    tint = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.size(appSize.iconSize / 1.2f)
-                )
+                userProfileName?.let {
+                    Text(
+                        text = it,
+                        fontSize = appSize.captionTextSize * 0.8f,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.padding(end = 4.dp)
+                    )
+                }
+                IconButton(
+                    onClick = {
+                        onSettingsClick(userProfileName != null) { language ->
+                            println("Language changed to: $language")
+                        }
+                        showSettingsBottomSheet = true
+                        showUserProfileInBottomSheet = userProfileName != null
+                    },
+                    modifier = Modifier
+                        .size(appSize.iconSize / 1.2f)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Settings,
+                        contentDescription = "Settings",
+                        tint = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.size(appSize.iconSize / 1.2f)
+                    )
+                }
             }
         }
     }
 
     if (showSettingsBottomSheet) {
-        SettingsBottomSheet(
+        SettingsProfileBottomSheet(
             onDismissRequest = { showSettingsBottomSheet = false },
-            isTablet = isTablet
+            isTablet = isTablet,
+            showUserProfile = showUserProfileInBottomSheet,
+            onLanguageChange = { language ->
+                println("Language changed to: $language")
+            }
         )
     }
 }
