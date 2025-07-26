@@ -58,7 +58,7 @@ import androidx.constraintlayout.compose.Dimension
 import com.jc.constraintlayout.R
 import com.jc.presentation.navigation.Screen
 import com.jc.presentation.ui.components.SourceCodePro
-import com.jc.presentation.ui.screens.main.ext.AboutDialog
+import com.jc.presentation.ui.screens.shared.ext.AboutDialog
 import com.jc.presentation.ui.screens.shared.FooterSection
 import com.jc.presentation.ui.screens.shared.HeaderSection
 import com.jc.presentation.ui.screens.shared.MainSection

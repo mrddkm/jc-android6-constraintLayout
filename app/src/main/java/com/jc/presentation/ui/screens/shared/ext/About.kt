@@ -1,4 +1,4 @@
-package com.jc.presentation.ui.screens.main.ext
+package com.jc.presentation.ui.screens.shared.ext
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
