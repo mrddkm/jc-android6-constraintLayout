@@ -29,6 +29,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
@@ -41,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.jc.constraintlayout.R
+import com.jc.presentation.ui.screens.shared.ext.SettingsBottomSheet
 import com.jc.presentation.ui.theme.AppSize
 import com.jc.presentation.ui.theme.AppTheme
 
@@ -165,6 +170,9 @@ fun FooterSection(
     modifier: Modifier = Modifier
 ) {
     val appSize = AppSize(isTablet = isTablet)
+
+    var showSettingsBottomSheet by remember { mutableStateOf(false) }
+
     Card(
         modifier = modifier.padding(appSize.verticalPadding / 2),
         colors = CardDefaults.cardColors(
@@ -183,7 +191,7 @@ fun FooterSection(
                 .fillMaxSize()
                 .padding(appSize.horizontalPadding / 4)
         ) {
-            val (appInfo, themeButton, versionText) = createRefs()
+            val (appInfo, themeButton, settingsButton) = createRefs()
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -232,8 +240,8 @@ fun FooterSection(
             }
 
             IconButton(
-                onClick = {},
-                modifier = Modifier.constrainAs(versionText) {
+                onClick = { showSettingsBottomSheet = true },
+                modifier = Modifier.constrainAs(settingsButton) {
                     end.linkTo(parent.end)
                     top.linkTo(parent.top)
                     bottom.linkTo(parent.bottom)
@@ -247,6 +255,13 @@ fun FooterSection(
                 )
             }
         }
+    }
+
+    if (showSettingsBottomSheet) {
+        SettingsBottomSheet(
+            onDismissRequest = { showSettingsBottomSheet = false },
+            isTablet = isTablet
+        )
     }
 }
 
