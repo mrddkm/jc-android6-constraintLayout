@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.jc.constraintlayout.R
+import com.jc.presentation.ui.screens.main.ext.AboutDialog
 import com.jc.presentation.ui.screens.shared.FooterSection
 import com.jc.presentation.ui.screens.shared.MainSection
 import com.jc.presentation.ui.theme.AppSize
@@ -53,6 +54,8 @@ fun ActivationScreen(
     footerPercent: Float = 0.08f,
     isTablet: Boolean = false
 ) {
+    var showAboutDialog by remember { mutableStateOf(false) }
+
     ConstraintLayout(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -81,6 +84,7 @@ fun ActivationScreen(
             onThemeToggle = onThemeToggle,
             isDarkTheme = isDarkTheme,
             isTablet = isTablet,
+            onAboutClick = { showAboutDialog = true },
             modifier = Modifier.constrainAs(footer) {
                 top.linkTo(bottomGuideline)
                 start.linkTo(parent.start)
@@ -89,6 +93,13 @@ fun ActivationScreen(
                 width = Dimension.fillToConstraints
                 height = Dimension.fillToConstraints
             }
+        )
+    }
+
+    if (showAboutDialog) {
+        AboutDialog(
+            onDismissRequest = { showAboutDialog = false },
+            isTablet = isTablet
         )
     }
 }

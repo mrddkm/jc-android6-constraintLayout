@@ -52,7 +52,8 @@ fun LayoutTemplate(
     footerPercent: Float = 0.08f,
     isTablet: Boolean = false,
     contentHeader: @Composable () -> Unit = { DefaultHeaderContent(isTablet = isTablet) },
-    contentMain: @Composable () -> Unit = { DefaultMainContent(isTablet = isTablet) }
+    contentMain: @Composable () -> Unit = { DefaultMainContent(isTablet = isTablet) },
+    onAboutClick: () -> Unit = {}
 ) {
     ConstraintLayout(
         modifier = Modifier
@@ -94,6 +95,7 @@ fun LayoutTemplate(
             onThemeToggle = onThemeToggle,
             isDarkTheme = isDarkTheme,
             isTablet = isTablet,
+            onAboutClick = onAboutClick,
             modifier = Modifier.constrainAs(footer) {
                 top.linkTo(bottomGuideline)
                 start.linkTo(parent.start)
@@ -159,6 +161,7 @@ fun FooterSection(
     onThemeToggle: () -> Unit,
     isDarkTheme: Boolean,
     isTablet: Boolean,
+    onAboutClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val appSize = AppSize(isTablet = isTablet)
@@ -183,7 +186,6 @@ fun FooterSection(
             val (appInfo, themeButton, versionText) = createRefs()
 
             Row(
-                horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.constrainAs(appInfo) {
                     start.linkTo(parent.start)
@@ -191,21 +193,24 @@ fun FooterSection(
                     bottom.linkTo(parent.bottom)
                 }
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.ae_ic),
-                    contentDescription = "ae_ic",
+                IconButton(
+                    onClick = onAboutClick,
                     modifier = Modifier
                         .size(appSize.iconSize * 1.1f)
-                        .padding(appSize.horizontalPadding / 8),
-                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
-                    contentScale = ContentScale.Fit
-                )
+                        .padding(appSize.horizontalPadding / 8)
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.ae_ic),
+                        contentDescription = "ae_ic",
+                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
+                        contentScale = ContentScale.Fit
+                    )
+                }
                 Text(
-                    text = "© 2025 Gaenta",
+                    text = " © 2025 Gaenta",
                     fontSize = appSize.captionTextSize * 0.8f,
                     color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier
-                        .padding(start = 1.dp)
+                    modifier = Modifier.padding(start = 1.dp)
                 )
             }
 

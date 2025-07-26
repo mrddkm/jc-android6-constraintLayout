@@ -59,6 +59,11 @@ fun AppNavigation(
                 onNavigateToPaymentCash = {
                     navController.navigate(Screen.PaymentCash.route)
                 },
+                onSignOut = {
+                    navController.navigate(Screen.SignIn.route) {
+                        popUpTo(Screen.Main.route) { inclusive = true }
+                    }
+                },
                 onThemeToggle = onThemeToggle,
                 isDarkTheme = isDarkTheme,
                 headerPercent = headerPercent,
@@ -83,8 +88,6 @@ fun AppNavigation(
                 },
                 onThemeToggle = onThemeToggle,
                 isDarkTheme = isDarkTheme,
-                headerPercent = headerPercent,
-                footerPercent = footerPercent,
                 isTablet = isTablet,
             )
         }

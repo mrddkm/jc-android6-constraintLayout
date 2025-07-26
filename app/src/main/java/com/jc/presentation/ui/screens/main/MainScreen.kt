@@ -58,6 +58,7 @@ import androidx.constraintlayout.compose.Dimension
 import com.jc.constraintlayout.R
 import com.jc.presentation.navigation.Screen
 import com.jc.presentation.ui.components.SourceCodePro
+import com.jc.presentation.ui.screens.main.ext.AboutDialog
 import com.jc.presentation.ui.screens.shared.FooterSection
 import com.jc.presentation.ui.screens.shared.HeaderSection
 import com.jc.presentation.ui.screens.shared.MainSection
@@ -75,6 +76,8 @@ fun MainScreen(
     footerPercent: Float = 0.08f,
     isTablet: Boolean = false
 ) {
+    var showAboutDialog by remember { mutableStateOf(false) }
+
     ConstraintLayout(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -125,6 +128,7 @@ fun MainScreen(
             onThemeToggle = onThemeToggle,
             isDarkTheme = isDarkTheme,
             isTablet = isTablet,
+            onAboutClick = { showAboutDialog = true },
             modifier = Modifier.constrainAs(footer) {
                 top.linkTo(bottomGuideline)
                 start.linkTo(parent.start)
@@ -133,6 +137,13 @@ fun MainScreen(
                 width = Dimension.fillToConstraints
                 height = Dimension.fillToConstraints
             }
+        )
+    }
+
+    if (showAboutDialog) {
+        AboutDialog(
+            onDismissRequest = { showAboutDialog = false },
+            isTablet = isTablet
         )
     }
 }
@@ -700,10 +711,11 @@ data class VehicleData(
 @Composable
 fun MainScreenPreview() {
     AppTheme(darkTheme = false) {
-        MainScreen(isDarkTheme = false)
+        MainScreen()
     }
 }
 
+/*
 @Preview(
     name = "Tablet Preview",
     widthDp = 800,
@@ -716,3 +728,4 @@ fun LayoutTabletPreview() {
         MainScreen(isTablet = true)
     }
 }
+*/

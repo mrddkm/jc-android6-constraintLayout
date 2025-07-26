@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.jc.presentation.ui.screens.shared.FooterSection
 import com.jc.presentation.ui.screens.shared.MainSection
 
 @Composable
@@ -34,17 +33,12 @@ fun PaymentCashScreen(
     onPaymentConfirm: () -> Unit = {},
     onThemeToggle: () -> Unit = {},
     isDarkTheme: Boolean = false,
-    headerPercent: Float = 0.01f,
-    footerPercent: Float = 0.08f,
     isTablet: Boolean = false
 ) {
     ConstraintLayout(
         modifier = Modifier.fillMaxSize()
     ) {
         val (main, footer) = createRefs()
-
-        val topGuideline = createGuidelineFromTop(headerPercent)
-        val bottomGuideline = createGuidelineFromBottom(footerPercent)
 
         MainSection(
             contentMain = {
@@ -55,21 +49,7 @@ fun PaymentCashScreen(
             },
             isTablet = isTablet,
             modifier = Modifier.constrainAs(main) {
-                top.linkTo(topGuideline)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-                bottom.linkTo(bottomGuideline)
-                width = Dimension.fillToConstraints
-                height = Dimension.fillToConstraints
-            }
-        )
-
-        FooterSection(
-            onThemeToggle = onThemeToggle,
-            isDarkTheme = isDarkTheme,
-            isTablet = isTablet,
-            modifier = Modifier.constrainAs(footer) {
-                top.linkTo(bottomGuideline)
+                top.linkTo(parent.top)
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
                 bottom.linkTo(parent.bottom)
