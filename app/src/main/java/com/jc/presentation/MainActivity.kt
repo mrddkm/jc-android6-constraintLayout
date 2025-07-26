@@ -92,14 +92,6 @@ class MainActivity : ComponentActivity() {
             hideNavigationBar()
         }
     }
-
-    fun onBackPressedDispatcher() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            super.onBackPressed()
-        } else {
-            super.onBackPressed()
-        }
-    }
 }
 
 @SuppressLint("ConfigurationScreenWidthHeight")
