@@ -40,9 +40,9 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.jc.constraintlayout.R
-import com.jc.presentation.ui.screens.shared.ext.AboutDialog
 import com.jc.presentation.ui.screens.shared.FooterSection
 import com.jc.presentation.ui.screens.shared.MainSection
+import com.jc.presentation.ui.screens.shared.ext.AboutDialog
 import com.jc.presentation.ui.screens.shared.ext.SettingsProfileBottomSheet
 import com.jc.presentation.ui.theme.AppSize
 import com.jc.presentation.ui.theme.AppTheme
@@ -87,10 +87,8 @@ fun ActivationScreen(
             isDarkTheme = isDarkTheme,
             isTablet = isTablet,
             onAboutClick = { showAboutDialog = true },
-            onSettingsClick = { showUserProfile, onLanguageChange ->
-                showSettingsBottomSheet = true
-            },
-            userProfileName = null,
+            onSettingsClick = { showSettingsBottomSheet = true },
+            currentUserProfile = null,
             modifier = Modifier.constrainAs(footer) {
                 top.linkTo(bottomGuideline)
                 start.linkTo(parent.start)
@@ -113,7 +111,8 @@ fun ActivationScreen(
         SettingsProfileBottomSheet(
             onDismissRequest = { showSettingsBottomSheet = false },
             isTablet = isTablet,
-            showUserProfile = false,
+            currentUserProfile = null,
+            currentLanguage = "en",
             onLanguageChange = { language ->
                 println("Language changed to: $language in ActivationScreen")
             }

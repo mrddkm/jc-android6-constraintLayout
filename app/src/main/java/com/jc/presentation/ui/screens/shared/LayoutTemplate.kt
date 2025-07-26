@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material.icons.filled.ManageAccounts
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.Card
@@ -30,10 +31,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
@@ -46,7 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.jc.constraintlayout.R
-import com.jc.presentation.ui.screens.shared.ext.SettingsProfileBottomSheet
+import com.jc.presentation.ui.screens.shared.ext.UserProfile
 import com.jc.presentation.ui.theme.AppSize
 import com.jc.presentation.ui.theme.AppTheme
 
@@ -102,8 +99,8 @@ fun LayoutTemplate(
             isDarkTheme = isDarkTheme,
             isTablet = isTablet,
             onAboutClick = onAboutClick,
-            onSettingsClick = { showUserProfile, onLanguageChange -> /* Default empty lambda */ },
-            userProfileName = null,
+            onSettingsClick = { /* Default empty lambda */ },
+            currentUserProfile = null,
             modifier = Modifier.constrainAs(footer) {
                 top.linkTo(bottomGuideline)
                 start.linkTo(parent.start)
@@ -171,14 +168,11 @@ fun FooterSection(
     isDarkTheme: Boolean,
     isTablet: Boolean,
     onAboutClick: () -> Unit,
-    onSettingsClick: (Boolean, (String) -> Unit) -> Unit,
-    userProfileName: String? = null,
+    onSettingsClick: () -> Unit,
+    currentUserProfile: UserProfile? = null,
     @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
 ) {
     val appSize = AppSize(isTablet = isTablet)
-
-    var showSettingsBottomSheet by remember { mutableStateOf(false) }
-    var showUserProfileInBottomSheet by remember { mutableStateOf(false) }
 
     Card(
         modifier = modifier.padding(appSize.verticalPadding / 2),
@@ -209,7 +203,7 @@ fun FooterSection(
                 }
             ) {
                 IconButton(
-                    onClick = onAboutClick,
+                    onClick = { onAboutClick() },
                     modifier = Modifier
                         .size(appSize.iconSize * 1.1f)
                         .padding(appSize.horizontalPadding / 8)
@@ -254,7 +248,7 @@ fun FooterSection(
                     bottom.linkTo(parent.bottom)
                 }
             ) {
-                userProfileName?.let {
+                currentUserProfile?.username?.let {
                     Text(
                         text = it,
                         fontSize = appSize.captionTextSize * 0.8f,
@@ -263,18 +257,12 @@ fun FooterSection(
                     )
                 }
                 IconButton(
-                    onClick = {
-                        onSettingsClick(userProfileName != null) { language ->
-                            println("Language changed to: $language")
-                        }
-                        showSettingsBottomSheet = true
-                        showUserProfileInBottomSheet = userProfileName != null
-                    },
+                    onClick = { onSettingsClick() },
                     modifier = Modifier
                         .size(appSize.iconSize / 1.2f)
                 ) {
                     Icon(
-                        imageVector = Icons.Filled.Settings,
+                        imageVector = if (currentUserProfile == null) Icons.Filled.Settings else Icons.Filled.ManageAccounts,
                         contentDescription = "Settings",
                         tint = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.size(appSize.iconSize / 1.2f)
@@ -282,17 +270,6 @@ fun FooterSection(
                 }
             }
         }
-    }
-
-    if (showSettingsBottomSheet) {
-        SettingsProfileBottomSheet(
-            onDismissRequest = { showSettingsBottomSheet = false },
-            isTablet = isTablet,
-            showUserProfile = showUserProfileInBottomSheet,
-            onLanguageChange = { language ->
-                println("Language changed to: $language")
-            }
-        )
     }
 }
 

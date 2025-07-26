@@ -58,11 +58,12 @@ import androidx.constraintlayout.compose.Dimension
 import com.jc.constraintlayout.R
 import com.jc.presentation.navigation.Screen
 import com.jc.presentation.ui.components.SourceCodePro
-import com.jc.presentation.ui.screens.shared.ext.AboutDialog
 import com.jc.presentation.ui.screens.shared.FooterSection
 import com.jc.presentation.ui.screens.shared.HeaderSection
 import com.jc.presentation.ui.screens.shared.MainSection
+import com.jc.presentation.ui.screens.shared.ext.AboutDialog
 import com.jc.presentation.ui.screens.shared.ext.SettingsProfileBottomSheet
+import com.jc.presentation.ui.screens.shared.ext.UserProfile
 import com.jc.presentation.ui.theme.AppSize
 import com.jc.presentation.ui.theme.AppTheme
 
@@ -131,10 +132,11 @@ fun MainScreen(
             isDarkTheme = isDarkTheme,
             isTablet = isTablet,
             onAboutClick = { showAboutDialog = true },
-            onSettingsClick = { showUserProfile, onLanguageChange ->
-                showSettingsBottomSheet = true
-            },
-            userProfileName = "Collector 01",
+            onSettingsClick = { showSettingsBottomSheet = true },
+            currentUserProfile = UserProfile(
+                username = "GAENTA",
+                fullName = "Gaenta Sinergi Sukses"
+            ),
             modifier = Modifier.constrainAs(footer) {
                 top.linkTo(bottomGuideline)
                 start.linkTo(parent.start)
@@ -157,9 +159,13 @@ fun MainScreen(
         SettingsProfileBottomSheet(
             onDismissRequest = { showSettingsBottomSheet = false },
             isTablet = isTablet,
-            showUserProfile = true,
+            currentUserProfile = UserProfile(
+                username = "GAENTA",
+                fullName = "Gaenta Sinergi Sukses"
+            ),
+            currentLanguage = "en",
             onLanguageChange = { language ->
-                println("Language changed to: $language in MainScreen")
+                println("Language changed to: $language in ActivationScreen")
             }
         )
     }
@@ -283,7 +289,10 @@ fun MainContent(
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = appSize.horizontalPadding, vertical = appSize.verticalPadding / 2)
+                .padding(
+                    horizontal = appSize.horizontalPadding,
+                    vertical = appSize.verticalPadding / 2
+                )
         )
 
         Card(
