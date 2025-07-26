@@ -39,15 +39,13 @@ class ThemeViewModel(
     }
 
     fun setTheme(isDark: Boolean) {
-        println("ThemeViewModel: setTheme isDark = $isDark")
         try {
             viewModelScope.launch {
                 saveThemeUseCase(isDark)
                 _isDarkTheme.value = isDark
             }
-            println("ThemeViewModel: saveThemeUseCase success, _isDarkTheme $isDark")
         } catch (e: Exception) {
-            println("ThemeViewModel: saveThemeUseCase failed with exception: ${e.message}")
+            println("ThemeViewModel: Error saving theme preference: ${e.message}")
         }
     }
 }
