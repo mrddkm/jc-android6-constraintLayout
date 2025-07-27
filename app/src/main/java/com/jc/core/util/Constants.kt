@@ -11,5 +11,5 @@ object Constants {
     const val LANGUAGE_DISPLAY_NAME_ENGLISH = "English"
     const val LANGUAGE_DISPLAY_NAME_INDONESIAN = "Indonesia"
     const val LANGUAGE_CODE_ENGLISH = "en"
-    const val LANGUAGE_CODE_INDONESIAN = "in"
+    const val LANGUAGE_CODE_INDONESIAN = "id"
 }

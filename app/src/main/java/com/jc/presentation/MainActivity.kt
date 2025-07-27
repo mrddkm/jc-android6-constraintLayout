@@ -16,12 +16,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.compose.rememberNavController
 import androidx.window.layout.WindowMetricsCalculator
+import com.jc.constraintlayout.R
 import com.jc.presentation.navigation.AppNavigation
 import com.jc.presentation.ui.theme.AppTheme
 import org.koin.compose.KoinContext
@@ -30,12 +32,28 @@ import org.koin.compose.KoinContext
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val appCtxGreeting = applicationContext.resources.getString(R.string.hello_world)
+        Log.e("CONTEXT_DEBUG", "String from ApplicationContext resources: $appCtxGreeting")
+
+        val activityCtxGreeting = this.resources.getString(R.string.hello_world)
+        Log.e("CONTEXT_DEBUG", "String from ActivityContext resources: $activityCtxGreeting")
+
         Log.e("MainActivity_Lifecycle", "onCreate CALLED. HashCode: ${this.hashCode()}")
         Log.d("MainActivity_Locale", "Locale at onCreate START: ${AppCompatDelegate.getApplicationLocales().toLanguageTags()}")
         setupWindowForAndroid6()
         setContent {
+
+            val composableGreeting = stringResource(R.string.hello_world)
+            Log.e("CONTEXT_DEBUG", "String from stringResource in Compose: $composableGreeting")
+
             KoinContext {
                 AppTheme {
+
+                    val greeting =
+                        stringResource(R.string.hello_world) // Ganti dengan salah satu string Anda
+                    Log.d("MainActivity_Locale", "String resource used in UI (greeting_activation): $greeting")
+
                     Surface(
                         modifier = Modifier
                             .fillMaxSize()
