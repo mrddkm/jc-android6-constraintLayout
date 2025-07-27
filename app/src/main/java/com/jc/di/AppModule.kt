@@ -39,7 +39,7 @@ val languageModule = module {
     factory { GetSelectedLanguageFlowUseCase(get()) }
     factory { GetSavedLanguageOnceUseCase(get()) }
 
-    viewModel { LanguageViewModel(get(), get(), get()) }
+    viewModel { LanguageViewModel(get()) }
 }
 
 val appModules = listOf(

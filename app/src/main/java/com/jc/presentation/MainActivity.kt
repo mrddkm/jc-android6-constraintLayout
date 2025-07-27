@@ -1,12 +1,9 @@
 package com.jc.presentation
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatDelegate
@@ -26,61 +23,41 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.compose.rememberNavController
 import androidx.window.layout.WindowMetricsCalculator
 import com.jc.constraintlayout.R
+import com.jc.core.util.LocaleHelper
+import com.jc.presentation.base.BaseActivity
 import com.jc.presentation.navigation.AppNavigation
 import com.jc.presentation.ui.theme.AppTheme
 import org.koin.compose.KoinContext
 
 @Suppress("DEPRECATION")
-class MainActivity : ComponentActivity() {
-
-    override fun attachBaseContext(newBase: Context) {
-        // Manual locale application for ComponentActivity
-        val locales = AppCompatDelegate.getApplicationLocales()
-        if (!locales.isEmpty) {
-            val locale = locales.get(0)
-            if (locale != null) {
-                val configuration = Configuration(newBase.resources.configuration)
-                configuration.setLocale(locale)
-                val localizedContext = newBase.createConfigurationContext(configuration)
-                super.attachBaseContext(localizedContext)
-                return
-            }
-        }
-        super.attachBaseContext(newBase)
-    }
+class MainActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val appCtxGreeting = applicationContext.resources.getString(R.string.hello_world)
-        Log.e("CONTEXT_DEBUG", "String from ApplicationContext resources: $appCtxGreeting")
-
-        val activityCtxGreeting = this.resources.getString(R.string.hello_world)
-        Log.e("CONTEXT_DEBUG", "String from ActivityContext resources: $activityCtxGreeting")
-
         Log.e("MainActivity_Lifecycle", "onCreate CALLED. HashCode: ${this.hashCode()}")
-        Log.d(
-            "MainActivity_Locale",
-            "Locale at onCreate START: ${
-                AppCompatDelegate.getApplicationLocales().toLanguageTags()
-            }"
-        )
-        setupWindowForAndroid6()
-        setContent {
 
+        // Log current language
+        val currentLang = LocaleHelper.getCurrentLanguage(this)
+        val savedLang = LocaleHelper.getLanguage(this)
+        Log.d("MainActivity_Locale", "Current language: $currentLang, Saved: $savedLang")
+
+        // Test string resources
+        val greeting = try {
+            resources.getString(R.string.hello_world)
+        } catch (e: Exception) {
+            "Error loading string: ${e.message}"
+        }
+        Log.e("CONTEXT_DEBUG", "String resource test: $greeting")
+
+        setupWindowForAndroid6()
+
+        setContent {
             val composableGreeting = stringResource(R.string.hello_world)
-            Log.e("CONTEXT_DEBUG", "String from stringResource in Compose: $composableGreeting")
+            Log.e("CONTEXT_DEBUG", "Compose string: $composableGreeting")
 
             KoinContext {
                 AppTheme {
-
-                    val greeting =
-                        stringResource(R.string.hello_world)
-                    Log.d(
-                        "MainActivity_Locale",
-                        "String resource used in UI (greeting_activation): $greeting"
-                    )
-
                     Surface(
                         modifier = Modifier
                             .fillMaxSize()
@@ -99,7 +76,11 @@ class MainActivity : ComponentActivity() {
 
                         ResponsiveApp(
                             navController = navController,
-                            isTablet = isTablet
+                            isTablet = isTablet,
+                            onLanguageChange = { languageCode ->
+                                Log.d("MainActivity", "Language change requested: $languageCode")
+                                changeLanguage(languageCode)
+                            }
                         )
                     }
                 }
@@ -110,6 +91,15 @@ class MainActivity : ComponentActivity() {
     override fun onDestroy() {
         super.onDestroy()
         Log.e("MainActivity_Lifecycle", "onDestroy CALLED. HashCode: ${this.hashCode()}")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("MainActivity_Lifecycle", "onResume called")
+
+        // Log locale info when resuming
+        val currentLocales = AppCompatDelegate.getApplicationLocales()
+        Log.d("MainActivity_Locale", "onResume - App locales: ${currentLocales.toLanguageTags()}")
     }
 
     @SuppressLint("ObsoleteSdkInt")
@@ -153,6 +143,7 @@ class MainActivity : ComponentActivity() {
 fun ResponsiveApp(
     navController: androidx.navigation.NavHostController,
     isTablet: Boolean = false,
+    onLanguageChange: (String) -> Unit = {}
 ) {
     val (headerPercent, footerPercent) = if (isTablet) {
         0.09f to 0.07f
@@ -164,6 +155,7 @@ fun ResponsiveApp(
         navController = navController,
         headerPercent = headerPercent,
         footerPercent = footerPercent,
-        isTablet = isTablet
+        isTablet = isTablet,
+        onLanguageChange = onLanguageChange
     )
 }

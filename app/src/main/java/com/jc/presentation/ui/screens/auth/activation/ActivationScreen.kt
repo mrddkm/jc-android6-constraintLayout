@@ -52,7 +52,8 @@ import com.jc.presentation.ui.theme.AppTheme
 fun ActivationScreen(
     onNavigateToSignIn: () -> Unit = {},
     footerPercent: Float = 0.08f,
-    isTablet: Boolean = false
+    isTablet: Boolean = false,
+    onLanguageChange: (String) -> Unit = {}
 ) {
     var showAboutDialog by remember { mutableStateOf(false) }
     var showSettingsBottomSheet by remember { mutableStateOf(false) }
@@ -108,7 +109,8 @@ fun ActivationScreen(
         SettingsProfileBottomSheet(
             onDismissRequest = { showSettingsBottomSheet = false },
             isTablet = isTablet,
-            currentUserProfile = null
+            currentUserProfile = null,
+            onLanguageChange = onLanguageChange
         )
     }
 }

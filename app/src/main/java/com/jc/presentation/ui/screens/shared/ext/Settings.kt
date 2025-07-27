@@ -1,6 +1,5 @@
 package com.jc.presentation.ui.screens.shared.ext
 
-import android.app.Activity
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -29,15 +28,16 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -60,13 +60,13 @@ fun SettingsProfileBottomSheet(
     onDismissRequest: () -> Unit,
     isTablet: Boolean,
     currentUserProfile: UserProfile? = null,
+    onLanguageChange: (String) -> Unit = {},
     languageViewModel: LanguageViewModel = koinViewModel()
 ) {
     val appSize = AppSize(isTablet = isTablet)
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    val activity = LocalContext.current as? Activity
 
-    val currentLanguageCode by languageViewModel.currentLanguageCode.collectAsState()
+    var currentLanguageCode by remember { mutableStateOf(languageViewModel.getCurrentLanguage()) }
     Log.d("SettingsSheet", "Current language code from VM: $currentLanguageCode")
 
     ModalBottomSheet(
@@ -100,46 +100,12 @@ fun SettingsProfileBottomSheet(
                 Log.d("SettingsSheet", "Language selected: $newLanguageCode")
 
                 if (currentLanguageCode != newLanguageCode) {
-                    languageViewModel.setLanguage(newLanguageCode) {
-                        Log.d("SettingsSheet", "Language changed, recreating activity")
-                        activity?.recreate()
-                    }
+                    currentLanguageCode = newLanguageCode
                     onDismissRequest()
+                    onLanguageChange(newLanguageCode)
                 }
             }
         )
-
-
-//        SettingsSheetContent(
-//            isTablet = isTablet,
-//            userProfile = currentUserProfile,
-//            selectedLanguageCode = currentLanguageCode,
-//            supportedLanguages = languageViewModel.supportedLanguages,
-//            onLanguageSelected = { newLanguageCode ->
-//                Log.d(
-//                    "SettingsSheet",
-//                    "Language selected in BottomSheet: $newLanguageCode. Calling VM."
-//                )
-//
-//                coroutineScope.launch {
-//                    languageViewModel.setLanguage(newLanguageCode) {
-//                        Log.d("SettingsSheet", "Attempting to recreate activity.")
-//                        Log.d(
-//                            "SettingsSheet",
-//                            "Activity instance: $activity, isFinishing: ${activity?.isFinishing}"
-//                        )
-//
-//                        coroutineScope.launch {
-//                            delay(100)
-//                            activity?.recreate()
-//                        }
-//                    }
-//
-//                    delay(500)
-//                    onDismissRequest()
-//                }
-//            }
-//        )
     }
 }
 
