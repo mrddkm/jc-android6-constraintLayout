@@ -42,26 +42,35 @@ class LanguageViewModel(
         )
     )
 
-    fun setLanguage(languageCode: String, activityRecreator: () -> Unit) {
-        if (currentLanguageCode.value == languageCode) return
+    fun setLanguage(languageCode: String, onComplete: () -> Unit) {
+        if (currentLanguageCode.value == languageCode) {
+            Log.d("LanguageViewModel", "Language already set to: $languageCode")
+            return
+        }
 
         viewModelScope.launch {
-            Log.d("LanguageViewModel", "Attempting to save language: $languageCode")
-            saveLanguageUseCase(languageCode)
-            Log.d(
-                "LanguageViewModel",
-                "Language saved. New currentLanguageCode from Flow: ${currentLanguageCode.value}"
-            )
+            try {
+                Log.d("LanguageViewModel", "Saving language to DataStore: $languageCode")
+                saveLanguageUseCase(languageCode)
 
-            val localeList = LocaleListCompat.forLanguageTags(languageCode)
-            Log.d(
-                "LanguageViewModel",
-                "Setting application locales to: ${localeList.toLanguageTags()}"
-            )
-            AppCompatDelegate.setApplicationLocales(localeList)
+                Log.d("LanguageViewModel", "Setting application locales: $languageCode")
+                val localeList = LocaleListCompat.forLanguageTags(languageCode)
+                AppCompatDelegate.setApplicationLocales(localeList)
 
-            Log.d("LanguageViewModel", "Calling activityRecreator callback.")
-            activityRecreator()
+                // Wait a bit for the locale to be applied
+                kotlinx.coroutines.delay(200)
+
+                Log.d(
+                    "LanguageViewModel",
+                    "Language change completed. Current locales: ${
+                        AppCompatDelegate.getApplicationLocales().toLanguageTags()
+                    }"
+                )
+                onComplete()
+
+            } catch (e: Exception) {
+                Log.e("LanguageViewModel", "Error setting language", e)
+            }
         }
     }
 

@@ -1,6 +1,8 @@
 package com.jc.presentation
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -30,6 +32,23 @@ import org.koin.compose.KoinContext
 
 @Suppress("DEPRECATION")
 class MainActivity : ComponentActivity() {
+
+    override fun attachBaseContext(newBase: Context) {
+        // Manual locale application for ComponentActivity
+        val locales = AppCompatDelegate.getApplicationLocales()
+        if (!locales.isEmpty) {
+            val locale = locales.get(0)
+            if (locale != null) {
+                val configuration = Configuration(newBase.resources.configuration)
+                configuration.setLocale(locale)
+                val localizedContext = newBase.createConfigurationContext(configuration)
+                super.attachBaseContext(localizedContext)
+                return
+            }
+        }
+        super.attachBaseContext(newBase)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -40,7 +59,12 @@ class MainActivity : ComponentActivity() {
         Log.e("CONTEXT_DEBUG", "String from ActivityContext resources: $activityCtxGreeting")
 
         Log.e("MainActivity_Lifecycle", "onCreate CALLED. HashCode: ${this.hashCode()}")
-        Log.d("MainActivity_Locale", "Locale at onCreate START: ${AppCompatDelegate.getApplicationLocales().toLanguageTags()}")
+        Log.d(
+            "MainActivity_Locale",
+            "Locale at onCreate START: ${
+                AppCompatDelegate.getApplicationLocales().toLanguageTags()
+            }"
+        )
         setupWindowForAndroid6()
         setContent {
 
@@ -51,8 +75,11 @@ class MainActivity : ComponentActivity() {
                 AppTheme {
 
                     val greeting =
-                        stringResource(R.string.hello_world) // Ganti dengan salah satu string Anda
-                    Log.d("MainActivity_Locale", "String resource used in UI (greeting_activation): $greeting")
+                        stringResource(R.string.hello_world)
+                    Log.d(
+                        "MainActivity_Locale",
+                        "String resource used in UI (greeting_activation): $greeting"
+                    )
 
                     Surface(
                         modifier = Modifier
