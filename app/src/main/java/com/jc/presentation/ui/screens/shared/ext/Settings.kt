@@ -31,6 +31,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,6 +48,8 @@ import com.jc.core.util.Constants
 import com.jc.presentation.ui.theme.AppSize
 import com.jc.presentation.viewmodel.LanguageOption
 import com.jc.presentation.viewmodel.LanguageViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 data class UserProfile(
@@ -65,6 +68,7 @@ fun SettingsProfileBottomSheet(
     val appSize = AppSize(isTablet = isTablet)
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val activity = LocalContext.current as? Activity
+    val coroutineScope = rememberCoroutineScope()
 
     val currentLanguageCode by languageViewModel.currentLanguageCode.collectAsState()
     Log.d("SettingsSheet", "Current language code from VM: $currentLanguageCode")
@@ -97,13 +101,28 @@ fun SettingsProfileBottomSheet(
             selectedLanguageCode = currentLanguageCode,
             supportedLanguages = languageViewModel.supportedLanguages,
             onLanguageSelected = { newLanguageCode ->
-                Log.d("SettingsSheet", "Language selected in BottomSheet: $newLanguageCode. Calling VM.")
-                languageViewModel.setLanguage(newLanguageCode) {
-                    Log.d("SettingsSheet", "Attempting to recreate activity.")
-                    Log.d("SettingsSheet", "Activity instance: $activity, isFinishing: ${activity?.isFinishing}")
-                    activity?.recreate()
+                Log.d(
+                    "SettingsSheet",
+                    "Language selected in BottomSheet: $newLanguageCode. Calling VM."
+                )
+
+                coroutineScope.launch {
+                    languageViewModel.setLanguage(newLanguageCode) {
+                        Log.d("SettingsSheet", "Attempting to recreate activity.")
+                        Log.d(
+                            "SettingsSheet",
+                            "Activity instance: $activity, isFinishing: ${activity?.isFinishing}"
+                        )
+
+                        coroutineScope.launch {
+                            delay(100)
+                            activity?.recreate()
+                        }
+                    }
+
+                    delay(500)
+                    onDismissRequest()
                 }
-                // onDismissRequest() // Optional, uncomment if you want to close the sheet after selecting a language
             }
         )
     }
@@ -156,7 +175,10 @@ private fun SettingsSheetContent(
             Spacer(modifier = Modifier.height(appSize.verticalPadding))
         }
 
-        SectionTitle(title = stringResource(R.string.settings_section_language), isTablet = isTablet)
+        SectionTitle(
+            title = stringResource(R.string.settings_section_language),
+            isTablet = isTablet
+        )
 
         supportedLanguages.forEach { langOption ->
             LanguageRow(

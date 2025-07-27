@@ -6,6 +6,7 @@ import com.jc.data.repository.language.LanguageRepository
 import com.jc.data.repository.language.LanguageRepositoryImpl
 import com.jc.data.repository.theme.ThemeRepository
 import com.jc.data.repository.theme.ThemeRepositoryImpl
+import com.jc.domain.usecase.language.GetSavedLanguageOnceUseCase
 import com.jc.domain.usecase.language.GetSelectedLanguageFlowUseCase
 import com.jc.domain.usecase.language.SaveLanguageUseCase
 import com.jc.domain.usecase.theme.GetThemeUseCase
@@ -36,8 +37,9 @@ val languageModule = module {
 
     factory { SaveLanguageUseCase(get()) }
     factory { GetSelectedLanguageFlowUseCase(get()) }
+    factory { GetSavedLanguageOnceUseCase(get()) }
 
-    viewModel { LanguageViewModel(get(), get()) }
+    viewModel { LanguageViewModel(get(), get(), get()) }
 }
 
 val appModules = listOf(

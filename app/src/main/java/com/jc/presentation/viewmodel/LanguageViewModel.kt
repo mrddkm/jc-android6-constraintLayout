@@ -6,6 +6,7 @@ import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jc.core.util.Constants
+import com.jc.domain.usecase.language.GetSavedLanguageOnceUseCase
 import com.jc.domain.usecase.language.GetSelectedLanguageFlowUseCase
 import com.jc.domain.usecase.language.SaveLanguageUseCase
 import kotlinx.coroutines.flow.SharingStarted
@@ -18,6 +19,7 @@ data class LanguageOption(val code: String, val displayName: String)
 class LanguageViewModel(
     private val saveLanguageUseCase: SaveLanguageUseCase,
     getSelectedLanguageFlowUseCase: GetSelectedLanguageFlowUseCase,
+    private val getSavedLanguageOnceUseCase: GetSavedLanguageOnceUseCase
 ) : ViewModel() {
 
     init {
@@ -64,26 +66,36 @@ class LanguageViewModel(
     }
 
     fun applyInitialLocale() {
-        val languageCodeToApply = currentLanguageCode.value
-        Log.d(
-            "LanguageViewModel",
-            "applyInitialLocale called. Language to apply from StateFlow: $languageCodeToApply"
-        )
-        val currentAppLocales = AppCompatDelegate.getApplicationLocales()
-        Log.d(
-            "LanguageViewModel",
-            "Current system app locales: ${currentAppLocales.toLanguageTags()}"
-        )
+        viewModelScope.launch {
+            try {
+                val savedLanguage = getSavedLanguageOnceUseCase()
+                Log.d(
+                    "LanguageViewModel",
+                    "applyInitialLocale called. Saved language from DataStore: $savedLanguage"
+                )
 
-        if (currentAppLocales.isEmpty || currentAppLocales.toLanguageTags() != languageCodeToApply) {
-            Log.d("LanguageViewModel", "Applying new locales: $languageCodeToApply")
-            val localeList = LocaleListCompat.forLanguageTags(languageCodeToApply)
-            AppCompatDelegate.setApplicationLocales(localeList)
-        } else {
-            Log.d(
-                "LanguageViewModel",
-                "No change needed, current locales already match: $languageCodeToApply"
-            )
+                val currentAppLocales = AppCompatDelegate.getApplicationLocales()
+                Log.d(
+                    "LanguageViewModel",
+                    "Current system app locales: ${currentAppLocales.toLanguageTags()}"
+                )
+
+                if (currentAppLocales.isEmpty || currentAppLocales.toLanguageTags() != savedLanguage) {
+                    Log.d("LanguageViewModel", "Applying new locales: $savedLanguage")
+                    val localeList = LocaleListCompat.forLanguageTags(savedLanguage)
+                    AppCompatDelegate.setApplicationLocales(localeList)
+                } else {
+                    Log.d(
+                        "LanguageViewModel",
+                        "No change needed, current locales already match: $savedLanguage"
+                    )
+                }
+            } catch (e: Exception) {
+                Log.e("LanguageViewModel", "Error applying initial locale", e)
+                // Fallback to default language
+                val localeList = LocaleListCompat.forLanguageTags(Constants.DEFAULT_LANGUAGE_CODE)
+                AppCompatDelegate.setApplicationLocales(localeList)
+            }
         }
     }
 }
