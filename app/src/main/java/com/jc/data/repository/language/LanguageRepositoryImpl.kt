@@ -14,4 +14,8 @@ class LanguageRepositoryImpl(
     override suspend fun saveSelectedLanguage(languageCode: String) {
         languageDataStore.saveSelectedLanguage(languageCode)
     }
+
+    override suspend fun getSelectedLanguageOnce(): String {
+        return languageDataStore.getSelectedLanguageOnce()
+    }
 }

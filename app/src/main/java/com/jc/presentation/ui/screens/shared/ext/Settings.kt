@@ -100,6 +100,7 @@ fun SettingsProfileBottomSheet(
                 Log.d("SettingsSheet", "Language selected in BottomSheet: $newLanguageCode. Calling VM.")
                 languageViewModel.setLanguage(newLanguageCode) {
                     Log.d("SettingsSheet", "Attempting to recreate activity.")
+                    Log.d("SettingsSheet", "Activity instance: $activity, isFinishing: ${activity?.isFinishing}")
                     activity?.recreate()
                 }
                 // onDismissRequest() // Optional, uncomment if you want to close the sheet after selecting a language

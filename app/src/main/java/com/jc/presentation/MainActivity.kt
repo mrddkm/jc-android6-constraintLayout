@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.MaterialTheme
@@ -29,7 +30,8 @@ import org.koin.compose.KoinContext
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d("MainActivity", "onCreate called. Intent: $intent")
+        Log.e("MainActivity_Lifecycle", "onCreate CALLED. HashCode: ${this.hashCode()}")
+        Log.d("MainActivity_Locale", "Locale at onCreate START: ${AppCompatDelegate.getApplicationLocales().toLanguageTags()}")
         setupWindowForAndroid6()
         setContent {
             KoinContext {
@@ -58,6 +60,11 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.e("MainActivity_Lifecycle", "onDestroy CALLED. HashCode: ${this.hashCode()}")
     }
 
     @SuppressLint("ObsoleteSdkInt")

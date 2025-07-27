@@ -11,6 +11,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.jc.core.util.Constants
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import java.io.IOException
 
@@ -22,8 +23,6 @@ object UserPreferenceKeys {
     val SELECTED_LANGUAGE_CODE = stringPreferencesKey(Constants.KEY_SELECTED_LANGUAGE)
 }
 
-const val DEFAULT_LANGUAGE_CODE = Constants.DEFAULT_LANGUAGE_CODE
-
 class LanguageDataStore(private val context: Context) {
     val selectedLanguageFlow: Flow<String> = context.languageDataStore.data
         .catch { exception ->
@@ -34,7 +33,8 @@ class LanguageDataStore(private val context: Context) {
             }
         }
         .map { preferences ->
-            val lang = preferences[UserPreferenceKeys.SELECTED_LANGUAGE_CODE] ?: DEFAULT_LANGUAGE_CODE
+            val lang = preferences[UserPreferenceKeys.SELECTED_LANGUAGE_CODE]
+                ?: Constants.DEFAULT_LANGUAGE_CODE
             Log.d("UserPrefsDataStore", "DataStore Flow emitting: $lang")
             lang
         }
@@ -46,9 +46,8 @@ class LanguageDataStore(private val context: Context) {
         }
     }
 
-    /*
     suspend fun getSelectedLanguageOnce(): String {
-        return context.userPreferencesDataStore.data.first()[UserPreferenceKeys.SELECTED_LANGUAGE_CODE] ?: DEFAULT_LANGUAGE_CODE
+        return context.languageDataStore.data.first()[UserPreferenceKeys.SELECTED_LANGUAGE_CODE]
+            ?: Constants.DEFAULT_LANGUAGE_CODE
     }
-    */
 }

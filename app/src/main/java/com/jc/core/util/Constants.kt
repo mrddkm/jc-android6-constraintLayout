@@ -7,11 +7,6 @@ object Constants {
     const val PREFS_NAME_LANGUAGE = "language_settings"
     const val KEY_SELECTED_LANGUAGE = "selected_language_code"
 
-    // Theme modes
-    const val THEME_MODE_SYSTEM = "system"
-    const val THEME_MODE_LIGHT = "light"
-    const val THEME_MODE_DARK = "dark"
-
     // Language codes & display names
     const val LANGUAGE_DISPLAY_NAME_ENGLISH = "English"
     const val LANGUAGE_DISPLAY_NAME_INDONESIAN = "Indonesia"
