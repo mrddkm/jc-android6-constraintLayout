@@ -36,6 +36,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -46,9 +47,9 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.jc.constraintlayout.R
-import com.jc.presentation.ui.screens.shared.ext.AboutDialog
 import com.jc.presentation.ui.screens.shared.FooterSection
 import com.jc.presentation.ui.screens.shared.MainSection
+import com.jc.presentation.ui.screens.shared.ext.AboutDialog
 import com.jc.presentation.ui.screens.shared.ext.SettingsProfileBottomSheet
 import com.jc.presentation.ui.theme.AppSize
 import com.jc.presentation.ui.theme.AppTheme
@@ -62,7 +63,7 @@ fun SignInScreen(
 ) {
     var showAboutDialog by remember { mutableStateOf(false) }
     var showSettingsBottomSheet by remember { mutableStateOf(false) }
-    
+
     ConstraintLayout(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -115,10 +116,6 @@ fun SignInScreen(
             onDismissRequest = { showSettingsBottomSheet = false },
             isTablet = isTablet,
             currentUserProfile = null,
-            currentLanguage = "en",
-            onLanguageChange = { language ->
-                println("Language changed to: $language in ActivationScreen")
-            }
         )
     }
 }
@@ -165,7 +162,7 @@ fun SignInContent(
         )
 
         Text(
-            text = "Sign In",
+            text = stringResource(R.string.sign_in_title),
             fontSize = appSize.titleSize,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
@@ -178,7 +175,7 @@ fun SignInContent(
         )
 
         Text(
-            text = "Please sign in to your account",
+            text = stringResource(R.string.sign_in_subtitle),
             fontSize = appSize.subtitleSize,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -194,8 +191,8 @@ fun SignInContent(
         OutlinedTextField(
             value = userId,
             onValueChange = { userId = it },
-            label = { Text("User ID") },
-            placeholder = { Text("Enter your User ID") },
+            label = { Text(stringResource(R.string.user_id)) },
+            placeholder = { Text(stringResource(R.string.user_id_placeholder)) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             enabled = !isLoading,
             modifier = Modifier
@@ -212,8 +209,8 @@ fun SignInContent(
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("Password") },
-            placeholder = { Text("Enter your password") },
+            label = { Text(stringResource(R.string.password)) },
+            placeholder = { Text(stringResource(R.string.password_placeholder)) },
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             enabled = !isLoading,

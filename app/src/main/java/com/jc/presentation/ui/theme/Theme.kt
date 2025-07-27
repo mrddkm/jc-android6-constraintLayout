@@ -92,18 +92,15 @@ fun AppTheme(
     content: @Composable () -> Unit
 ) {
     val userThemePreference by themeViewModel.isDarkTheme.collectAsState()
-    println("AppTheme: userThemePreference from ViewModel: $userThemePreference")
 
     val useDarkTheme = when (userThemePreference) {
         true -> true
         false -> false
         null -> {
             val systemTheme = isSystemInDarkTheme()
-            println("AppTheme: userThemePreference null, using theme: ${if (systemTheme) "Dark" else "Light"}") // DEBUG LOG
             systemTheme
         }
     }
-    println("AppTheme: Final 'useDarkTheme' : ${if (useDarkTheme) "Dark" else "Light"}")
 
     val colorScheme = if (useDarkTheme) {
         darkScheme

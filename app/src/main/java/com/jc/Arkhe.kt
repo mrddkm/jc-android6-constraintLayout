@@ -2,6 +2,8 @@ package com.jc
 
 import android.app.Application
 import com.jc.di.appModules
+import com.jc.presentation.viewmodel.LanguageViewModel
+import org.koin.android.ext.android.get
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -15,5 +17,8 @@ class Arkhe : Application() {
             androidContext(this@Arkhe)
             modules(appModules)
         }
+
+        val languageViewModel: LanguageViewModel = get()
+        languageViewModel.applyInitialLocale()
     }
 }

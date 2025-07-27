@@ -32,6 +32,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -107,11 +108,7 @@ fun ActivationScreen(
         SettingsProfileBottomSheet(
             onDismissRequest = { showSettingsBottomSheet = false },
             isTablet = isTablet,
-            currentUserProfile = null,
-            currentLanguage = "en",
-            onLanguageChange = { language ->
-                println("Language changed to: $language in ActivationScreen")
-            }
+            currentUserProfile = null
         )
     }
 }
@@ -156,7 +153,7 @@ fun ActivationContent(
         )
 
         Text(
-            text = "Activation",
+            text = stringResource(R.string.activation_title),
             fontSize = appSize.titleSize,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
@@ -169,7 +166,7 @@ fun ActivationContent(
         )
 
         Text(
-            text = "Please enter User ID to activate",
+            text = stringResource(R.string.activation_subtitle),
             fontSize = appSize.subtitleSize,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -185,8 +182,8 @@ fun ActivationContent(
         OutlinedTextField(
             value = userId,
             onValueChange = { userId = it },
-            label = { Text("User ID") },
-            placeholder = { Text("Enter your User ID") },
+            label = { Text(stringResource(R.string.user_id)) },
+            placeholder = { Text(stringResource(R.string.user_id_placeholder)) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             enabled = !isLoading,
             modifier = Modifier
@@ -255,7 +252,7 @@ fun ActivationContent(
                         )
                     } else {
                         Text(
-                            text = "Activate Account",
+                            text = stringResource(R.string.activate_button),
                             fontSize = appSize.buttonTextSize,
                             fontWeight = FontWeight.Medium
                         )

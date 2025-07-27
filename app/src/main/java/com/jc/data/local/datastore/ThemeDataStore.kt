@@ -9,7 +9,9 @@ import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-val Context.themeDataStore: DataStore<Preferences> by preferencesDataStore(name = "theme_settings")
+val Context.themeDataStore: DataStore<Preferences> by preferencesDataStore(
+    name = "theme_settings"
+)
 
 class ThemeDataStore(private val context: Context) {
     companion object {
@@ -28,11 +30,9 @@ class ThemeDataStore(private val context: Context) {
         }
 
     suspend fun saveThemePreference(isDarkTheme: Boolean) {
-        println("ThemeDataStore: saveThemePreference called. isDarkTheme = $isDarkTheme")
         context.themeDataStore.edit { preferences ->
             preferences[IS_DARK_THEME_KEY] = isDarkTheme
             preferences[USER_THEME_CHOICE_MADE_KEY] = true
-            println("ThemeDataStore: Data saved on DataStore.")
         }
     }
 }

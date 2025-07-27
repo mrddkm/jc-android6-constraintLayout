@@ -1,5 +1,7 @@
 package com.jc.presentation.ui.screens.shared.ext
 
+import android.app.Activity
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -10,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -26,19 +29,25 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jc.constraintlayout.R
+import com.jc.core.util.Constants
 import com.jc.presentation.ui.theme.AppSize
-import com.jc.presentation.ui.theme.AppTheme
+import com.jc.presentation.viewmodel.LanguageOption
+import com.jc.presentation.viewmodel.LanguageViewModel
+import org.koin.androidx.compose.koinViewModel
 
 data class UserProfile(
     val username: String,
@@ -51,11 +60,14 @@ fun SettingsProfileBottomSheet(
     onDismissRequest: () -> Unit,
     isTablet: Boolean,
     currentUserProfile: UserProfile? = null,
-    currentLanguage: String,
-    onLanguageChange: (String) -> Unit
+    languageViewModel: LanguageViewModel = koinViewModel()
 ) {
     val appSize = AppSize(isTablet = isTablet)
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val activity = LocalContext.current as? Activity
+
+    val currentLanguageCode by languageViewModel.currentLanguageCode.collectAsState()
+    Log.d("SettingsSheet", "Current language code from VM: $currentLanguageCode")
 
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
@@ -82,10 +94,16 @@ fun SettingsProfileBottomSheet(
         SettingsSheetContent(
             isTablet = isTablet,
             userProfile = currentUserProfile,
-            selectedLanguage = currentLanguage,
-            onLanguageSelected = { newLanguage ->
-                onLanguageChange(newLanguage)
-            },
+            selectedLanguageCode = currentLanguageCode,
+            supportedLanguages = languageViewModel.supportedLanguages,
+            onLanguageSelected = { newLanguageCode ->
+                Log.d("SettingsSheet", "Language selected in BottomSheet: $newLanguageCode. Calling VM.")
+                languageViewModel.setLanguage(newLanguageCode) {
+                    Log.d("SettingsSheet", "Attempting to recreate activity.")
+                    activity?.recreate()
+                }
+                // onDismissRequest() // Optional, uncomment if you want to close the sheet after selecting a language
+            }
         )
     }
 }
@@ -94,7 +112,8 @@ fun SettingsProfileBottomSheet(
 private fun SettingsSheetContent(
     isTablet: Boolean,
     userProfile: UserProfile?,
-    selectedLanguage: String,
+    selectedLanguageCode: String,
+    supportedLanguages: List<LanguageOption>,
     onLanguageSelected: (String) -> Unit,
 ) {
     val appSize = AppSize(isTablet = isTablet)
@@ -104,8 +123,11 @@ private fun SettingsSheetContent(
             .fillMaxWidth()
             .padding(horizontal = appSize.horizontalPadding * 3f)
             .padding(bottom = appSize.verticalPadding)
+            .navigationBarsPadding()
     ) {
-        val title = if (userProfile == null) "Settings" else "Profile & Settings"
+        val title = if (userProfile == null) stringResource(R.string.settings_title)
+        else stringResource(R.string.settings_profile_title)
+
         Text(
             text = title,
             style = MaterialTheme.typography.titleMedium,
@@ -116,7 +138,10 @@ private fun SettingsSheetContent(
         )
 
         if (userProfile != null) {
-            SectionTitle(title = "Profile", isTablet = isTablet)
+            SectionTitle(
+                title = stringResource(R.string.settings_section_profile),
+                isTablet = isTablet
+            )
             UserProfileInfo(
                 userProfile = userProfile,
                 isTablet = isTablet,
@@ -130,21 +155,21 @@ private fun SettingsSheetContent(
             Spacer(modifier = Modifier.height(appSize.verticalPadding))
         }
 
-        SectionTitle(title = "Language", isTablet = isTablet)
-        LanguageOptionItem(
-            languageName = "Indonesia",
-            languageCode = "id",
-            isSelected = selectedLanguage == "id",
-            isTablet = isTablet,
-            onLanguageSelected = { onLanguageSelected("id") }
-        )
-        LanguageOptionItem(
-            languageName = "English (US)",
-            languageCode = "en",
-            isSelected = selectedLanguage == "en",
-            isTablet = isTablet,
-            onLanguageSelected = { onLanguageSelected("en") }
-        )
+        SectionTitle(title = stringResource(R.string.settings_section_language), isTablet = isTablet)
+
+        supportedLanguages.forEach { langOption ->
+            LanguageRow(
+                languageName = langOption.displayName,
+                languageCode = langOption.code,
+                isSelected = selectedLanguageCode == langOption.code,
+                isTablet = isTablet,
+                onLanguageSelected = {
+                    Log.d("SettingsSheet", "LanguageRow clicked for code: ${langOption.code}")
+                    onLanguageSelected(langOption.code)
+                }
+            )
+        }
+
         Spacer(modifier = Modifier.height(appSize.verticalPadding))
     }
 }
@@ -214,7 +239,7 @@ private fun UserProfileInfo(
 }
 
 @Composable
-private fun LanguageOptionItem(
+private fun LanguageRow(
     languageName: String,
     languageCode: String,
     isSelected: Boolean,
@@ -233,11 +258,8 @@ private fun LanguageOptionItem(
         var imageTint: Color? = null
 
         when (languageCode.lowercase()) {
-            "id" -> {
-                flagIconResId = R.drawable.id_flag_ic
-            }
-
-            "en" -> {
+            Constants.LANGUAGE_CODE_INDONESIAN -> flagIconResId = R.drawable.id_flag_ic
+            Constants.LANGUAGE_CODE_ENGLISH -> {
                 flagIconResId = R.drawable.world_flag_ic
                 imageTint = Color.Gray
             }
@@ -268,33 +290,12 @@ private fun LanguageOptionItem(
         if (isSelected) {
             Icon(
                 imageVector = Icons.Filled.CheckCircle,
-                contentDescription = languageName,
+                contentDescription = "Selected Language",
                 tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(appSize.iconSize)
+                modifier = Modifier.size(appSize.iconSize / 1.2f)
             )
         } else {
-            Spacer(modifier = Modifier.size(appSize.iconSize))
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview(
-    name = "Settings Sheet Content - Phone",
-    widthDp = 360,
-    heightDp = 640,
-    showBackground = true
-)
-@Composable
-fun SettingsSheetContentPreviewPhone() {
-    AppTheme {
-        androidx.compose.material3.Surface {
-            SettingsSheetContent(
-                isTablet = false,
-                userProfile = UserProfile("GAENTA", "Gaenta Sinergi Sukses"),
-                selectedLanguage = "id",
-                onLanguageSelected = {},
-            )
+            Spacer(modifier = Modifier.size(appSize.iconSize / 1.2f))
         }
     }
 }

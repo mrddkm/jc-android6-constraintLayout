@@ -38,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -228,7 +229,6 @@ fun FooterSection(
             IconButton(
                 onClick = {
                     val newThemeState = !isCurrentlyDark
-                    println("FooterSection: ${if (newThemeState) "Dark" else "Light"}")
                     themeViewModel.setTheme(newThemeState)
                 },
                 modifier = Modifier.constrainAs(themeButton) {
@@ -345,7 +345,7 @@ fun DefaultMainContent(isTablet: Boolean) {
         val (welcomeText, descriptionText, sampleCard) = createRefs()
 
         Text(
-            text = "Hello World!",
+            text = stringResource(R.string.hello_world),
             fontSize = appSize.titleSize,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.constrainAs(welcomeText) {
@@ -356,7 +356,7 @@ fun DefaultMainContent(isTablet: Boolean) {
         )
 
         Text(
-            text = "Template layout",
+            text = stringResource(R.string.template_description),
             textAlign = TextAlign.Center,
             fontSize = appSize.bodyTextSize,
             modifier = Modifier
@@ -383,7 +383,7 @@ fun DefaultMainContent(isTablet: Boolean) {
                 modifier = Modifier.padding(appSize.horizontalPadding),
             ) {
                 Text(
-                    text = "Framework",
+                    text = stringResource(R.string.framework),
                     fontSize = appSize.subtitleSize,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -397,7 +397,7 @@ fun DefaultMainContent(isTablet: Boolean) {
                 )
                 Spacer(modifier = Modifier.height(appSize.verticalPadding / 2))
                 Text(
-                    text = "arkhe (base).",
+                    text = stringResource(R.string.framework_name),
                     fontSize = appSize.bodyTextSize,
                 )
                 Image(

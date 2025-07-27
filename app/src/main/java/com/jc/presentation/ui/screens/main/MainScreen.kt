@@ -159,10 +159,6 @@ fun MainScreen(
                 username = "GAENTA",
                 fullName = "Gaenta Sinergi Sukses"
             ),
-            currentLanguage = "en",
-            onLanguageChange = { language ->
-                println("Language changed to: $language in ActivationScreen")
-            }
         )
     }
 }

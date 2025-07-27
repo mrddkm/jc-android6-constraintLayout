@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Arkhe</string>
+    <string name="settings_title">Pengaturan</string>
+    <string name="settings_profile_title"><![CDATA[Profil & Pengaturan]]></string>
+    <string name="settings_section_profile">Profil</string>
+    <string name="settings_section_language">Bahasa</string>
+    <string name="hello_world">Halo Dunia!</string>
+    <string name="template_description">Tata letak template</string>
+    <string name="framework">Framework</string>
+    <string name="framework_name">arkhe (base).</string>
+    <string name="activation_title">Activation</string>
+    <string name="activation_subtitle">Silakan masukkan User ID untuk mengaktifkan</string>
+    <string name="user_id">User ID</string>
+    <string name="user_id_placeholder">Masukkan User ID</string>
+    <string name="activate_button">Activate Account</string>
+    <string name="sign_in_title">Sign In</string>
+    <string name="sign_in_subtitle">Silakan masuk ke akun Anda</string>
+    <string name="password">Password</string>
+    <string name="password_placeholder">Masukkan password Anda</string>
+</resources>
