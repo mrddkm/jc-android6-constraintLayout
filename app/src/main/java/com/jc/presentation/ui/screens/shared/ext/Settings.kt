@@ -97,16 +97,10 @@ fun SettingsProfileBottomSheet(
             selectedLanguageCode = currentLanguageCode,
             supportedLanguages = languageViewModel.supportedLanguages,
             onLanguageSelected = { newLanguageCode ->
-                Log.d(
-                    "SettingsSheet",
-                    "Language selected in BottomSheet: $newLanguageCode. Calling VM."
-                )
+                Log.d("SettingsSheet", "Language selected in BottomSheet: $newLanguageCode. Calling VM.")
                 languageViewModel.setLanguage(newLanguageCode) {
                     Log.d("SettingsSheet", "Attempting to recreate activity.")
-                    Log.d(
-                        "SettingsSheet",
-                        "Activity instance: $activity, isFinishing: ${activity?.isFinishing}"
-                    )
+                    Log.d("SettingsSheet", "Activity instance: $activity, isFinishing: ${activity?.isFinishing}")
                     activity?.recreate()
                 }
                 // onDismissRequest() // Optional, uncomment if you want to close the sheet after selecting a language
@@ -162,10 +156,7 @@ private fun SettingsSheetContent(
             Spacer(modifier = Modifier.height(appSize.verticalPadding))
         }
 
-        SectionTitle(
-            title = stringResource(R.string.settings_section_language),
-            isTablet = isTablet
-        )
+        SectionTitle(title = stringResource(R.string.settings_section_language), isTablet = isTablet)
 
         supportedLanguages.forEach { langOption ->
             LanguageRow(
@@ -267,7 +258,7 @@ private fun LanguageRow(
         val flagIconResId: Int
         var imageTint: Color? = null
 
-        when (languageCode) {
+        when (languageCode.lowercase()) {
             Constants.LANGUAGE_CODE_INDONESIAN -> flagIconResId = R.drawable.id_flag_ic
             Constants.LANGUAGE_CODE_ENGLISH -> {
                 flagIconResId = R.drawable.world_flag_ic
@@ -291,7 +282,7 @@ private fun LanguageRow(
         )
         Spacer(modifier = Modifier.width(appSize.horizontalPadding / 2))
         Text(
-            text = "($languageCode) $languageName",
+            text = languageName,
             fontSize = appSize.bodyTextSize,
             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
             color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,

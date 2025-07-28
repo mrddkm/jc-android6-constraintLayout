@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatDelegate
@@ -16,24 +15,47 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.compose.rememberNavController
 import androidx.window.layout.WindowMetricsCalculator
+import com.jc.constraintlayout.R
+import com.jc.core.util.LocaleHelper
+import com.jc.presentation.base.BaseActivity
 import com.jc.presentation.navigation.AppNavigation
 import com.jc.presentation.ui.theme.AppTheme
 import org.koin.compose.KoinContext
 
 @Suppress("DEPRECATION")
-class MainActivity : ComponentActivity() {
+class MainActivity : BaseActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         Log.e("MainActivity_Lifecycle", "onCreate CALLED. HashCode: ${this.hashCode()}")
-        Log.d("MainActivity_Locale", "Locale at onCreate START: ${AppCompatDelegate.getApplicationLocales().toLanguageTags()}")
+
+        // Log current language
+        val currentLang = LocaleHelper.getCurrentLanguage(this)
+        val savedLang = LocaleHelper.getLanguage(this)
+        Log.d("MainActivity_Locale", "Current language: $currentLang, Saved: $savedLang")
+
+        // Test string resources
+        val greeting = try {
+            resources.getString(R.string.hello_world)
+        } catch (e: Exception) {
+            "Error loading string: ${e.message}"
+        }
+        Log.e("CONTEXT_DEBUG", "String resource test: $greeting")
+
         setupWindowForAndroid6()
+
         setContent {
+            val composableGreeting = stringResource(R.string.hello_world)
+            Log.e("CONTEXT_DEBUG", "Compose string: $composableGreeting")
+
             KoinContext {
                 AppTheme {
                     Surface(
@@ -54,7 +76,11 @@ class MainActivity : ComponentActivity() {
 
                         ResponsiveApp(
                             navController = navController,
-                            isTablet = isTablet
+                            isTablet = isTablet,
+                            onLanguageChange = { languageCode ->
+                                Log.d("MainActivity", "Language change requested: $languageCode")
+                                changeLanguage(languageCode)
+                            }
                         )
                     }
                 }
@@ -65,6 +91,15 @@ class MainActivity : ComponentActivity() {
     override fun onDestroy() {
         super.onDestroy()
         Log.e("MainActivity_Lifecycle", "onDestroy CALLED. HashCode: ${this.hashCode()}")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("MainActivity_Lifecycle", "onResume called")
+
+        // Log locale info when resuming
+        val currentLocales = AppCompatDelegate.getApplicationLocales()
+        Log.d("MainActivity_Locale", "onResume - App locales: ${currentLocales.toLanguageTags()}")
     }
 
     @SuppressLint("ObsoleteSdkInt")
@@ -108,6 +143,7 @@ class MainActivity : ComponentActivity() {
 fun ResponsiveApp(
     navController: androidx.navigation.NavHostController,
     isTablet: Boolean = false,
+    onLanguageChange: (String) -> Unit = {}
 ) {
     val (headerPercent, footerPercent) = if (isTablet) {
         0.09f to 0.07f
@@ -119,6 +155,7 @@ fun ResponsiveApp(
         navController = navController,
         headerPercent = headerPercent,
         footerPercent = footerPercent,
-        isTablet = isTablet
+        isTablet = isTablet,
+        onLanguageChange = onLanguageChange
     )
 }
