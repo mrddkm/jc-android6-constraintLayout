@@ -20,6 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jc.constraintlayout.R
+import com.jc.core.util.Constants
 import com.jc.presentation.ui.theme.AppSize
 import com.jc.presentation.ui.theme.AppTheme
 
@@ -29,6 +30,13 @@ fun AboutDialog(
     isTablet: Boolean = false
 ) {
     val appSize = AppSize(isTablet = isTablet)
+
+    val isO3Country = Constants.localeID.isO3Country
+    val displayCountry = Constants.localeID.displayCountry
+    val country = Constants.localeID.country
+    val isO3Language = Constants.localeID.isO3Language
+    val displayLanguage = Constants.localeID.displayLanguage
+    val language = Constants.localeID.language
 
     AlertDialog(
         onDismissRequest = onDismissRequest,
@@ -73,6 +81,42 @@ fun AboutDialog(
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = "This application is designed to manage parking subscriptions efficiently.",
+                    fontSize = appSize.captionTextSize,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = isO3Country,
+                    fontSize = appSize.captionTextSize,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = displayCountry,
+                    fontSize = appSize.captionTextSize,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = country,
+                    fontSize = appSize.captionTextSize,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = isO3Language,
+                    fontSize = appSize.captionTextSize,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = displayLanguage,
+                    fontSize = appSize.captionTextSize,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = language,
                     fontSize = appSize.captionTextSize,
                     textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.onSurface
