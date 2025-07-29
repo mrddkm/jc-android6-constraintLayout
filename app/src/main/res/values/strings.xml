@@ -5,6 +5,8 @@
     <string name="settings_profile_title"><![CDATA[Profile & Settings]]></string>
     <string name="settings_section_profile">Profile</string>
     <string name="settings_section_language">Language</string>
+    <string name="select_language">Select Language</string>
+    <string name="current_language">Current Language</string>
     <string name="hello_world">Hello World!</string>
     <string name="template_description">Template layout</string>
     <string name="framework">Framework</string>

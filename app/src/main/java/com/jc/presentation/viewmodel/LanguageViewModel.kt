@@ -1,166 +1,118 @@
 package com.jc.presentation.viewmodel
 
-import android.content.Context
-import android.util.Log
-import androidx.lifecycle.ViewModel
-import com.jc.core.util.Constants
-import com.jc.core.util.LocaleHelper
-
-data class LanguageOption(val code: String, val displayName: String)
-
-class LanguageViewModel(
-    private val context: Context
-) : ViewModel() {
-
-    init {
-        Log.d("LanguageViewModel", "LanguageViewModel initialized: ${this.hashCode()}")
-    }
-
-    val supportedLanguages = listOf(
-        LanguageOption(Constants.LANGUAGE_CODE_ENGLISH, Constants.LANGUAGE_DISPLAY_NAME_ENGLISH),
-        LanguageOption(
-            Constants.LANGUAGE_CODE_INDONESIAN,
-            Constants.LANGUAGE_DISPLAY_NAME_INDONESIAN
-        )
-    )
-
-    fun getCurrentLanguage(): String {
-        return LocaleHelper.getLanguage(context)
-    }
-
-    fun getCurrentLanguageDisplay(): String {
-        val currentCode = getCurrentLanguage()
-        return supportedLanguages.find { it.code == currentCode }?.displayName
-            ?: Constants.LANGUAGE_DISPLAY_NAME_ENGLISH
-    }
-}
-
-/*
-data class LanguageOption(val code: String, val displayName: String)
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
+import com.jc.constraintlayout.R
+import com.jc.core.utils.LanguageManager
+import com.jc.data.repository.language.LanguageRepository
+import com.jc.model.language.Language
+import com.jc.model.language.LanguageState
+import com.jc.model.language.Languages
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 class LanguageViewModel(
-    private val saveLanguageUseCase: SaveLanguageUseCase,
-    getSelectedLanguageFlowUseCase: GetSelectedLanguageFlowUseCase,
-    private val getSavedLanguageOnceUseCase: GetSavedLanguageOnceUseCase
-) : ViewModel() {
+    application: Application,
+    private val languageRepository: LanguageRepository
+) : AndroidViewModel(application) {
+
+    private val _languageState = MutableStateFlow(LanguageState())
+    val languageState: StateFlow<LanguageState> = _languageState.asStateFlow()
+
+    private val _showBottomSheet = MutableStateFlow(false)
+    val showBottomSheet: StateFlow<Boolean> = _showBottomSheet.asStateFlow()
 
     init {
-        Log.d("LanguageViewModel", "LanguageViewModel initialized: ${this.hashCode()}")
+        observeLanguageChanges()
     }
 
-    val currentLanguageCode: StateFlow<String> =
-        getSelectedLanguageFlowUseCase()
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5000),
-                initialValue = Constants.DEFAULT_LANGUAGE_CODE
+    private fun observeLanguageChanges() {
+        viewModelScope.launch {
+            languageRepository.selectedLanguageCode.collect { languageCode ->
+                val language = Languages.getLanguageByCode(languageCode)
+                val localizedStrings = loadLocalizedStrings(languageCode)
+
+                _languageState.value = _languageState.value.copy(
+                    currentLanguage = language,
+                    localizedStrings = localizedStrings
+                )
+            }
+        }
+    }
+
+    private fun loadLocalizedStrings(languageCode: String): Map<String, String> {
+        return mapOf(
+            "app_name" to LanguageManager.getLocalizedString(
+                getApplication(),
+                R.string.app_name,
+                languageCode
+            ),
+            "select_language" to LanguageManager.getLocalizedString(
+                getApplication(),
+                R.string.select_language,
+                languageCode
+            ),
+            "current_language" to LanguageManager.getLocalizedString(
+                getApplication(),
+                R.string.current_language,
+                languageCode
+            ),
+            "activation_title" to LanguageManager.getLocalizedString(
+                getApplication(),
+                R.string.activation_title,
+                languageCode
+            ),
+            "activation_subtitle" to LanguageManager.getLocalizedString(
+                getApplication(),
+                R.string.activation_subtitle,
+                languageCode
+            ),
+            "activate_button" to LanguageManager.getLocalizedString(
+                getApplication(),
+                R.string.activate_button,
+                languageCode
             )
-
-    val supportedLanguages = listOf(
-        LanguageOption(Constants.LANGUAGE_CODE_ENGLISH, Constants.LANGUAGE_DISPLAY_NAME_ENGLISH),
-        LanguageOption(
-            Constants.LANGUAGE_CODE_INDONESIAN,
-            Constants.LANGUAGE_DISPLAY_NAME_INDONESIAN
         )
-    )
-
-    fun setLanguage(languageCode: String, onComplete: () -> Unit) {
-        if (currentLanguageCode.value == languageCode) {
-            Log.d("LanguageViewModel", "Language already set to: $languageCode")
-            return
-        }
-
-        viewModelScope.launch {
-            try {
-                Log.d("LanguageViewModel", "Starting language change to: $languageCode")
-
-                // 1. Save to DataStore first
-                Log.d("LanguageViewModel", "Saving language to DataStore: $languageCode")
-                saveLanguageUseCase(languageCode)
-
-                // 2. Wait for DataStore to complete
-                delay(300)
-
-                // 3. Apply system locale
-                Log.d("LanguageViewModel", "Setting application locales: $languageCode")
-                val localeList = LocaleListCompat.forLanguageTags(languageCode)
-                AppCompatDelegate.setApplicationLocales(localeList)
-
-                // 4. Wait for locale to be applied
-                delay(500)
-
-                // 5. Verify the change
-                val currentLocales = AppCompatDelegate.getApplicationLocales()
-                Log.d(
-                    "LanguageViewModel",
-                    "Language change completed. Current locales: ${currentLocales.toLanguageTags()}"
-                )
-
-                // 6. Trigger completion callback
-                onComplete()
-
-            } catch (e: Exception) {
-                Log.e("LanguageViewModel", "Error setting language", e)
-            }
-        }
     }
 
-    fun applyInitialLocale() {
+    fun getLocalizedString(key: String): String {
+        return _languageState.value.localizedStrings[key] ?: ""
+    }
+
+    fun showLanguageSelector() {
+        _showBottomSheet.value = true
+    }
+
+    fun hideLanguageSelector() {
+        _showBottomSheet.value = false
+    }
+
+    fun selectLanguage(language: Language) {
         viewModelScope.launch {
-            try {
-                // Add delay to ensure DataStore is ready
-                delay(100)
+            val currentLanguage = _languageState.value.currentLanguage
 
-                val savedLanguage = getSavedLanguageOnceUseCase()
-                Log.d(
-                    "LanguageViewModel",
-                    "applyInitialLocale called. Saved language from DataStore: $savedLanguage"
+            if (currentLanguage.code != language.code) {
+                _languageState.value = _languageState.value.copy(isChangingLanguage = true)
+                _showBottomSheet.value = false
+
+                languageRepository.setLanguage(language.code)
+
+                delay(800) // 800ms loading
+
+                val newLocalizedStrings = loadLocalizedStrings(language.code)
+
+                _languageState.value = _languageState.value.copy(
+                    currentLanguage = language,
+                    localizedStrings = newLocalizedStrings,
+                    isChangingLanguage = false
                 )
-
-                val currentAppLocales = AppCompatDelegate.getApplicationLocales()
-                val currentLanguageTags = currentAppLocales.toLanguageTags()
-
-                Log.d(
-                    "LanguageViewModel",
-                    "Current system app locales: $currentLanguageTags"
-                )
-
-                // Only apply if different or empty
-                val needsUpdate = currentAppLocales.isEmpty ||
-                        currentLanguageTags.isEmpty() ||
-                        !currentLanguageTags.contains(savedLanguage)
-
-                if (needsUpdate) {
-                    Log.d("LanguageViewModel", "Applying initial locales: $savedLanguage")
-                    val localeList = LocaleListCompat.forLanguageTags(savedLanguage)
-                    AppCompatDelegate.setApplicationLocales(localeList)
-
-                    // Wait for the locale to be applied
-                    delay(200)
-
-                    Log.d(
-                        "LanguageViewModel",
-                        "Initial locale applied. New locales: ${
-                            AppCompatDelegate.getApplicationLocales().toLanguageTags()
-                        }"
-                    )
-                } else {
-                    Log.d(
-                        "LanguageViewModel",
-                        "No change needed, current locales already match: $savedLanguage"
-                    )
-                }
-            } catch (e: Exception) {
-                Log.e("LanguageViewModel", "Error applying initial locale", e)
-                // Fallback to default language
-                try {
-                    val localeList = LocaleListCompat.forLanguageTags(Constants.DEFAULT_LANGUAGE_CODE)
-                    AppCompatDelegate.setApplicationLocales(localeList)
-                } catch (fallbackError: Exception) {
-                    Log.e("LanguageViewModel", "Error applying fallback locale", fallbackError)
-                }
+            } else {
+                _showBottomSheet.value = false
             }
         }
     }
 }
-*/

@@ -16,7 +16,6 @@ fun AppNavigation(
     headerPercent: Float = 0.10f,
     footerPercent: Float = 0.08f,
     isTablet: Boolean = false,
-    onLanguageChange: (String) -> Unit = {}
 ) {
     NavHost(
         navController = navController,
@@ -31,7 +30,6 @@ fun AppNavigation(
                 },
                 footerPercent = footerPercent,
                 isTablet = isTablet,
-                onLanguageChange = onLanguageChange
             )
         }
 

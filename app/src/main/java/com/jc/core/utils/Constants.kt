@@ -1,4 +1,4 @@
-package com.jc.core.util
+package com.jc.core.utils
 
 object Constants {
     // Shared Preferences keys

@@ -1,7 +1,5 @@
 package com.jc.presentation.ui.screens.shared.ext
 
-import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -15,10 +13,12 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AssignmentInd
-import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Key
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -28,24 +28,19 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.jc.constraintlayout.R
-import com.jc.core.util.Constants
+import com.jc.core.utils.LanguageManager
+import com.jc.model.language.Language
+import com.jc.model.language.Languages
 import com.jc.presentation.ui.theme.AppSize
-import com.jc.presentation.viewmodel.LanguageOption
 import com.jc.presentation.viewmodel.LanguageViewModel
 import org.koin.androidx.compose.koinViewModel
 
@@ -60,14 +55,11 @@ fun SettingsProfileBottomSheet(
     onDismissRequest: () -> Unit,
     isTablet: Boolean,
     currentUserProfile: UserProfile? = null,
-    onLanguageChange: (String) -> Unit = {},
-    languageViewModel: LanguageViewModel = koinViewModel()
+    viewModel: LanguageViewModel = koinViewModel()
 ) {
     val appSize = AppSize(isTablet = isTablet)
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-
-    var currentLanguageCode by remember { mutableStateOf(languageViewModel.getCurrentLanguage()) }
-    Log.d("SettingsSheet", "Current language code from VM: $currentLanguageCode")
+    val languageState by viewModel.languageState.collectAsState()
 
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
@@ -94,17 +86,8 @@ fun SettingsProfileBottomSheet(
         SettingsSheetContent(
             isTablet = isTablet,
             userProfile = currentUserProfile,
-            selectedLanguageCode = currentLanguageCode,
-            supportedLanguages = languageViewModel.supportedLanguages,
-            onLanguageSelected = { newLanguageCode ->
-                Log.d("SettingsSheet", "Language selected: $newLanguageCode")
-
-                if (currentLanguageCode != newLanguageCode) {
-                    currentLanguageCode = newLanguageCode
-                    onDismissRequest()
-                    onLanguageChange(newLanguageCode)
-                }
-            }
+            selectedLanguage = languageState.currentLanguage,
+            onLanguageSelected = viewModel::selectLanguage,
         )
     }
 }
@@ -113,11 +96,11 @@ fun SettingsProfileBottomSheet(
 private fun SettingsSheetContent(
     isTablet: Boolean,
     userProfile: UserProfile?,
-    selectedLanguageCode: String,
-    supportedLanguages: List<LanguageOption>,
-    onLanguageSelected: (String) -> Unit,
+    selectedLanguage: Language,
+    onLanguageSelected: (Language) -> Unit,
 ) {
     val appSize = AppSize(isTablet = isTablet)
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -161,17 +144,33 @@ private fun SettingsSheetContent(
             isTablet = isTablet
         )
 
-        supportedLanguages.forEach { langOption ->
-            LanguageRow(
-                languageName = langOption.displayName,
-                languageCode = langOption.code,
-                isSelected = selectedLanguageCode == langOption.code,
-                isTablet = isTablet,
-                onLanguageSelected = {
-                    Log.d("SettingsSheet", "LanguageRow clicked for code: ${langOption.code}")
-                    onLanguageSelected(langOption.code)
-                }
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Text(
+                text = LanguageManager.getLocalizedString(
+                    context,
+                    R.string.select_language,
+                    selectedLanguage.code
+                ),
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(bottom = 16.dp)
             )
+
+            LazyColumn {
+                items(Languages.availableLanguages) { language ->
+                    LanguageItem(
+                        language = language,
+                        isSelected = language.code == selectedLanguage.code,
+                        onLanguageSelected = onLanguageSelected
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
         }
 
         Spacer(modifier = Modifier.height(appSize.verticalPadding))
@@ -243,63 +242,39 @@ private fun UserProfileInfo(
 }
 
 @Composable
-private fun LanguageRow(
-    languageName: String,
-    languageCode: String,
+private fun LanguageItem(
+    language: Language,
     isSelected: Boolean,
-    isTablet: Boolean,
-    onLanguageSelected: () -> Unit
+    onLanguageSelected: (Language) -> Unit
 ) {
-    val appSize = AppSize(isTablet = isTablet)
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onLanguageSelected() }
-            .padding(vertical = appSize.verticalPadding / 1.5f),
-        verticalAlignment = Alignment.CenterVertically,
+            .clickable { onLanguageSelected(language) }
+            .padding(vertical = 12.dp, horizontal = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        val flagIconResId: Int
-        var imageTint: Color? = null
-
-        when (languageCode.lowercase()) {
-            Constants.LANGUAGE_CODE_INDONESIAN -> flagIconResId = R.drawable.id_flag_ic
-            Constants.LANGUAGE_CODE_ENGLISH -> {
-                flagIconResId = R.drawable.world_flag_ic
-                imageTint = Color.Gray
-            }
-
-            else -> {
-                flagIconResId = R.drawable.world_flag_ic
-                imageTint = Color.DarkGray
-            }
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
+            Text(
+                text = language.nativeName,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Medium
+            )
+            Text(
+                text = language.name,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
 
-        Image(
-            painter = painterResource(id = flagIconResId),
-            contentDescription = languageName,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .size(appSize.iconSize / 1.2f)
-                .clip(CircleShape),
-            colorFilter = if (imageTint != null) ColorFilter.tint(imageTint) else null
-        )
-        Spacer(modifier = Modifier.width(appSize.horizontalPadding / 2))
-        Text(
-            text = languageName,
-            fontSize = appSize.bodyTextSize,
-            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-            color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.weight(1f)
-        )
         if (isSelected) {
             Icon(
-                imageVector = Icons.Filled.CheckCircle,
-                contentDescription = "Selected Language",
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(appSize.iconSize / 1.2f)
+                imageVector = Icons.Default.Check,
+                contentDescription = "Selected",
+                tint = MaterialTheme.colorScheme.primary
             )
-        } else {
-            Spacer(modifier = Modifier.size(appSize.iconSize / 1.2f))
         }
     }
 }
