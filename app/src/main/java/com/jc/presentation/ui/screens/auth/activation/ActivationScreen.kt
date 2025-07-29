@@ -1,5 +1,9 @@
 package com.jc.presentation.ui.screens.auth.activation
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -23,6 +27,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,21 +47,27 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.jc.constraintlayout.R
 import com.jc.presentation.ui.screens.shared.FooterSection
+import com.jc.presentation.ui.screens.shared.LoadingScreen
 import com.jc.presentation.ui.screens.shared.MainSection
 import com.jc.presentation.ui.screens.shared.ext.AboutDialog
 import com.jc.presentation.ui.screens.shared.ext.SettingsProfileBottomSheet
 import com.jc.presentation.ui.theme.AppSize
 import com.jc.presentation.ui.theme.AppTheme
+import com.jc.presentation.viewmodel.LanguageViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun ActivationScreen(
     onNavigateToSignIn: () -> Unit = {},
     footerPercent: Float = 0.08f,
     isTablet: Boolean = false,
-    onLanguageChange: (String) -> Unit = {}
+    viewModelLanguage: LanguageViewModel = koinViewModel()
 ) {
     var showAboutDialog by remember { mutableStateOf(false) }
     var showSettingsBottomSheet by remember { mutableStateOf(false) }
+
+    val languageState by viewModelLanguage.languageState.collectAsState()
+
 
     ConstraintLayout(
         modifier = Modifier.fillMaxSize()
@@ -64,23 +75,34 @@ fun ActivationScreen(
         val (main, footer) = createRefs()
         val bottomGuideline = createGuidelineFromBottom(footerPercent)
 
-        MainSection(
-            contentMain = {
-                ActivationContent(
-                    onActivate = onNavigateToSignIn,
-                    isTablet = isTablet
+        AnimatedContent(
+            targetState = languageState.isChangingLanguage,
+            transitionSpec = { fadeIn() togetherWith fadeOut() },
+            label = "language_change_animation"
+        ) { isLoading ->
+            if (isLoading) {
+                LoadingScreen()
+            } else {
+                MainSection(
+                    contentMain = {
+                        ActivationContent(
+                            onActivate = onNavigateToSignIn,
+                            isTablet = isTablet,
+                            viewModelLanguage = viewModelLanguage
+                        )
+                    },
+                    isTablet = isTablet,
+                    modifier = Modifier.constrainAs(main) {
+                        top.linkTo(parent.top)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        bottom.linkTo(bottomGuideline)
+                        width = Dimension.fillToConstraints
+                        height = Dimension.fillToConstraints
+                    }
                 )
-            },
-            isTablet = isTablet,
-            modifier = Modifier.constrainAs(main) {
-                top.linkTo(parent.top)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-                bottom.linkTo(bottomGuideline)
-                width = Dimension.fillToConstraints
-                height = Dimension.fillToConstraints
             }
-        )
+        }
 
         FooterSection(
             isTablet = isTablet,
@@ -96,6 +118,7 @@ fun ActivationScreen(
                 height = Dimension.fillToConstraints
             }
         )
+
     }
 
     if (showAboutDialog) {
@@ -110,7 +133,6 @@ fun ActivationScreen(
             onDismissRequest = { showSettingsBottomSheet = false },
             isTablet = isTablet,
             currentUserProfile = null,
-            onLanguageChange = onLanguageChange
         )
     }
 }
@@ -118,7 +140,8 @@ fun ActivationScreen(
 @Composable
 fun ActivationContent(
     onActivate: () -> Unit = {},
-    isTablet: Boolean = false
+    isTablet: Boolean = false,
+    viewModelLanguage: LanguageViewModel
 ) {
     var userId by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
@@ -155,7 +178,7 @@ fun ActivationContent(
         )
 
         Text(
-            text = stringResource(R.string.activation_title),
+            text = viewModelLanguage.getLocalizedString("activation_title"),
             fontSize = appSize.titleSize,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
@@ -168,7 +191,7 @@ fun ActivationContent(
         )
 
         Text(
-            text = stringResource(R.string.activation_subtitle),
+            text = viewModelLanguage.getLocalizedString("activation_subtitle"),
             fontSize = appSize.subtitleSize,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -266,7 +289,7 @@ fun ActivationContent(
 }
 
 @Preview(
-    name = "SUNMI V1s",
+    name = "Smartphone",
     widthDp = 360,
     heightDp = 640,
     showBackground = true,
@@ -277,18 +300,3 @@ fun ActivationScreenPreview() {
         ActivationScreen()
     }
 }
-
-/*
-@Preview(
-    name = "SUNMI V1s Dark",
-    widthDp = 360,
-    heightDp = 640,
-    showBackground = true,
-)
-@Composable
-fun ActivationScreenDarkPreview() {
-    AppTheme(darkTheme = true) {
-        ActivationScreen(isDarkTheme = true)
-    }
-}
-*/

@@ -25,6 +25,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -59,7 +60,7 @@ fun LayoutTemplate(
     isTablet: Boolean = false,
     contentHeader: @Composable () -> Unit = { DefaultHeaderContent(isTablet = isTablet) },
     contentMain: @Composable () -> Unit = { DefaultMainContent(isTablet = isTablet) },
-    onAboutClick: () -> Unit = {}
+    onAboutClick: () -> Unit = {},
 ) {
     ConstraintLayout(
         modifier = Modifier
@@ -115,6 +116,32 @@ fun LayoutTemplate(
 }
 
 @Composable
+fun LoadingScreen() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(48.dp),
+                color = MaterialTheme.colorScheme.primary
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = "Changing language...",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
+}
+
+@Composable
 fun HeaderSection(
     contentHeader: @Composable () -> Unit,
     isTablet: Boolean,
@@ -142,7 +169,7 @@ fun HeaderSection(
 fun MainSection(
     contentMain: @Composable () -> Unit,
     isTablet: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val appSize = AppSize(isTablet = isTablet)
     Card(
@@ -414,7 +441,7 @@ fun DefaultMainContent(isTablet: Boolean) {
 }
 
 @Preview(
-    name = "SUNMI V1s",
+    name = "Smartphone",
     widthDp = 360,
     heightDp = 640,
     showBackground = true,
@@ -425,17 +452,3 @@ fun LayoutLightPreview() {
         LayoutTemplate()
     }
 }
-
-/*
-@Preview(
-    name = "Tablet Preview",
-    widthDp = 800,
-    heightDp = 1280,
-    showBackground = true,
-)
-@Composable
-fun LayoutTabletPreview() {
-    AppTheme {
-        LayoutTemplate(isTablet = true)
-    }
-}*/
