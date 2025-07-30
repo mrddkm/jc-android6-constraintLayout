@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.jc.constraintlayout.R
 import com.jc.core.utils.ConsLang
+import com.jc.core.utils.Constants
 import com.jc.core.utils.LanguageManager
 import com.jc.data.repository.language.LanguageRepository
 import com.jc.model.language.Language
@@ -21,11 +22,27 @@ class LanguageViewModel(
     private val languageRepository: LanguageRepository
 ) : AndroidViewModel(application) {
 
-    private val _languageState = MutableStateFlow(LanguageState())
+    private val _languageState = MutableStateFlow(
+        LanguageState(
+            currentLanguage = Languages.ENGLISH,
+            localizedStrings = loadLocalizedStrings(Constants.DEFAULT_LANGUAGE_CODE)
+        )
+    )
     val languageState: StateFlow<LanguageState> = _languageState.asStateFlow()
 
     init {
-        observeLanguageChanges()
+        initializeLanguage()
+    }
+
+    private fun initializeLanguage() {
+        viewModelScope.launch {
+            val initialLocalizedStrings = loadLocalizedStrings(Constants.DEFAULT_LANGUAGE_CODE)
+            _languageState.value = _languageState.value.copy(
+                localizedStrings = initialLocalizedStrings
+            )
+
+            observeLanguageChanges()
+        }
     }
 
     private fun observeLanguageChanges() {
@@ -43,7 +60,14 @@ class LanguageViewModel(
     }
 
     fun getLocalizedString(key: String): String {
-        return _languageState.value.localizedStrings[key] ?: ""
+        val result = _languageState.value.localizedStrings[key]
+
+        if (result.isNullOrEmpty()) {
+            val fallbackStrings = loadLocalizedStrings(Constants.DEFAULT_LANGUAGE_CODE)
+            return fallbackStrings[key] ?: key // Return key as last resort
+        }
+
+        return result
     }
 
     fun selectLanguage(language: Language) {
@@ -55,7 +79,7 @@ class LanguageViewModel(
 
                 languageRepository.setLanguage(language.code)
 
-                delay(800) // 800ms loading
+                delay(800)
 
                 val newLocalizedStrings = loadLocalizedStrings(language.code)
 
@@ -69,42 +93,50 @@ class LanguageViewModel(
     }
 
     private fun loadLocalizedStrings(languageCode: String): Map<String, String> {
-        return mapOf(
-            ConsLang.APP_NAME to LanguageManager.getLocalizedString(
-                getApplication(),
-                R.string.app_name,
-                languageCode
-            ),
-            ConsLang.SELECT_LANGUAGE to LanguageManager.getLocalizedString(
-                getApplication(),
-                R.string.select_language,
-                languageCode
-            ),
-            "current_language" to LanguageManager.getLocalizedString(
-                getApplication(),
-                R.string.current_language,
-                languageCode
-            ),
-            ConsLang.ACTIVATION_TITLE to LanguageManager.getLocalizedString(
-                getApplication(),
-                R.string.activation_title,
-                languageCode
-            ),
-            ConsLang.ACTIVATION_SUBTITLE to LanguageManager.getLocalizedString(
-                getApplication(),
-                R.string.activation_subtitle,
-                languageCode
-            ),
-            ConsLang.ACTIVATION_BUTTON to LanguageManager.getLocalizedString(
-                getApplication(),
-                R.string.activate_button,
-                languageCode
-            ),
-            ConsLang.USERID_INPUT_PLACEHOLDER to LanguageManager.getLocalizedString(
-                getApplication(),
-                R.string.user_id_placeholder,
-                languageCode
-            ),
-        )
+        return try {
+            mapOf(
+                ConsLang.APP_NAME to LanguageManager.getLocalizedString(
+                    getApplication(),
+                    R.string.app_name,
+                    languageCode
+                ),
+                ConsLang.SELECT_LANGUAGE to LanguageManager.getLocalizedString(
+                    getApplication(),
+                    R.string.select_language,
+                    languageCode
+                ),
+                "current_language" to LanguageManager.getLocalizedString(
+                    getApplication(),
+                    R.string.current_language,
+                    languageCode
+                ),
+                ConsLang.ACTIVATION_TITLE to LanguageManager.getLocalizedString(
+                    getApplication(),
+                    R.string.activation_title,
+                    languageCode
+                ),
+                ConsLang.ACTIVATION_SUBTITLE to LanguageManager.getLocalizedString(
+                    getApplication(),
+                    R.string.activation_subtitle,
+                    languageCode
+                ),
+                ConsLang.ACTIVATION_BUTTON to LanguageManager.getLocalizedString(
+                    getApplication(),
+                    R.string.activate_button,
+                    languageCode
+                ),
+                ConsLang.USERID_INPUT_PLACEHOLDER to LanguageManager.getLocalizedString(
+                    getApplication(),
+                    R.string.user_id_placeholder,
+                    languageCode
+                ),
+            )
+        } catch (_: Exception) {
+            if (languageCode != Constants.DEFAULT_LANGUAGE_CODE) {
+                loadLocalizedStrings(Constants.DEFAULT_LANGUAGE_CODE)
+            } else {
+                emptyMap()
+            }
+        }
     }
 }
