@@ -33,7 +33,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.jc.constraintlayout.R
@@ -109,8 +108,17 @@ private fun SettingsSheetContent(
             .padding(bottom = appSize.verticalPadding)
             .navigationBarsPadding()
     ) {
-        val title = if (userProfile == null) stringResource(R.string.settings_title)
-        else stringResource(R.string.settings_profile_title)
+        val title = if (userProfile == null)
+            LanguageManager.getLocalizedString(
+                context,
+                R.string.settings_title,
+                selectedLanguage.code
+            )
+        else LanguageManager.getLocalizedString(
+            context,
+            R.string.settings_profile_title,
+            selectedLanguage.code
+        )
 
         Text(
             text = title,
@@ -123,7 +131,11 @@ private fun SettingsSheetContent(
 
         if (userProfile != null) {
             SectionTitle(
-                title = stringResource(R.string.settings_section_profile),
+                title = LanguageManager.getLocalizedString(
+                    context,
+                    R.string.settings_section_profile,
+                    selectedLanguage.code
+                ),
                 isTablet = isTablet
             )
             UserProfileInfo(
@@ -140,26 +152,19 @@ private fun SettingsSheetContent(
         }
 
         SectionTitle(
-            title = stringResource(R.string.settings_section_language),
+            title = LanguageManager.getLocalizedString(
+                context,
+                R.string.select_language,
+                selectedLanguage.code
+            ),
             isTablet = isTablet
         )
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(appSize.verticalPadding)
         ) {
-            Text(
-                text = LanguageManager.getLocalizedString(
-                    context,
-                    R.string.select_language,
-                    selectedLanguage.code
-                ),
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-
             LazyColumn {
                 items(Languages.availableLanguages) { language ->
                     LanguageItem(
@@ -169,8 +174,6 @@ private fun SettingsSheetContent(
                     )
                 }
             }
-
-            Spacer(modifier = Modifier.height(16.dp))
         }
 
         Spacer(modifier = Modifier.height(appSize.verticalPadding))

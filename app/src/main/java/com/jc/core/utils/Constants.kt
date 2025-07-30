@@ -13,3 +13,12 @@ object Constants {
     const val LANGUAGE_CODE_ENGLISH = "en"
     const val LANGUAGE_CODE_INDONESIAN = "in"
 }
+
+object ConsLang {
+    const val APP_NAME = "app_name"
+    const val SELECT_LANGUAGE = "select_language"
+    const val ACTIVATION_TITLE = "activation_title"
+    const val ACTIVATION_SUBTITLE = "activation_subtitle"
+    const val ACTIVATION_BUTTON = "activation_button"
+    const val USERID_INPUT_PLACEHOLDER = "userid_input_placeholder"
+}

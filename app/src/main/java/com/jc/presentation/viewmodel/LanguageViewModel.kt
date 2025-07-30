@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.jc.constraintlayout.R
+import com.jc.core.utils.ConsLang
 import com.jc.core.utils.LanguageManager
 import com.jc.data.repository.language.LanguageRepository
 import com.jc.model.language.Language
@@ -23,9 +24,6 @@ class LanguageViewModel(
     private val _languageState = MutableStateFlow(LanguageState())
     val languageState: StateFlow<LanguageState> = _languageState.asStateFlow()
 
-    private val _showBottomSheet = MutableStateFlow(false)
-    val showBottomSheet: StateFlow<Boolean> = _showBottomSheet.asStateFlow()
-
     init {
         observeLanguageChanges()
     }
@@ -44,51 +42,8 @@ class LanguageViewModel(
         }
     }
 
-    private fun loadLocalizedStrings(languageCode: String): Map<String, String> {
-        return mapOf(
-            "app_name" to LanguageManager.getLocalizedString(
-                getApplication(),
-                R.string.app_name,
-                languageCode
-            ),
-            "select_language" to LanguageManager.getLocalizedString(
-                getApplication(),
-                R.string.select_language,
-                languageCode
-            ),
-            "current_language" to LanguageManager.getLocalizedString(
-                getApplication(),
-                R.string.current_language,
-                languageCode
-            ),
-            "activation_title" to LanguageManager.getLocalizedString(
-                getApplication(),
-                R.string.activation_title,
-                languageCode
-            ),
-            "activation_subtitle" to LanguageManager.getLocalizedString(
-                getApplication(),
-                R.string.activation_subtitle,
-                languageCode
-            ),
-            "activate_button" to LanguageManager.getLocalizedString(
-                getApplication(),
-                R.string.activate_button,
-                languageCode
-            )
-        )
-    }
-
     fun getLocalizedString(key: String): String {
         return _languageState.value.localizedStrings[key] ?: ""
-    }
-
-    fun showLanguageSelector() {
-        _showBottomSheet.value = true
-    }
-
-    fun hideLanguageSelector() {
-        _showBottomSheet.value = false
     }
 
     fun selectLanguage(language: Language) {
@@ -97,7 +52,6 @@ class LanguageViewModel(
 
             if (currentLanguage.code != language.code) {
                 _languageState.value = _languageState.value.copy(isChangingLanguage = true)
-                _showBottomSheet.value = false
 
                 languageRepository.setLanguage(language.code)
 
@@ -110,9 +64,47 @@ class LanguageViewModel(
                     localizedStrings = newLocalizedStrings,
                     isChangingLanguage = false
                 )
-            } else {
-                _showBottomSheet.value = false
             }
         }
+    }
+
+    private fun loadLocalizedStrings(languageCode: String): Map<String, String> {
+        return mapOf(
+            ConsLang.APP_NAME to LanguageManager.getLocalizedString(
+                getApplication(),
+                R.string.app_name,
+                languageCode
+            ),
+            ConsLang.SELECT_LANGUAGE to LanguageManager.getLocalizedString(
+                getApplication(),
+                R.string.select_language,
+                languageCode
+            ),
+            "current_language" to LanguageManager.getLocalizedString(
+                getApplication(),
+                R.string.current_language,
+                languageCode
+            ),
+            ConsLang.ACTIVATION_TITLE to LanguageManager.getLocalizedString(
+                getApplication(),
+                R.string.activation_title,
+                languageCode
+            ),
+            ConsLang.ACTIVATION_SUBTITLE to LanguageManager.getLocalizedString(
+                getApplication(),
+                R.string.activation_subtitle,
+                languageCode
+            ),
+            ConsLang.ACTIVATION_BUTTON to LanguageManager.getLocalizedString(
+                getApplication(),
+                R.string.activate_button,
+                languageCode
+            ),
+            ConsLang.USERID_INPUT_PLACEHOLDER to LanguageManager.getLocalizedString(
+                getApplication(),
+                R.string.user_id_placeholder,
+                languageCode
+            ),
+        )
     }
 }

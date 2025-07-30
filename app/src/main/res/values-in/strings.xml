@@ -15,7 +15,7 @@
     <string name="activation_subtitle">Silakan masukkan User ID untuk mengaktifkan</string>
     <string name="user_id">User ID</string>
     <string name="user_id_placeholder">Masukkan User ID</string>
-    <string name="activate_button">Activate Account</string>
+    <string name="activate_button">Submit</string>
     <string name="sign_in_title">Sign In</string>
     <string name="sign_in_subtitle">Silakan masuk ke akun Anda</string>
     <string name="password">Password</string>

@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.jc.constraintlayout.R
+import com.jc.core.utils.ConsLang
 import com.jc.presentation.ui.screens.shared.FooterSection
 import com.jc.presentation.ui.screens.shared.LoadingScreen
 import com.jc.presentation.ui.screens.shared.MainSection
@@ -67,7 +68,6 @@ fun ActivationScreen(
     var showSettingsBottomSheet by remember { mutableStateOf(false) }
 
     val languageState by viewModelLanguage.languageState.collectAsState()
-
 
     ConstraintLayout(
         modifier = Modifier.fillMaxSize()
@@ -118,7 +118,6 @@ fun ActivationScreen(
                 height = Dimension.fillToConstraints
             }
         )
-
     }
 
     if (showAboutDialog) {
@@ -143,6 +142,8 @@ fun ActivationContent(
     isTablet: Boolean = false,
     viewModelLanguage: LanguageViewModel
 ) {
+    val appSize = AppSize(isTablet = isTablet)
+
     var userId by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
     var shouldActivate by remember { mutableStateOf(false) }
@@ -156,8 +157,6 @@ fun ActivationContent(
             shouldActivate = false
         }
     }
-
-    val appSize = AppSize(isTablet = isTablet)
 
     ConstraintLayout(
         modifier = Modifier.fillMaxSize()
@@ -178,7 +177,7 @@ fun ActivationContent(
         )
 
         Text(
-            text = viewModelLanguage.getLocalizedString("activation_title"),
+            text = viewModelLanguage.getLocalizedString(ConsLang.ACTIVATION_TITLE),
             fontSize = appSize.titleSize,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
@@ -191,7 +190,7 @@ fun ActivationContent(
         )
 
         Text(
-            text = viewModelLanguage.getLocalizedString("activation_subtitle"),
+            text = viewModelLanguage.getLocalizedString(ConsLang.ACTIVATION_SUBTITLE),
             fontSize = appSize.subtitleSize,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -208,7 +207,7 @@ fun ActivationContent(
             value = userId,
             onValueChange = { userId = it },
             label = { Text(stringResource(R.string.user_id)) },
-            placeholder = { Text(stringResource(R.string.user_id_placeholder)) },
+            placeholder = { Text(viewModelLanguage.getLocalizedString(ConsLang.USERID_INPUT_PLACEHOLDER)) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             enabled = !isLoading,
             modifier = Modifier
@@ -277,7 +276,7 @@ fun ActivationContent(
                         )
                     } else {
                         Text(
-                            text = stringResource(R.string.activate_button),
+                            text = viewModelLanguage.getLocalizedString(ConsLang.ACTIVATION_BUTTON),
                             fontSize = appSize.buttonTextSize,
                             fontWeight = FontWeight.Medium
                         )
