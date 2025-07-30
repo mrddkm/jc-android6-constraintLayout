@@ -95,9 +95,67 @@ class LanguageViewModel(
     private fun loadLocalizedStrings(languageCode: String): Map<String, String> {
         return try {
             mapOf(
+                /*Company*/
+                ConsLang.COMPANY to LanguageManager.getLocalizedString(
+                    getApplication(),
+                    R.string.company,
+                    languageCode
+                ),
+                ConsLang.COMPANY_NAME to LanguageManager.getLocalizedString(
+                    getApplication(),
+                    R.string.company_name,
+                    languageCode
+                ),
+                ConsLang.COPYRIGHT to LanguageManager.getLocalizedString(
+                    getApplication(),
+                    R.string.copyright,
+                    languageCode
+                ),
+                /*App*/
                 ConsLang.APP_NAME to LanguageManager.getLocalizedString(
                     getApplication(),
                     R.string.app_name,
+                    languageCode
+                ),
+                ConsLang.HELLO_WORLD to LanguageManager.getLocalizedString(
+                    getApplication(),
+                    R.string.hello_world,
+                    languageCode
+                ),
+                ConsLang.TEMPLATE_DESCRIPTION to LanguageManager.getLocalizedString(
+                    getApplication(),
+                    R.string.template_description,
+                    languageCode
+                ),
+                ConsLang.FRAMEWORK to LanguageManager.getLocalizedString(
+                    getApplication(),
+                    R.string.framework,
+                    languageCode
+                ),
+                ConsLang.FRAMEWORK_NAME to LanguageManager.getLocalizedString(
+                    getApplication(),
+                    R.string.framework_name,
+                    languageCode
+                ),
+                /*BottomSheet*/
+                ConsLang.SETTINGS_TITLE to LanguageManager.getLocalizedString(
+                    getApplication(),
+                    R.string.settings_title,
+                    languageCode
+                ),
+                ConsLang.SETTINGS_PROFILE_TITLE to LanguageManager.getLocalizedString(
+                    getApplication(),
+                    R.string.settings_profile_title,
+                    languageCode
+                ),
+                ConsLang.SETTINGS_SECTION_PROFILE to LanguageManager.getLocalizedString(
+                    getApplication(),
+                    R.string.settings_section_profile,
+                    languageCode
+                ),
+                ConsLang.SETTINGS_SECTION_LANGUAGE to LanguageManager.getLocalizedString(
+                    getApplication(),
+                    R.string.settings_section_language,
                     languageCode
                 ),
                 ConsLang.SELECT_LANGUAGE to LanguageManager.getLocalizedString(
@@ -105,11 +163,43 @@ class LanguageViewModel(
                     R.string.select_language,
                     languageCode
                 ),
-                "current_language" to LanguageManager.getLocalizedString(
+                ConsLang.CURRENT_LANGUAGE to LanguageManager.getLocalizedString(
                     getApplication(),
                     R.string.current_language,
                     languageCode
                 ),
+                /*Common*/
+                ConsLang.SUBMIT_BUTTON to LanguageManager.getLocalizedString(
+                    getApplication(),
+                    R.string.submit_button,
+                    languageCode
+                ),
+                ConsLang.CHECK_BUTTON to LanguageManager.getLocalizedString(
+                    getApplication(),
+                    R.string.check_button,
+                    languageCode
+                ),
+                ConsLang.USERID to LanguageManager.getLocalizedString(
+                    getApplication(),
+                    R.string.user_id,
+                    languageCode
+                ),
+                ConsLang.USERID_PLACEHOLDER to LanguageManager.getLocalizedString(
+                    getApplication(),
+                    R.string.user_id_placeholder,
+                    languageCode
+                ),
+                ConsLang.PASSWORD to LanguageManager.getLocalizedString(
+                    getApplication(),
+                    R.string.password,
+                    languageCode
+                ),
+                ConsLang.PASSWORD_PLACEHOLDER to LanguageManager.getLocalizedString(
+                    getApplication(),
+                    R.string.password_placeholder,
+                    languageCode
+                ),
+                /*Activation*/
                 ConsLang.ACTIVATION_TITLE to LanguageManager.getLocalizedString(
                     getApplication(),
                     R.string.activation_title,
@@ -120,14 +210,36 @@ class LanguageViewModel(
                     R.string.activation_subtitle,
                     languageCode
                 ),
-                ConsLang.ACTIVATION_BUTTON to LanguageManager.getLocalizedString(
+                /*SignIn*/
+                ConsLang.SIGN_IN_TITLE to LanguageManager.getLocalizedString(
                     getApplication(),
-                    R.string.activate_button,
+                    R.string.sign_in_title,
                     languageCode
                 ),
-                ConsLang.USERID_INPUT_PLACEHOLDER to LanguageManager.getLocalizedString(
+                ConsLang.SIGN_IN_SUBTITLE to LanguageManager.getLocalizedString(
                     getApplication(),
-                    R.string.user_id_placeholder,
+                    R.string.sign_in_subtitle,
+                    languageCode
+                ),
+                /*Main*/
+                ConsLang.APP_CLIENT to LanguageManager.getLocalizedString(
+                    getApplication(),
+                    R.string.app_client,
+                    languageCode
+                ),
+                ConsLang.APP_REGION to LanguageManager.getLocalizedString(
+                    getApplication(),
+                    R.string.app_region,
+                    languageCode
+                ),
+                ConsLang.APP_PRODUCT_NAME to LanguageManager.getLocalizedString(
+                    getApplication(),
+                    R.string.app_product_name,
+                    languageCode
+                ),
+                ConsLang.VEHICLE_PLATE to LanguageManager.getLocalizedString(
+                    getApplication(),
+                    R.string.vehicle_plate,
                     languageCode
                 ),
             )

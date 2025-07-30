@@ -1,6 +1,9 @@
 package com.jc.presentation.ui.screens.main
 
-import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -34,6 +37,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -56,16 +60,20 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.jc.constraintlayout.R
+import com.jc.core.utils.ConsLang
 import com.jc.presentation.navigation.Screen
 import com.jc.presentation.ui.components.SourceCodePro
 import com.jc.presentation.ui.screens.shared.FooterSection
 import com.jc.presentation.ui.screens.shared.HeaderSection
+import com.jc.presentation.ui.screens.shared.LoadingScreen
 import com.jc.presentation.ui.screens.shared.MainSection
 import com.jc.presentation.ui.screens.shared.ext.AboutDialog
 import com.jc.presentation.ui.screens.shared.ext.SettingsProfileBottomSheet
 import com.jc.presentation.ui.screens.shared.ext.UserProfile
 import com.jc.presentation.ui.theme.AppSize
 import com.jc.presentation.ui.theme.AppTheme
+import com.jc.presentation.viewmodel.LanguageViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun MainScreen(
@@ -74,7 +82,8 @@ fun MainScreen(
     onSignOut: () -> Unit = {},
     headerPercent: Float = 0.10f,
     footerPercent: Float = 0.08f,
-    isTablet: Boolean = false
+    isTablet: Boolean = false,
+    viewModelLanguage: LanguageViewModel = koinViewModel(),
 ) {
     var showAboutDialog by remember { mutableStateOf(false) }
     var showSettingsBottomSheet by remember { mutableStateOf(false) }
@@ -92,6 +101,7 @@ fun MainScreen(
                 MainHeaderSection(
                     onSignOut = onSignOut,
                     isTablet = isTablet,
+                    viewModelLanguage = viewModelLanguage,
                     modifier = Modifier.fillMaxWidth()
                 )
             },
@@ -111,7 +121,8 @@ fun MainScreen(
                 MainContent(
                     onNavigateToPaymentQris = onNavigateToPaymentQris,
                     onNavigateToPaymentCash = onNavigateToPaymentCash,
-                    isTablet = isTablet
+                    isTablet = isTablet,
+                    viewModelLanguage = viewModelLanguage
                 )
             },
             isTablet = isTablet,
@@ -167,7 +178,8 @@ fun MainScreen(
 fun MainHeaderSection(
     onSignOut: () -> Unit,
     isTablet: Boolean = false,
-    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
+    viewModelLanguage: LanguageViewModel,
+    modifier: Modifier,
 ) {
     val appSize = AppSize(isTablet = isTablet)
     ConstraintLayout(
@@ -195,7 +207,7 @@ fun MainHeaderSection(
                 contentScale = ContentScale.Fit
             )
             Text(
-                text = "Dinas Perhubungan",
+                text = viewModelLanguage.getLocalizedString(ConsLang.APP_CLIENT),
                 fontSize = appSize.bodyTextSize * 1.3f,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.primary,
@@ -226,327 +238,340 @@ fun MainHeaderSection(
 fun MainContent(
     onNavigateToPaymentQris: (String) -> Unit,
     onNavigateToPaymentCash: (String) -> Unit,
-    isTablet: Boolean = false
+    isTablet: Boolean = false,
+    viewModelLanguage: LanguageViewModel,
 ) {
+    val appSize = AppSize(isTablet = isTablet)
+
+    val languageState by viewModelLanguage.languageState.collectAsState()
+
     var showVehicleDetail by remember { mutableStateOf(false) }
     var vehicleData by remember { mutableStateOf<VehicleData?>(null) }
-    var isLoading by remember { mutableStateOf(false) }
+    var isLoadingButton by remember { mutableStateOf(false) }
 
     var areaCode by remember { mutableStateOf("") }
     var plateNumber by remember { mutableStateOf("") }
     var seriesCode by remember { mutableStateOf("") }
     val areaCodeFocusRequester = remember { FocusRequester() }
 
-    val appSize = AppSize(isTablet = isTablet)
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = appSize.verticalPadding / 4)
-        ) {
+    AnimatedContent(
+        targetState = languageState.isChangingLanguage,
+        transitionSpec = { fadeIn() togetherWith fadeOut() },
+        label = "language_change_animation"
+    ) { isLoading ->
+        if (isLoading) {
+            LoadingScreen()
+        } else {
             Column(
-                verticalArrangement = Arrangement.Top,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxWidth()
+                verticalArrangement = Arrangement.Top
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.client_kab_cianjur_ic),
-                    contentDescription = "Client",
+                Box(
                     modifier = Modifier
-                        .size(appSize.logoSize)
-                        .padding(appSize.horizontalPadding / 10),
-                    contentScale = ContentScale.Fit
-                )
-                Text(
-                    "Kabupaten Cianjur",
-                    fontSize = appSize.bodyTextSize,
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Bold,
-                )
-            }
-        }
-
-        Text(
-            text = "Parkir Berlangganan",
-            fontSize = appSize.titleSize,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    horizontal = appSize.horizontalPadding,
-                    vertical = appSize.verticalPadding / 2
-                )
-        )
-
-        Card(
-            elevation = CardDefaults.cardElevation(defaultElevation = appSize.cardElevation),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = appSize.horizontalPadding)
-        ) {
-            Column(
-                modifier = Modifier.padding(
-                    horizontal = appSize.horizontalPadding / 2,
-                    vertical = appSize.verticalPadding / 2
-                ),
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                        .fillMaxWidth()
+                        .padding(top = appSize.verticalPadding / 4)
                 ) {
-                    Text(
-                        text = "Plat Kendaraan",
-                        fontSize = appSize.captionTextSize,
-                        fontWeight = FontWeight.Light,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(appSize.buttonHeight)
-                            .background(
-                                color = Color.White,
-                                shape = RoundedCornerShape(appSize.roundedCornerShapeSize / 2)
-                            )
-                            .padding(horizontal = 2.dp, vertical = 2.dp)
-                            .border(
-                                width = 1.2.dp,
-                                color = Color.Black,
-                                shape = RoundedCornerShape(appSize.roundedCornerShapeSize / 2)
-                            ),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
+                    Column(
+                        verticalArrangement = Arrangement.Top,
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        BasicTextField(
-                            value = areaCode,
-                            onValueChange = {
-                                if (it.length <= 2) areaCode = it.uppercase()
-                            },
-                            textStyle = TextStyle(
-                                fontSize = appSize.titleSize,
-                                fontWeight = FontWeight.ExtraBold,
-                                color = Color.Black,
-                                textAlign = TextAlign.Center,
-                                fontFamily = SourceCodePro
-                            ),
-                            keyboardOptions = KeyboardOptions(
-                                capitalization = KeyboardCapitalization.Characters,
-                                keyboardType = KeyboardType.Text
-                            ),
-                            singleLine = true,
+                        Image(
+                            painter = painterResource(id = R.drawable.client_kab_cianjur_ic),
+                            contentDescription = "Client",
                             modifier = Modifier
-                                .width(if (isTablet) 80.dp else 60.dp)
-                                .focusRequester(areaCodeFocusRequester),
-                            decorationBox = { innerTextField ->
-                                Box(
-                                    modifier = Modifier
-                                        .background(
-                                            color = Color.White,
-                                            shape = RoundedCornerShape(appSize.roundedCornerShapeSize)
-                                        )
-                                        .padding(horizontal = 1.dp, vertical = 1.dp),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    if (areaCode.isEmpty()) {
-                                        Text(
-                                            text = "F",
-                                            fontSize = appSize.titleSize,
-                                            fontWeight = FontWeight.Light,
-                                            color = Color.LightGray,
-                                            textAlign = TextAlign.Center,
-                                            fontFamily = SourceCodePro
-                                        )
-                                    }
-                                    innerTextField()
-                                }
-                            }
+                                .size(appSize.logoSize)
+                                .padding(appSize.horizontalPadding / 10),
+                            contentScale = ContentScale.Fit
                         )
-                        Spacer(modifier = Modifier.width(2.dp))
-                        BasicTextField(
-                            value = plateNumber,
-                            onValueChange = {
-                                if (it.length <= 4 && it.all { char -> char.isDigit() })
-                                    plateNumber = it
-                            },
-                            textStyle = TextStyle(
-                                fontSize = appSize.titleSize,
-                                fontWeight = FontWeight.ExtraBold,
-                                color = Color.Black,
-                                textAlign = TextAlign.Center,
-                                fontFamily = SourceCodePro
-                            ),
-                            keyboardOptions = KeyboardOptions(
-                                keyboardType = KeyboardType.Number
-                            ),
-                            singleLine = true,
-                            modifier = Modifier.width(if (isTablet) 160.dp else 120.dp),
-                            decorationBox = { innerTextField ->
-                                Box(
-                                    modifier = Modifier
-                                        .background(
-                                            color = Color.White,
-                                            shape = RoundedCornerShape(appSize.roundedCornerShapeSize)
-                                        )
-                                        .padding(horizontal = 1.dp, vertical = 1.dp),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    if (plateNumber.isEmpty()) {
-                                        Text(
-                                            text = "8939",
-                                            fontSize = appSize.titleSize,
-                                            fontWeight = FontWeight.Light,
-                                            color = Color.LightGray,
-                                            textAlign = TextAlign.Center,
-                                            fontFamily = SourceCodePro
-                                        )
-                                    }
-                                    innerTextField()
-                                }
-                            }
-                        )
-                        Spacer(modifier = Modifier.width(2.dp))
-                        BasicTextField(
-                            value = seriesCode,
-                            onValueChange = {
-                                if (it.length <= 3) seriesCode = it.uppercase()
-                            },
-                            textStyle = TextStyle(
-                                fontSize = appSize.titleSize,
-                                fontWeight = FontWeight.ExtraBold,
-                                color = Color.Black,
-                                textAlign = TextAlign.Center,
-                                fontFamily = SourceCodePro
-                            ),
-                            keyboardOptions = KeyboardOptions(
-                                capitalization = KeyboardCapitalization.Characters,
-                                keyboardType = KeyboardType.Text
-                            ),
-                            singleLine = true,
-                            modifier = Modifier
-                                .width(if (isTablet) 120.dp else 100.dp),
-                            decorationBox = { innerTextField ->
-                                Box(
-                                    modifier = Modifier
-                                        .background(
-                                            color = Color.White,
-                                            shape = RoundedCornerShape(appSize.roundedCornerShapeSize)
-                                        )
-                                        .padding(horizontal = 1.dp, vertical = 1.dp),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    if (seriesCode.isEmpty()) {
-                                        Text(
-                                            text = "ABC",
-                                            fontSize = appSize.titleSize,
-                                            fontWeight = FontWeight.Light,
-                                            color = Color.LightGray,
-                                            textAlign = TextAlign.Center,
-                                            fontFamily = SourceCodePro
-                                        )
-                                    }
-                                    innerTextField()
-                                }
-                            }
+                        Text(
+                            text = viewModelLanguage.getLocalizedString(ConsLang.APP_REGION),
+                            fontSize = appSize.bodyTextSize,
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.Bold,
                         )
                     }
                 }
-                Spacer(modifier = Modifier.height(appSize.verticalPadding / 2))
-                Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = appSize.cardElevation),
+
+                Text(
+                    text = viewModelLanguage.getLocalizedString(ConsLang.APP_PRODUCT_NAME),
+                    fontSize = appSize.titleSize,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(
                             horizontal = appSize.horizontalPadding,
-                            vertical = appSize.verticalPadding
-                        ),
+                            vertical = appSize.verticalPadding / 2
+                        )
+                )
+
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = appSize.cardElevation),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = appSize.horizontalPadding)
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    Column(
+                        modifier = Modifier.padding(
+                            horizontal = appSize.horizontalPadding / 2,
+                            vertical = appSize.verticalPadding / 2
+                        ),
                     ) {
-                        IconButton(
-                            onClick = {
-                                areaCode = ""
-                                plateNumber = ""
-                                seriesCode = ""
-                                showVehicleDetail = false
-                                vehicleData = null
-                                areaCodeFocusRequester.requestFocus()
-                            },
-                            modifier = Modifier
-                                .weight(0.2f)
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
-                            Icon(
-                                imageVector = Icons.Outlined.Refresh,
-                                contentDescription = "Clear",
-                                tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                                modifier = Modifier.size(appSize.iconSize)
+                            Text(
+                                text = viewModelLanguage.getLocalizedString(ConsLang.VEHICLE_PLATE),
+                                fontSize = appSize.captionTextSize,
+                                fontWeight = FontWeight.Light,
+                                color = MaterialTheme.colorScheme.onSurface
                             )
-                        }
-                        Button(
-                            onClick = {
-                                if (areaCode.isNotEmpty() && plateNumber.isNotEmpty() && seriesCode.isNotEmpty()) {
-                                    vehicleData = VehicleData(
-                                        platNumber = "$areaCode $plateNumber $seriesCode",
-                                        status = "Belum Bayar",
-                                        vehicleType = "Mobil",
-                                        amount = "100.000"
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(appSize.buttonHeight)
+                                    .background(
+                                        color = Color.White,
+                                        shape = RoundedCornerShape(appSize.roundedCornerShapeSize / 2)
                                     )
-                                    showVehicleDetail = true
-                                }
-                            },
+                                    .padding(horizontal = 2.dp, vertical = 2.dp)
+                                    .border(
+                                        width = 1.2.dp,
+                                        color = Color.Black,
+                                        shape = RoundedCornerShape(appSize.roundedCornerShapeSize / 2)
+                                    ),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                BasicTextField(
+                                    value = areaCode,
+                                    onValueChange = {
+                                        if (it.length <= 2) areaCode = it.uppercase()
+                                    },
+                                    textStyle = TextStyle(
+                                        fontSize = appSize.titleSize,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        color = Color.Black,
+                                        textAlign = TextAlign.Center,
+                                        fontFamily = SourceCodePro
+                                    ),
+                                    keyboardOptions = KeyboardOptions(
+                                        capitalization = KeyboardCapitalization.Characters,
+                                        keyboardType = KeyboardType.Text
+                                    ),
+                                    singleLine = true,
+                                    modifier = Modifier
+                                        .width(if (isTablet) 80.dp else 60.dp)
+                                        .focusRequester(areaCodeFocusRequester),
+                                    decorationBox = { innerTextField ->
+                                        Box(
+                                            modifier = Modifier
+                                                .background(
+                                                    color = Color.White,
+                                                    shape = RoundedCornerShape(appSize.roundedCornerShapeSize)
+                                                )
+                                                .padding(horizontal = 1.dp, vertical = 1.dp),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            if (areaCode.isEmpty()) {
+                                                Text(
+                                                    text = "F",
+                                                    fontSize = appSize.titleSize,
+                                                    fontWeight = FontWeight.Light,
+                                                    color = Color.LightGray,
+                                                    textAlign = TextAlign.Center,
+                                                    fontFamily = SourceCodePro
+                                                )
+                                            }
+                                            innerTextField()
+                                        }
+                                    }
+                                )
+                                Spacer(modifier = Modifier.width(2.dp))
+                                BasicTextField(
+                                    value = plateNumber,
+                                    onValueChange = {
+                                        if (it.length <= 4 && it.all { char -> char.isDigit() })
+                                            plateNumber = it
+                                    },
+                                    textStyle = TextStyle(
+                                        fontSize = appSize.titleSize,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        color = Color.Black,
+                                        textAlign = TextAlign.Center,
+                                        fontFamily = SourceCodePro
+                                    ),
+                                    keyboardOptions = KeyboardOptions(
+                                        keyboardType = KeyboardType.Number
+                                    ),
+                                    singleLine = true,
+                                    modifier = Modifier.width(if (isTablet) 160.dp else 120.dp),
+                                    decorationBox = { innerTextField ->
+                                        Box(
+                                            modifier = Modifier
+                                                .background(
+                                                    color = Color.White,
+                                                    shape = RoundedCornerShape(appSize.roundedCornerShapeSize)
+                                                )
+                                                .padding(horizontal = 1.dp, vertical = 1.dp),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            if (plateNumber.isEmpty()) {
+                                                Text(
+                                                    text = "8939",
+                                                    fontSize = appSize.titleSize,
+                                                    fontWeight = FontWeight.Light,
+                                                    color = Color.LightGray,
+                                                    textAlign = TextAlign.Center,
+                                                    fontFamily = SourceCodePro
+                                                )
+                                            }
+                                            innerTextField()
+                                        }
+                                    }
+                                )
+                                Spacer(modifier = Modifier.width(2.dp))
+                                BasicTextField(
+                                    value = seriesCode,
+                                    onValueChange = {
+                                        if (it.length <= 3) seriesCode = it.uppercase()
+                                    },
+                                    textStyle = TextStyle(
+                                        fontSize = appSize.titleSize,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        color = Color.Black,
+                                        textAlign = TextAlign.Center,
+                                        fontFamily = SourceCodePro
+                                    ),
+                                    keyboardOptions = KeyboardOptions(
+                                        capitalization = KeyboardCapitalization.Characters,
+                                        keyboardType = KeyboardType.Text
+                                    ),
+                                    singleLine = true,
+                                    modifier = Modifier
+                                        .width(if (isTablet) 120.dp else 100.dp),
+                                    decorationBox = { innerTextField ->
+                                        Box(
+                                            modifier = Modifier
+                                                .background(
+                                                    color = Color.White,
+                                                    shape = RoundedCornerShape(appSize.roundedCornerShapeSize)
+                                                )
+                                                .padding(horizontal = 1.dp, vertical = 1.dp),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            if (seriesCode.isEmpty()) {
+                                                Text(
+                                                    text = "ABC",
+                                                    fontSize = appSize.titleSize,
+                                                    fontWeight = FontWeight.Light,
+                                                    color = Color.LightGray,
+                                                    textAlign = TextAlign.Center,
+                                                    fontFamily = SourceCodePro
+                                                )
+                                            }
+                                            innerTextField()
+                                        }
+                                    }
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(appSize.verticalPadding / 2))
+                        Card(
+                            elevation = CardDefaults.cardElevation(defaultElevation = appSize.cardElevation),
                             modifier = Modifier
-                                .weight(0.8f)
-                                .height(appSize.buttonHeight),
-                            shape = RoundedCornerShape(
-                                topStart = 0.dp,
-                                topEnd = appSize.roundedCornerShapeSize,
-                                bottomStart = 0.dp,
-                                bottomEnd = appSize.roundedCornerShapeSize
-                            ),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.primary
-                            ),
-                            enabled = areaCode.isNotEmpty() && plateNumber.isNotEmpty() && seriesCode.isNotEmpty()
+                                .fillMaxWidth()
+                                .padding(
+                                    horizontal = appSize.horizontalPadding,
+                                    vertical = appSize.verticalPadding
+                                ),
                         ) {
-                            if (isLoading) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.size(appSize.circularProgressIndicatorSize),
-                                    color = MaterialTheme.colorScheme.onPrimary
-                                )
-                            } else {
-                                Text(
-                                    text = "Check",
-                                    fontSize = appSize.buttonTextSize,
-                                    fontWeight = FontWeight.ExtraBold
-                                )
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                IconButton(
+                                    onClick = {
+                                        areaCode = ""
+                                        plateNumber = ""
+                                        seriesCode = ""
+                                        showVehicleDetail = false
+                                        vehicleData = null
+                                        areaCodeFocusRequester.requestFocus()
+                                    },
+                                    modifier = Modifier
+                                        .weight(0.2f)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.Refresh,
+                                        contentDescription = "Clear",
+                                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                        modifier = Modifier.size(appSize.iconSize)
+                                    )
+                                }
+                                Button(
+                                    onClick = {
+                                        if (areaCode.isNotEmpty() && plateNumber.isNotEmpty() && seriesCode.isNotEmpty()) {
+                                            vehicleData = VehicleData(
+                                                platNumber = "$areaCode $plateNumber $seriesCode",
+                                                status = "Belum Bayar",
+                                                vehicleType = "Mobil",
+                                                amount = "100.000"
+                                            )
+                                            showVehicleDetail = true
+                                        }
+                                    },
+                                    modifier = Modifier
+                                        .weight(0.8f)
+                                        .height(appSize.buttonHeight),
+                                    shape = RoundedCornerShape(
+                                        topStart = 0.dp,
+                                        topEnd = appSize.roundedCornerShapeSize,
+                                        bottomStart = 0.dp,
+                                        bottomEnd = appSize.roundedCornerShapeSize
+                                    ),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = MaterialTheme.colorScheme.primary
+                                    ),
+                                    enabled = areaCode.isNotEmpty() && plateNumber.isNotEmpty() && seriesCode.isNotEmpty()
+                                ) {
+                                    if (isLoadingButton) {
+                                        CircularProgressIndicator(
+                                            modifier = Modifier.size(appSize.circularProgressIndicatorSize),
+                                            color = MaterialTheme.colorScheme.onPrimary
+                                        )
+                                    } else {
+                                        Text(
+                                            text = viewModelLanguage.getLocalizedString(ConsLang.CHECK_BUTTON),
+                                            fontSize = appSize.buttonTextSize,
+                                            fontWeight = FontWeight.ExtraBold
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
                 }
-            }
-        }
 
-        if (showVehicleDetail && vehicleData != null) {
-            VehicleDetailCard(
-                vehicleData = vehicleData!!,
-                onQRISClick = { onNavigateToPaymentQris(Screen.PaymentQris.route) },
-                onCashClick = { onNavigateToPaymentCash(Screen.PaymentCash.route) },
-                isTablet = isTablet,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = appSize.horizontalPadding)
-                    .padding(top = appSize.verticalPadding / 2)
-            )
+                if (showVehicleDetail && vehicleData != null) {
+                    VehicleDetailCard(
+                        vehicleData = vehicleData!!,
+                        onQRISClick = { onNavigateToPaymentQris(Screen.PaymentQris.route) },
+                        onCashClick = { onNavigateToPaymentCash(Screen.PaymentCash.route) },
+                        isTablet = isTablet,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = appSize.horizontalPadding)
+                            .padding(top = appSize.verticalPadding / 2)
+                    )
+                }
+            }
         }
     }
 }
@@ -721,7 +746,7 @@ data class VehicleData(
 )
 
 @Preview(
-    name = "SUNMI V1s",
+    name = "Smartphone",
     widthDp = 360,
     heightDp = 640,
     showBackground = true,
@@ -732,18 +757,3 @@ fun MainScreenPreview() {
         MainScreen()
     }
 }
-
-/*
-@Preview(
-    name = "Tablet Preview",
-    widthDp = 800,
-    heightDp = 1280,
-    showBackground = true,
-)
-@Composable
-fun LayoutTabletPreview() {
-    AppTheme {
-        MainScreen(isTablet = true)
-    }
-}
-*/

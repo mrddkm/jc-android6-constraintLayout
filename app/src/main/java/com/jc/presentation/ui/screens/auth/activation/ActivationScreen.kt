@@ -62,7 +62,7 @@ fun ActivationScreen(
     onNavigateToSignIn: () -> Unit = {},
     footerPercent: Float = 0.08f,
     isTablet: Boolean = false,
-    viewModelLanguage: LanguageViewModel = koinViewModel()
+    viewModelLanguage: LanguageViewModel = koinViewModel(),
 ) {
     var showAboutDialog by remember { mutableStateOf(false) }
     var showSettingsBottomSheet by remember { mutableStateOf(false) }
@@ -207,7 +207,7 @@ fun ActivationContent(
             value = userId,
             onValueChange = { userId = it },
             label = { Text(stringResource(R.string.user_id)) },
-            placeholder = { Text(viewModelLanguage.getLocalizedString(ConsLang.USERID_INPUT_PLACEHOLDER)) },
+            placeholder = { Text(viewModelLanguage.getLocalizedString(ConsLang.USERID_PLACEHOLDER)) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             enabled = !isLoading,
             modifier = Modifier
@@ -276,7 +276,7 @@ fun ActivationContent(
                         )
                     } else {
                         Text(
-                            text = viewModelLanguage.getLocalizedString(ConsLang.ACTIVATION_BUTTON),
+                            text = viewModelLanguage.getLocalizedString(ConsLang.SUBMIT_BUTTON),
                             fontSize = appSize.buttonTextSize,
                             fontWeight = FontWeight.Medium
                         )

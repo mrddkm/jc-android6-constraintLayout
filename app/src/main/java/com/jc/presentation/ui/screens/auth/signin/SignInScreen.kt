@@ -2,6 +2,10 @@
 
 package com.jc.presentation.ui.screens.auth.signin
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -27,6 +31,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,7 +41,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -47,22 +51,29 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.jc.constraintlayout.R
+import com.jc.core.utils.ConsLang
 import com.jc.presentation.ui.screens.shared.FooterSection
+import com.jc.presentation.ui.screens.shared.LoadingScreen
 import com.jc.presentation.ui.screens.shared.MainSection
 import com.jc.presentation.ui.screens.shared.ext.AboutDialog
 import com.jc.presentation.ui.screens.shared.ext.SettingsProfileBottomSheet
 import com.jc.presentation.ui.theme.AppSize
 import com.jc.presentation.ui.theme.AppTheme
+import com.jc.presentation.viewmodel.LanguageViewModel
 import kotlinx.coroutines.DelicateCoroutinesApi
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SignInScreen(
     onNavigateToMain: () -> Unit = {},
     footerPercent: Float = 0.08f,
-    isTablet: Boolean = false
+    isTablet: Boolean = false,
+    viewModelLanguage: LanguageViewModel = koinViewModel(),
 ) {
     var showAboutDialog by remember { mutableStateOf(false) }
     var showSettingsBottomSheet by remember { mutableStateOf(false) }
+
+    val languageState by viewModelLanguage.languageState.collectAsState()
 
     ConstraintLayout(
         modifier = Modifier.fillMaxSize()
@@ -70,23 +81,34 @@ fun SignInScreen(
         val (main, footer) = createRefs()
         val bottomGuideline = createGuidelineFromBottom(footerPercent)
 
-        MainSection(
-            contentMain = {
-                SignInContent(
-                    onSignIn = onNavigateToMain,
-                    isTablet = isTablet
+        AnimatedContent(
+            targetState = languageState.isChangingLanguage,
+            transitionSpec = { fadeIn() togetherWith fadeOut() },
+            label = "language_change_animation"
+        ) { isLoading ->
+            if (isLoading) {
+                LoadingScreen()
+            } else {
+                MainSection(
+                    contentMain = {
+                        SignInContent(
+                            onSignIn = onNavigateToMain,
+                            isTablet = isTablet,
+                            viewModelLanguage = viewModelLanguage
+                        )
+                    },
+                    isTablet = isTablet,
+                    modifier = Modifier.constrainAs(main) {
+                        top.linkTo(parent.top)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        bottom.linkTo(bottomGuideline)
+                        width = Dimension.fillToConstraints
+                        height = Dimension.fillToConstraints
+                    }
                 )
-            },
-            isTablet = isTablet,
-            modifier = Modifier.constrainAs(main) {
-                top.linkTo(parent.top)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-                bottom.linkTo(bottomGuideline)
-                width = Dimension.fillToConstraints
-                height = Dimension.fillToConstraints
             }
-        )
+        }
 
         FooterSection(
             isTablet = isTablet,
@@ -123,7 +145,8 @@ fun SignInScreen(
 @Composable
 fun SignInContent(
     onSignIn: () -> Unit = {},
-    isTablet: Boolean = false
+    isTablet: Boolean = false,
+    viewModelLanguage: LanguageViewModel,
 ) {
     var userId by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -162,7 +185,7 @@ fun SignInContent(
         )
 
         Text(
-            text = stringResource(R.string.sign_in_title),
+            text = viewModelLanguage.getLocalizedString(ConsLang.SIGN_IN_TITLE),
             fontSize = appSize.titleSize,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
@@ -175,7 +198,7 @@ fun SignInContent(
         )
 
         Text(
-            text = stringResource(R.string.sign_in_subtitle),
+            text = viewModelLanguage.getLocalizedString(ConsLang.SIGN_IN_SUBTITLE),
             fontSize = appSize.subtitleSize,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -191,8 +214,8 @@ fun SignInContent(
         OutlinedTextField(
             value = userId,
             onValueChange = { userId = it },
-            label = { Text(stringResource(R.string.user_id)) },
-            placeholder = { Text(stringResource(R.string.user_id_placeholder)) },
+            label = { Text(viewModelLanguage.getLocalizedString(ConsLang.USERID)) },
+            placeholder = { Text(viewModelLanguage.getLocalizedString(ConsLang.USERID_PLACEHOLDER)) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             enabled = !isLoading,
             modifier = Modifier
@@ -209,8 +232,8 @@ fun SignInContent(
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text(stringResource(R.string.password)) },
-            placeholder = { Text(stringResource(R.string.password_placeholder)) },
+            label = { Text(viewModelLanguage.getLocalizedString(ConsLang.PASSWORD)) },
+            placeholder = { Text(viewModelLanguage.getLocalizedString(ConsLang.PASSWORD_PLACEHOLDER)) },
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             enabled = !isLoading,
@@ -293,7 +316,7 @@ fun SignInContent(
                         )
                     } else {
                         Text(
-                            text = "Sign In",
+                            text = viewModelLanguage.getLocalizedString(ConsLang.SUBMIT_BUTTON),
                             fontSize = appSize.buttonTextSize,
                             fontWeight = FontWeight.Medium
                         )
@@ -305,7 +328,7 @@ fun SignInContent(
 }
 
 @Preview(
-    name = "SUNMI V1s",
+    name = "Smartphone",
     widthDp = 360,
     heightDp = 640,
     showBackground = true,
@@ -316,18 +339,3 @@ fun SignInScreenPreview() {
         SignInScreen()
     }
 }
-
-/*
-@Preview(
-    name = "SUNMI V1s Dark",
-    widthDp = 360,
-    heightDp = 640,
-    showBackground = true,
-)
-@Composable
-fun SignInScreenDarkPreview() {
-    AppTheme(darkTheme = true) {
-        SignInScreen(isDarkTheme = true)
-    }
-}
-*/

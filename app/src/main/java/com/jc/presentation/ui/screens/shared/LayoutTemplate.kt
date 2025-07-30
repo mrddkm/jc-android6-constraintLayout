@@ -39,7 +39,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -47,9 +46,11 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.jc.constraintlayout.R
+import com.jc.core.utils.ConsLang
 import com.jc.presentation.ui.screens.shared.ext.UserProfile
 import com.jc.presentation.ui.theme.AppSize
 import com.jc.presentation.ui.theme.AppTheme
+import com.jc.presentation.viewmodel.LanguageViewModel
 import com.jc.presentation.viewmodel.ThemeViewModel
 import org.koin.androidx.compose.koinViewModel
 
@@ -197,6 +198,7 @@ fun FooterSection(
     onSettingsClick: () -> Unit,
     currentUserProfile: UserProfile? = null,
     themeViewModel: ThemeViewModel = koinViewModel(),
+    viewModelLanguage: LanguageViewModel = koinViewModel(),
     modifier: Modifier
 ) {
     val appSize = AppSize(isTablet = isTablet)
@@ -223,6 +225,9 @@ fun FooterSection(
                 .padding(appSize.horizontalPadding / 4)
         ) {
             val (appInfo, themeButton, settingsAndProfile) = createRefs()
+            val copyright =
+                " " + viewModelLanguage.getLocalizedString(ConsLang.COPYRIGHT) + " " +
+                        viewModelLanguage.getLocalizedString(ConsLang.COMPANY)
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -246,7 +251,7 @@ fun FooterSection(
                     )
                 }
                 Text(
-                    text = " © 2025 Gaenta",
+                    text = copyright,
                     fontSize = appSize.captionTextSize * 0.8f,
                     color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.padding(start = 1.dp)
@@ -309,7 +314,10 @@ fun FooterSection(
 }
 
 @Composable
-fun DefaultHeaderContent(isTablet: Boolean) {
+fun DefaultHeaderContent(
+    isTablet: Boolean,
+    viewModelLanguage: LanguageViewModel = koinViewModel(),
+) {
     val appSize = AppSize(isTablet = isTablet)
     ConstraintLayout(
         modifier = Modifier
@@ -337,7 +345,7 @@ fun DefaultHeaderContent(isTablet: Boolean) {
                 contentScale = ContentScale.Fit
             )
             Text(
-                text = "Gaenta Sinergi Sukses",
+                text = viewModelLanguage.getLocalizedString(ConsLang.COMPANY_NAME),
                 fontSize = appSize.bodyTextSize * 1.3f,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.primary,
@@ -364,7 +372,10 @@ fun DefaultHeaderContent(isTablet: Boolean) {
 }
 
 @Composable
-fun DefaultMainContent(isTablet: Boolean) {
+fun DefaultMainContent(
+    isTablet: Boolean,
+    viewModelLanguage: LanguageViewModel = koinViewModel(),
+) {
     val appSize = AppSize(isTablet = isTablet)
     ConstraintLayout(
         modifier = Modifier.fillMaxSize()
@@ -372,7 +383,7 @@ fun DefaultMainContent(isTablet: Boolean) {
         val (welcomeText, descriptionText, sampleCard) = createRefs()
 
         Text(
-            text = stringResource(R.string.hello_world),
+            text = viewModelLanguage.getLocalizedString(ConsLang.HELLO_WORLD),
             fontSize = appSize.titleSize,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.constrainAs(welcomeText) {
@@ -383,7 +394,7 @@ fun DefaultMainContent(isTablet: Boolean) {
         )
 
         Text(
-            text = stringResource(R.string.template_description),
+            text = viewModelLanguage.getLocalizedString(ConsLang.TEMPLATE_DESCRIPTION),
             textAlign = TextAlign.Center,
             fontSize = appSize.bodyTextSize,
             modifier = Modifier
@@ -410,7 +421,7 @@ fun DefaultMainContent(isTablet: Boolean) {
                 modifier = Modifier.padding(appSize.horizontalPadding),
             ) {
                 Text(
-                    text = stringResource(R.string.framework),
+                    text = viewModelLanguage.getLocalizedString(ConsLang.FRAMEWORK),
                     fontSize = appSize.subtitleSize,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -424,7 +435,7 @@ fun DefaultMainContent(isTablet: Boolean) {
                 )
                 Spacer(modifier = Modifier.height(appSize.verticalPadding / 2))
                 Text(
-                    text = stringResource(R.string.framework_name),
+                    text = viewModelLanguage.getLocalizedString(ConsLang.FRAMEWORK_NAME),
                     fontSize = appSize.bodyTextSize,
                 )
                 Image(

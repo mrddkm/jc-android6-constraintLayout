@@ -1,23 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--Company-->
+    <string name="company">Gaenta</string>
+    <string name="company_name">Gaenta Sinergi Sukses, PT</string>
+    <string name="copyright">© 2025</string>
+
+    <!--App-->
     <string name="app_name">Arkhe</string>
+    <string name="hello_world">Hello World!</string>
+    <string name="template_description">Template layout</string>
+    <string name="framework">Framework</string>
+    <string name="framework_name">arkhe (base).</string>
+
+    <!--BottomSheet-->
     <string name="settings_title">Pengaturan</string>
     <string name="settings_profile_title"><![CDATA[Profil & Pengaturan]]></string>
     <string name="settings_section_profile">Profil</string>
     <string name="settings_section_language">Bahasa</string>
     <string name="select_language">Pilih Bahasa</string>
     <string name="current_language">Bahasa Saat Ini</string>
-    <string name="hello_world">Halo Dunia!</string>
-    <string name="template_description">Tata letak template</string>
-    <string name="framework">Framework</string>
-    <string name="framework_name">arkhe (base).</string>
-    <string name="activation_title">Activation</string>
-    <string name="activation_subtitle">Silakan masukkan User ID untuk mengaktifkan</string>
-    <string name="user_id">User ID</string>
-    <string name="user_id_placeholder">Masukkan User ID</string>
-    <string name="activate_button">Submit</string>
-    <string name="sign_in_title">Sign In</string>
+
+    <!--Common-->
+    <string name="submit_button">Kirim</string>
+    <string name="check_button">Periksa</string>
+    <string name="user_id">ID Pengguna</string>
+    <string name="user_id_placeholder">Masukkan ID Pengguna</string>
+    <string name="password">Kata Sandi</string>
+    <string name="password_placeholder">Masukkan kata sandi Anda</string>
+
+    <!--Activation-->
+    <string name="activation_title">Aktivasi</string>
+    <string name="activation_subtitle">Silakan masukkan ID Pengguna untuk mengaktifasi</string>
+
+    <!--SignIn-->
+    <string name="sign_in_title">Masuk</string>
     <string name="sign_in_subtitle">Silakan masuk ke akun Anda</string>
-    <string name="password">Password</string>
-    <string name="password_placeholder">Masukkan password Anda</string>
+
+    <!--Main-->
+    <string name="app_client">Dinas Perhubungan</string>
+    <string name="app_region">Kabupaten Cianjur</string>
+    <string name="app_product_name">Parkir Berlangganan</string>
+    <string name="vehicle_plate">Plat Kendaraan</string>
 </resources>
