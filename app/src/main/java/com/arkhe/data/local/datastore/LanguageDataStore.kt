@@ -16,9 +16,9 @@ class LanguageDataStore(private val context: Context) {
 
     companion object {
         private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
-            name = "language_preferences"
+            name = Constants.PREFS_NAME_LANGUAGE
         )
-        private val LANGUAGE_CODE_KEY = stringPreferencesKey("selected_language_code")
+        private val LANGUAGE_CODE_KEY = stringPreferencesKey(Constants.PREFS_SELECTED_LANGUAGE_CODE)
     }
 
     val selectedLanguageCode: Flow<String> = context.dataStore.data
