@@ -31,7 +31,7 @@ val timestampString = localDateTime?.format(timestampFormatter)
 val buildTimestamp = timestampString
 
 android {
-    namespace = "com.jc.constraintlayout"
+    namespace = "com.arkhe.constraintlayout"
     compileSdk = 36
 
     defaultConfig {

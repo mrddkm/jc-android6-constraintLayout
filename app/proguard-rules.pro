@@ -33,8 +33,8 @@
 }
 
 # Application classes that will be serialized/deserialized over Gson or kotlinx.serialization
--keep class com.jc.constraintlayout.data.** { *; }
--keep class com.jc.constraintlayout.domain.** { *; }
+-keep class com.arkhe.constraintlayout.data.** { *; }
+-keep class com.arkhe.constraintlayout.domain.** { *; }
 
 # Ktor Client
 -keep class io.ktor.** { *; }
