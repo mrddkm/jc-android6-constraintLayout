@@ -35,7 +35,7 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.jc.constraintlayout"
+        applicationId = "com.arkhe.constraintlayout"
         minSdk = 23
         targetSdk = 36
         versionCode = appVersionCode
