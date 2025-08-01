@@ -25,6 +25,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.window.layout.WindowMetricsCalculator
 import com.arkhe.domain.model.ThemeMode
 import com.arkhe.presentation.navigation.AppNavigation
+import com.arkhe.presentation.state.ThemeUiState
 import com.arkhe.presentation.ui.theme.AppTheme
 import com.arkhe.presentation.viewmodel.ThemeViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -69,8 +70,10 @@ class MainActivity : ComponentActivity() {
                         ResponsiveApp(
                             navController = navController,
                             isTablet = isTablet,
+                            uiStateTheme = uiStateTheme,
                             currentTheme = uiStateTheme.currentTheme,
                             onCycleTheme = viewModelTheme::cycleTheme,
+                            onThemeSelected = viewModelTheme::setTheme,
                         )
                     }
                 }
@@ -119,8 +122,10 @@ class MainActivity : ComponentActivity() {
 fun ResponsiveApp(
     navController: androidx.navigation.NavHostController,
     isTablet: Boolean = false,
+    uiStateTheme: ThemeUiState,
     currentTheme: ThemeMode,
     onCycleTheme: () -> Unit,
+    onThemeSelected: (ThemeMode) -> Unit,
 ) {
     val (headerPercent, footerPercent) = if (isTablet) {
         0.09f to 0.07f
@@ -133,7 +138,9 @@ fun ResponsiveApp(
         headerPercent = headerPercent,
         footerPercent = footerPercent,
         isTablet = isTablet,
+        uiStateTheme = uiStateTheme,
         currentTheme = currentTheme,
         onCycleTheme = onCycleTheme,
+        onThemeSelected = onThemeSelected,
     )
 }

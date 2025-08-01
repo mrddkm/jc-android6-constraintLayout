@@ -47,6 +47,7 @@ import androidx.constraintlayout.compose.Dimension
 import com.arkhe.constraintlayout.R
 import com.arkhe.core.utils.ConsLang
 import com.arkhe.domain.model.ThemeMode
+import com.arkhe.presentation.state.ThemeUiState
 import com.arkhe.presentation.ui.screens.shared.FooterSection
 import com.arkhe.presentation.ui.screens.shared.LoadingScreen
 import com.arkhe.presentation.ui.screens.shared.MainSection
@@ -62,8 +63,10 @@ fun ActivationScreen(
     footerPercent: Float = 0.08f,
     isTablet: Boolean = false,
     viewModelLanguage: LanguageViewModel = koinViewModel(),
+    uiStateTheme: ThemeUiState,
     currentTheme: ThemeMode,
     onCycleTheme: () -> Unit,
+    onThemeSelected: (ThemeMode) -> Unit,
 ) {
     var showAboutDialog by remember { mutableStateOf(false) }
     var showSettingsBottomSheet by remember { mutableStateOf(false) }
@@ -135,6 +138,8 @@ fun ActivationScreen(
             onDismissRequest = { showSettingsBottomSheet = false },
             isTablet = isTablet,
             currentUserProfile = null,
+            uiStateTheme = uiStateTheme,
+            onThemeSelected = onThemeSelected,
         )
     }
 }

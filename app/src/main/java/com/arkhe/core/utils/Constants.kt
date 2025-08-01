@@ -38,6 +38,7 @@ object ConsLang {
     const val SETTINGS_SECTION_LANGUAGE = "settings_section_language"
     const val SELECT_LANGUAGE = "select_language"
     const val CURRENT_LANGUAGE = "current_language"
+    const val SELECT_THEME = "select_theme"
 
     /*Common*/
     const val SUBMIT_BUTTON = "submit_button"

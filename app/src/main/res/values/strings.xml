@@ -19,6 +19,7 @@
     <string name="settings_section_language">Language</string>
     <string name="select_language">Select Language</string>
     <string name="current_language">Current Language</string>
+    <string name="select_theme">Select Theme</string>
 
     <!--Common-->
     <string name="submit_button">Submit</string>

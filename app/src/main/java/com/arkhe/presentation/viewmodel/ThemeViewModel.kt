@@ -18,20 +18,15 @@ class ThemeViewModel(
     private val setThemeUseCase: SetThemeUseCase
 ) : ViewModel() {
 
-    private val _showBottomSheet = MutableStateFlow(false)
-    private val showBottomSheet: StateFlow<Boolean> = _showBottomSheet.asStateFlow()
-
-    private val _selectedUIType = MutableStateFlow(ThemeUIType.BOTTOM_SHEET)
+    private val _selectedUIType = MutableStateFlow(ThemeUIType.CYCLING_BUTTON)
     private val selectedUIType: StateFlow<ThemeUIType> = _selectedUIType.asStateFlow()
 
     val uiState: StateFlow<ThemeUiState> = combine(
         getCurrentThemeUseCase(),
-        showBottomSheet,
         selectedUIType
-    ) { currentTheme, isBottomSheetVisible, uiType ->
+    ) { currentTheme, uiType ->
         ThemeUiState(
             currentTheme = currentTheme,
-            showBottomSheet = isBottomSheetVisible,
             selectedUIType = uiType
         )
     }.stateInViewModelScope(ThemeUiState())
@@ -50,18 +45,6 @@ class ThemeViewModel(
             ThemeMode.AUTOMATIC -> ThemeMode.LIGHT
         }
         setTheme(nextTheme)
-    }
-
-    fun setUIType(uiType: ThemeUIType) {
-        _selectedUIType.value = uiType
-    }
-
-    fun showThemeSelector() {
-        _showBottomSheet.value = true
-    }
-
-    fun hideThemeSelector() {
-        _showBottomSheet.value = false
     }
 }
 

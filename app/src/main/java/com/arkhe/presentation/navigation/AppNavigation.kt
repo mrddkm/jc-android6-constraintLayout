@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.arkhe.domain.model.ThemeMode
+import com.arkhe.presentation.state.ThemeUiState
 import com.arkhe.presentation.ui.screens.auth.activation.ActivationScreen
 import com.arkhe.presentation.ui.screens.auth.signin.SignInScreen
 import com.arkhe.presentation.ui.screens.main.MainScreen
@@ -17,8 +18,10 @@ fun AppNavigation(
     headerPercent: Float = 0.10f,
     footerPercent: Float = 0.08f,
     isTablet: Boolean = false,
+    uiStateTheme: ThemeUiState,
     currentTheme: ThemeMode,
     onCycleTheme: () -> Unit,
+    onThemeSelected: (ThemeMode) -> Unit,
 ) {
     NavHost(
         navController = navController,
@@ -33,8 +36,10 @@ fun AppNavigation(
                 },
                 footerPercent = footerPercent,
                 isTablet = isTablet,
+                uiStateTheme = uiStateTheme,
                 currentTheme = currentTheme,
-                onCycleTheme = onCycleTheme
+                onCycleTheme = onCycleTheme,
+                onThemeSelected = onThemeSelected
             )
         }
 
@@ -47,8 +52,10 @@ fun AppNavigation(
                 },
                 footerPercent = footerPercent,
                 isTablet = isTablet,
+                uiStateTheme = uiStateTheme,
                 currentTheme = currentTheme,
-                onCycleTheme = onCycleTheme
+                onCycleTheme = onCycleTheme,
+                onThemeSelected = onThemeSelected,
             )
         }
 
@@ -68,8 +75,10 @@ fun AppNavigation(
                 headerPercent = headerPercent,
                 footerPercent = footerPercent,
                 isTablet = isTablet,
+                uiStateTheme = uiStateTheme,
                 currentTheme = currentTheme,
-                onCycleTheme = onCycleTheme
+                onCycleTheme = onCycleTheme,
+                onThemeSelected = onThemeSelected,
             )
         }
 

@@ -168,6 +168,11 @@ class LanguageViewModel(
                     R.string.current_language,
                     languageCode
                 ),
+                ConsLang.SELECT_THEME to LanguageManager.getLocalizedString(
+                    getApplication(),
+                    R.string.select_theme,
+                    languageCode
+                ),
                 /*Common*/
                 ConsLang.SUBMIT_BUTTON to LanguageManager.getLocalizedString(
                     getApplication(),

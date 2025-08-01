@@ -37,8 +37,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.arkhe.constraintlayout.R
 import com.arkhe.core.utils.LanguageManager
+import com.arkhe.domain.model.ThemeMode
 import com.arkhe.model.language.Language
 import com.arkhe.model.language.Languages
+import com.arkhe.presentation.state.ThemeUiState
+import com.arkhe.presentation.ui.components.ThreeButtonsRow
 import com.arkhe.presentation.ui.theme.AppSize
 import com.arkhe.presentation.viewmodel.LanguageViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -54,7 +57,9 @@ fun SettingsProfileBottomSheet(
     onDismissRequest: () -> Unit,
     isTablet: Boolean,
     currentUserProfile: UserProfile? = null,
-    viewModel: LanguageViewModel = koinViewModel()
+    viewModel: LanguageViewModel = koinViewModel(),
+    uiStateTheme: ThemeUiState,
+    onThemeSelected: (ThemeMode) -> Unit,
 ) {
     val appSize = AppSize(isTablet = isTablet)
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -87,6 +92,8 @@ fun SettingsProfileBottomSheet(
             userProfile = currentUserProfile,
             selectedLanguage = languageState.currentLanguage,
             onLanguageSelected = viewModel::selectLanguage,
+            uiStateTheme = uiStateTheme,
+            onThemeSelected = onThemeSelected
         )
     }
 }
@@ -97,6 +104,8 @@ private fun SettingsSheetContent(
     userProfile: UserProfile?,
     selectedLanguage: Language,
     onLanguageSelected: (Language) -> Unit,
+    uiStateTheme: ThemeUiState,
+    onThemeSelected: (ThemeMode) -> Unit,
 ) {
     val appSize = AppSize(isTablet = isTablet)
     val context = LocalContext.current
@@ -175,6 +184,22 @@ private fun SettingsSheetContent(
                 }
             }
         }
+
+        Spacer(modifier = Modifier.height(appSize.verticalPadding))
+
+        SectionTitle(
+            title = LanguageManager.getLocalizedString(
+                context,
+                R.string.select_theme,
+                selectedLanguage.code
+            ),
+            isTablet = isTablet
+        )
+
+        ThreeButtonsRow(
+            currentTheme = uiStateTheme.currentTheme,
+            onThemeSelected = onThemeSelected
+        )
 
         Spacer(modifier = Modifier.height(appSize.verticalPadding))
     }

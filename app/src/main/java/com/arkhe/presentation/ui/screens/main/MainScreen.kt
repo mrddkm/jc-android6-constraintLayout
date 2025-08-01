@@ -62,6 +62,7 @@ import com.arkhe.constraintlayout.R
 import com.arkhe.core.utils.ConsLang
 import com.arkhe.domain.model.ThemeMode
 import com.arkhe.presentation.navigation.Screen
+import com.arkhe.presentation.state.ThemeUiState
 import com.arkhe.presentation.ui.components.SourceCodePro
 import com.arkhe.presentation.ui.screens.shared.FooterSection
 import com.arkhe.presentation.ui.screens.shared.HeaderSection
@@ -83,8 +84,10 @@ fun MainScreen(
     footerPercent: Float = 0.08f,
     isTablet: Boolean = false,
     viewModelLanguage: LanguageViewModel = koinViewModel(),
+    uiStateTheme: ThemeUiState,
     currentTheme: ThemeMode,
     onCycleTheme: () -> Unit,
+    onThemeSelected: (ThemeMode) -> Unit,
 ) {
     var showAboutDialog by remember { mutableStateOf(false) }
     var showSettingsBottomSheet by remember { mutableStateOf(false) }
@@ -173,6 +176,8 @@ fun MainScreen(
                 username = "GAENTA",
                 fullName = "Gaenta Sinergi Sukses"
             ),
+            uiStateTheme = uiStateTheme,
+            onThemeSelected = onThemeSelected,
         )
     }
 }

@@ -19,6 +19,7 @@
     <string name="settings_section_language">Bahasa</string>
     <string name="select_language">Pilih Bahasa</string>
     <string name="current_language">Bahasa Saat Ini</string>
+    <string name="select_theme">Pilih Tema</string>
 
     <!--Common-->
     <string name="submit_button">Kirim</string>
