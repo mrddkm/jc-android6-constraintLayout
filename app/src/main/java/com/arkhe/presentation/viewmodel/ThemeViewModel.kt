@@ -2,50 +2,74 @@ package com.arkhe.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.arkhe.domain.usecase.theme.GetThemeUseCase
-import com.arkhe.domain.usecase.theme.HasUserMadeThemeChoiceUseCase
-import com.arkhe.domain.usecase.theme.SaveThemeUseCase
+import com.arkhe.domain.model.ThemeMode
+import com.arkhe.domain.usecase.theme.GetCurrentThemeUseCase
+import com.arkhe.domain.usecase.theme.SetThemeUseCase
+import com.arkhe.presentation.state.ThemeUIType
+import com.arkhe.presentation.state.ThemeUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 class ThemeViewModel(
-    private val getThemeUseCase: GetThemeUseCase,
-    private val saveThemeUseCase: SaveThemeUseCase,
-    private val hasUserMadeThemeChoiceUseCase: HasUserMadeThemeChoiceUseCase
+    getCurrentThemeUseCase: GetCurrentThemeUseCase,
+    private val setThemeUseCase: SetThemeUseCase
 ) : ViewModel() {
 
-    private val _isDarkTheme = MutableStateFlow<Boolean?>(null)
-    val isDarkTheme: StateFlow<Boolean?> = _isDarkTheme.asStateFlow()
+    private val _showBottomSheet = MutableStateFlow(false)
+    private val showBottomSheet: StateFlow<Boolean> = _showBottomSheet.asStateFlow()
 
-    init {
-        loadInitialTheme()
-    }
+    private val _selectedUIType = MutableStateFlow(ThemeUIType.BOTTOM_SHEET)
+    private val selectedUIType: StateFlow<ThemeUIType> = _selectedUIType.asStateFlow()
 
-    private fun loadInitialTheme() {
+    val uiState: StateFlow<ThemeUiState> = combine(
+        getCurrentThemeUseCase(),
+        showBottomSheet,
+        selectedUIType
+    ) { currentTheme, isBottomSheetVisible, uiType ->
+        ThemeUiState(
+            currentTheme = currentTheme,
+            showBottomSheet = isBottomSheetVisible,
+            selectedUIType = uiType
+        )
+    }.stateInViewModelScope(ThemeUiState())
+
+    fun setTheme(themeMode: ThemeMode) {
         viewModelScope.launch {
-            val userHasChosen = hasUserMadeThemeChoiceUseCase().first()
-            if (userHasChosen) {
-                getThemeUseCase().collectLatest { themePreference ->
-                    _isDarkTheme.value = themePreference
-                }
-            } else {
-                _isDarkTheme.value = null
-            }
+            setThemeUseCase(themeMode)
         }
     }
 
-    fun setTheme(isDark: Boolean) {
-        try {
-            viewModelScope.launch {
-                saveThemeUseCase(isDark)
-                _isDarkTheme.value = isDark
-            }
-        } catch (e: Exception) {
-            println("ThemeViewModel: Error saving theme preference: ${e.message}")
+    fun cycleTheme() {
+        val currentTheme = uiState.value.currentTheme
+        val nextTheme = when (currentTheme) {
+            ThemeMode.LIGHT -> ThemeMode.DARK
+            ThemeMode.DARK -> ThemeMode.AUTOMATIC
+            ThemeMode.AUTOMATIC -> ThemeMode.LIGHT
         }
+        setTheme(nextTheme)
+    }
+
+    fun setUIType(uiType: ThemeUIType) {
+        _selectedUIType.value = uiType
+    }
+
+    fun showThemeSelector() {
+        _showBottomSheet.value = true
+    }
+
+    fun hideThemeSelector() {
+        _showBottomSheet.value = false
     }
 }
+
+/*Extension function from StateFlow*/
+private fun <T> kotlinx.coroutines.flow.Flow<T>.stateInViewModelScope(
+    initialValue: T
+): StateFlow<T> = MutableStateFlow(initialValue).apply {
+    kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
+        this@stateInViewModelScope.collect { value = it }
+    }
+}.asStateFlow()

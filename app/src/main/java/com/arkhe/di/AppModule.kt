@@ -1,34 +1,36 @@
 package com.arkhe.di
 
 import com.arkhe.data.local.datastore.LanguageDataStore
-import com.arkhe.data.local.datastore.ThemeDataStore
+import com.arkhe.data.local.datastore.ThemeDataSource
 import com.arkhe.data.repository.language.LanguageRepository
-import com.arkhe.data.repository.theme.ThemeRepository
 import com.arkhe.data.repository.theme.ThemeRepositoryImpl
-import com.arkhe.domain.usecase.theme.GetThemeUseCase
-import com.arkhe.domain.usecase.theme.HasUserMadeThemeChoiceUseCase
-import com.arkhe.domain.usecase.theme.SaveThemeUseCase
+import com.arkhe.domain.repository.ThemeRepository
+import com.arkhe.domain.usecase.theme.GetCurrentThemeUseCase
+import com.arkhe.domain.usecase.theme.SetThemeUseCase
 import com.arkhe.presentation.viewmodel.LanguageViewModel
-import com.arkhe.presentation.viewmodel.ThemeViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
-val appModule = module {
-    // DataStore instances
-    single { ThemeDataStore(androidContext()) }
+val dataModule = module {
     single { LanguageDataStore(androidContext()) }
-
-    // Repositories
+    single { ThemeDataSource(get()) }
     single<ThemeRepository> { ThemeRepositoryImpl(get()) }
-    single { LanguageRepository(get()) } // Hanya LanguageDataStore
+    single { LanguageRepository(get()) }
+}
 
-    // Theme Use Cases
-    factory { GetThemeUseCase(get()) }
-    factory { SaveThemeUseCase(get()) }
-    factory { HasUserMadeThemeChoiceUseCase(get()) }
+val domainModule = module {
+    factory { GetCurrentThemeUseCase(get()) }
+    factory { SetThemeUseCase(get()) }
+}
 
-    // ViewModels
-    viewModel { ThemeViewModel(get(), get(), get()) }
+val presentationModule = module {
+    viewModel { ThemeViewModel(get(), get()) }
     viewModel { LanguageViewModel(get(), get()) }
 }
+
+val appModule = listOf(
+    dataModule,
+    domainModule,
+    presentationModule
+)

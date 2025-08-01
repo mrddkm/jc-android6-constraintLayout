@@ -1,18 +1,19 @@
 package com.arkhe.data.repository.theme
 
-import com.arkhe.data.local.datastore.ThemeDataStore
+import com.arkhe.data.local.datastore.ThemeDataSource
+import com.arkhe.domain.model.ThemeMode
+import com.arkhe.domain.repository.ThemeRepository
 import kotlinx.coroutines.flow.Flow
 
 class ThemeRepositoryImpl(
-    private val themeDataStore: ThemeDataStore
+    private val localDataSource: ThemeDataSource
 ) : ThemeRepository {
-    override fun getTheme(): Flow<Boolean?> = themeDataStore.isDarkThemeFlow
-    override suspend fun saveTheme(isDarkTheme: Boolean) {
-        try {
-            themeDataStore.saveThemePreference(isDarkTheme)
-        } catch (e: Exception) {
-            throw e
-        }
+
+    override fun getThemeMode(): Flow<ThemeMode> {
+        return localDataSource.getThemeMode()
     }
-    override fun hasUserMadeThemeChoice(): Flow<Boolean> = themeDataStore.userThemeChoiceMadeFlow
+
+    override suspend fun setThemeMode(themeMode: ThemeMode) {
+        localDataSource.setThemeMode(themeMode)
+    }
 }

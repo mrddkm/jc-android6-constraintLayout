@@ -51,7 +51,6 @@ import com.arkhe.presentation.ui.screens.shared.ext.UserProfile
 import com.arkhe.presentation.ui.theme.AppSize
 import com.arkhe.presentation.ui.theme.AppTheme
 import com.arkhe.presentation.viewmodel.LanguageViewModel
-import com.arkhe.presentation.viewmodel.ThemeViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
