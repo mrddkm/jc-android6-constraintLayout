@@ -8,6 +8,7 @@ import com.arkhe.domain.repository.ThemeRepository
 import com.arkhe.domain.usecase.theme.GetCurrentThemeUseCase
 import com.arkhe.domain.usecase.theme.SetThemeUseCase
 import com.arkhe.presentation.viewmodel.LanguageViewModel
+import com.arkhe.presentation.viewmodel.ThemeViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module

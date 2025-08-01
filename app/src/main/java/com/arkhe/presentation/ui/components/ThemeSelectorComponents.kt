@@ -15,16 +15,18 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Autorenew
+import androidx.compose.material.icons.filled.BrightnessAuto
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.LightMode
 import androidx.compose.material.icons.outlined.SettingsBrightness
 import androidx.compose.material3.BottomSheetDefaults
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
@@ -38,6 +40,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.arkhe.domain.model.ThemeMode
+import com.arkhe.presentation.ui.theme.AppSize
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -133,20 +136,19 @@ private fun ThemeOptionItem(
 fun CyclingThemeButton(
     currentTheme: ThemeMode,
     onCycleTheme: () -> Unit,
-    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
+    val appSize = AppSize(isTablet = false)
 
     val icon = when (currentTheme) {
-        ThemeMode.LIGHT -> Icons.Outlined.LightMode
-        ThemeMode.DARK -> Icons.Outlined.DarkMode
-        ThemeMode.AUTOMATIC -> Icons.Outlined.SettingsBrightness
+        ThemeMode.LIGHT -> Icons.Filled.LightMode
+        ThemeMode.DARK -> Icons.Filled.DarkMode
+        ThemeMode.AUTOMATIC -> Icons.Filled.BrightnessAuto
     }
 
-    Button(
+    IconButton(
         onClick = {
             onCycleTheme()
-            // Show toast with current theme
             val nextTheme = when (currentTheme) {
                 ThemeMode.LIGHT -> ThemeMode.DARK
                 ThemeMode.DARK -> ThemeMode.AUTOMATIC
@@ -154,25 +156,18 @@ fun CyclingThemeButton(
             }
             Toast.makeText(
                 context,
-                "Switched to ${nextTheme.displayName}",
+                nextTheme.displayName,
                 Toast.LENGTH_SHORT
             ).show()
         },
-        modifier = modifier.fillMaxWidth()
+        modifier = Modifier
+            .size(appSize.iconSize / 1.2f)
     ) {
         Icon(
             imageVector = icon,
             contentDescription = null,
-            modifier = Modifier.size(18.dp)
+            modifier = Modifier.size(appSize.iconSize / 1.2f)
         )
-        Spacer(modifier = Modifier.width(8.dp))
-        Icon(
-            imageVector = Icons.Default.Autorenew,
-            contentDescription = null,
-            modifier = Modifier.size(16.dp)
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        Text("Cycle Theme (${currentTheme.displayName})")
     }
 }
 

@@ -6,11 +6,13 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
@@ -18,10 +20,14 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import androidx.window.layout.WindowMetricsCalculator
+import com.arkhe.domain.model.ThemeMode
 import com.arkhe.presentation.navigation.AppNavigation
 import com.arkhe.presentation.ui.theme.AppTheme
+import com.arkhe.presentation.viewmodel.ThemeViewModel
+import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.KoinContext
 
 @Suppress("DEPRECATION")
@@ -33,8 +39,17 @@ class MainActivity : ComponentActivity() {
         setupWindowForAndroid6()
 
         setContent {
+            val viewModelTheme: ThemeViewModel = koinViewModel()
+            val uiStateTheme by viewModelTheme.uiState.collectAsStateWithLifecycle()
+
+            val darkTheme = when (uiStateTheme.currentTheme) {
+                ThemeMode.LIGHT -> false
+                ThemeMode.DARK -> true
+                ThemeMode.AUTOMATIC -> isSystemInDarkTheme()
+            }
+
             KoinContext {
-                AppTheme {
+                AppTheme(darkTheme = darkTheme) {
                     Surface(
                         modifier = Modifier
                             .fillMaxSize()
@@ -54,6 +69,8 @@ class MainActivity : ComponentActivity() {
                         ResponsiveApp(
                             navController = navController,
                             isTablet = isTablet,
+                            currentTheme = uiStateTheme.currentTheme,
+                            onCycleTheme = viewModelTheme::cycleTheme,
                         )
                     }
                 }
@@ -102,6 +119,8 @@ class MainActivity : ComponentActivity() {
 fun ResponsiveApp(
     navController: androidx.navigation.NavHostController,
     isTablet: Boolean = false,
+    currentTheme: ThemeMode,
+    onCycleTheme: () -> Unit,
 ) {
     val (headerPercent, footerPercent) = if (isTablet) {
         0.09f to 0.07f
@@ -114,5 +133,7 @@ fun ResponsiveApp(
         headerPercent = headerPercent,
         footerPercent = footerPercent,
         isTablet = isTablet,
+        currentTheme = currentTheme,
+        onCycleTheme = onCycleTheme,
     )
 }

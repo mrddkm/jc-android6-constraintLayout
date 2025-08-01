@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.arkhe.domain.model.ThemeMode
 import com.arkhe.presentation.ui.screens.auth.activation.ActivationScreen
 import com.arkhe.presentation.ui.screens.auth.signin.SignInScreen
 import com.arkhe.presentation.ui.screens.main.MainScreen
@@ -16,6 +17,8 @@ fun AppNavigation(
     headerPercent: Float = 0.10f,
     footerPercent: Float = 0.08f,
     isTablet: Boolean = false,
+    currentTheme: ThemeMode,
+    onCycleTheme: () -> Unit,
 ) {
     NavHost(
         navController = navController,
@@ -30,6 +33,8 @@ fun AppNavigation(
                 },
                 footerPercent = footerPercent,
                 isTablet = isTablet,
+                currentTheme = currentTheme,
+                onCycleTheme = onCycleTheme
             )
         }
 
@@ -41,7 +46,9 @@ fun AppNavigation(
                     }
                 },
                 footerPercent = footerPercent,
-                isTablet = isTablet
+                isTablet = isTablet,
+                currentTheme = currentTheme,
+                onCycleTheme = onCycleTheme
             )
         }
 
@@ -61,6 +68,8 @@ fun AppNavigation(
                 headerPercent = headerPercent,
                 footerPercent = footerPercent,
                 isTablet = isTablet,
+                currentTheme = currentTheme,
+                onCycleTheme = onCycleTheme
             )
         }
 

@@ -4,7 +4,6 @@ package com.arkhe.presentation.ui.screens.shared
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,8 +17,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DarkMode
-import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.ManageAccounts
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Lock
@@ -32,7 +29,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
@@ -40,20 +36,16 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.arkhe.constraintlayout.R
 import com.arkhe.core.utils.ConsLang
 import com.arkhe.domain.model.ThemeMode
 import com.arkhe.presentation.ui.components.CyclingThemeButton
 import com.arkhe.presentation.ui.screens.shared.ext.UserProfile
 import com.arkhe.presentation.ui.theme.AppSize
-import com.arkhe.presentation.ui.theme.AppTheme
 import com.arkhe.presentation.viewmodel.LanguageViewModel
-import com.arkhe.presentation.viewmodel.ThemeViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -64,6 +56,8 @@ fun LayoutTemplate(
     contentHeader: @Composable () -> Unit = { DefaultHeaderContent(isTablet = isTablet) },
     contentMain: @Composable () -> Unit = { DefaultMainContent(isTablet = isTablet) },
     onAboutClick: () -> Unit = {},
+    currentTheme: ThemeMode,
+    onCycleTheme: () -> Unit,
 ) {
     ConstraintLayout(
         modifier = Modifier
@@ -106,6 +100,8 @@ fun LayoutTemplate(
             onAboutClick = onAboutClick,
             onSettingsClick = { /* Default empty lambda */ },
             currentUserProfile = null,
+            currentTheme = currentTheme,
+            onCycleTheme = onCycleTheme,
             modifier = Modifier.constrainAs(footer) {
                 top.linkTo(bottomGuideline)
                 start.linkTo(parent.start)
@@ -199,22 +195,12 @@ fun FooterSection(
     onAboutClick: () -> Unit,
     onSettingsClick: () -> Unit,
     currentUserProfile: UserProfile? = null,
-    viewModelTheme: ThemeViewModel = koinViewModel(),
     viewModelLanguage: LanguageViewModel = koinViewModel(),
+    currentTheme: ThemeMode,
+    onCycleTheme: () -> Unit,
     modifier: Modifier
 ) {
     val appSize = AppSize(isTablet = isTablet)
-
-    val uiStateTheme by viewModelTheme.uiState.collectAsStateWithLifecycle()
-
-    val darkTheme = when (uiStateTheme.currentTheme) {
-        ThemeMode.LIGHT -> false
-        ThemeMode.DARK -> true
-        ThemeMode.AUTOMATIC -> isSystemInDarkTheme()
-    }
-
-//    val userThemePreference by viewModelTheme.isDarkTheme.collectAsState()
-//    val isCurrentlyDark = userThemePreference ?: isSystemInDarkTheme()
 
     Card(
         modifier = modifier.padding(appSize.verticalPadding / 2),
@@ -268,11 +254,7 @@ fun FooterSection(
                 )
             }
 
-            IconButton(
-                onClick = {
-                    val newThemeState = !isCurrentlyDark
-                    viewModelTheme.setTheme(newThemeState)
-                },
+            Row(
                 modifier = Modifier.constrainAs(themeButton) {
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
@@ -281,18 +263,9 @@ fun FooterSection(
                 }
             ) {
                 CyclingThemeButton(
-                    currentTheme = uiStateTheme.currentTheme,
-                    onCycleTheme = viewModelTheme.cycleTheme()
+                    currentTheme = currentTheme,
+                    onCycleTheme = onCycleTheme,
                 )
-
-                IconButton(onClick = { viewModelTheme.setTheme(!isCurrentlyDark) }) {
-                    Icon(
-                        imageVector = if (isCurrentlyDark) Icons.Default.LightMode else Icons.Default.DarkMode,
-                        contentDescription = "Toggle Theme",
-                        tint = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.size(appSize.iconSize)
-                    )
-                }
             }
 
             Row(
@@ -466,7 +439,7 @@ fun DefaultMainContent(
     }
 }
 
-@Preview(
+/*@Preview(
     name = "Smartphone",
     widthDp = 360,
     heightDp = 640,
@@ -477,4 +450,4 @@ fun LayoutLightPreview() {
     AppTheme {
         LayoutTemplate()
     }
-}
+}*/
