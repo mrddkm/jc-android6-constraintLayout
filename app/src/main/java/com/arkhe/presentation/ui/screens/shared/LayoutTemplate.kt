@@ -32,7 +32,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,12 +44,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.arkhe.constraintlayout.R
 import com.arkhe.core.utils.ConsLang
+import com.arkhe.domain.model.ThemeMode
 import com.arkhe.presentation.ui.screens.shared.ext.UserProfile
 import com.arkhe.presentation.ui.theme.AppSize
 import com.arkhe.presentation.ui.theme.AppTheme
 import com.arkhe.presentation.viewmodel.LanguageViewModel
+import com.arkhe.presentation.viewmodel.ThemeViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -196,14 +198,22 @@ fun FooterSection(
     onAboutClick: () -> Unit,
     onSettingsClick: () -> Unit,
     currentUserProfile: UserProfile? = null,
-    themeViewModel: ThemeViewModel = koinViewModel(),
+    viewModelTheme: ThemeViewModel = koinViewModel(),
     viewModelLanguage: LanguageViewModel = koinViewModel(),
     modifier: Modifier
 ) {
     val appSize = AppSize(isTablet = isTablet)
 
-    val userThemePreference by themeViewModel.isDarkTheme.collectAsState()
-    val isCurrentlyDark = userThemePreference ?: isSystemInDarkTheme()
+    val uiStateTheme by viewModelTheme.uiState.collectAsStateWithLifecycle()
+
+    val darkTheme = when (uiStateTheme.currentTheme) {
+        ThemeMode.LIGHT -> false
+        ThemeMode.DARK -> true
+        ThemeMode.AUTOMATIC -> isSystemInDarkTheme()
+    }
+
+//    val userThemePreference by viewModelTheme.isDarkTheme.collectAsState()
+//    val isCurrentlyDark = userThemePreference ?: isSystemInDarkTheme()
 
     Card(
         modifier = modifier.padding(appSize.verticalPadding / 2),
@@ -260,7 +270,7 @@ fun FooterSection(
             IconButton(
                 onClick = {
                     val newThemeState = !isCurrentlyDark
-                    themeViewModel.setTheme(newThemeState)
+                    viewModelTheme.setTheme(newThemeState)
                 },
                 modifier = Modifier.constrainAs(themeButton) {
                     start.linkTo(parent.start)
@@ -269,7 +279,7 @@ fun FooterSection(
                     bottom.linkTo(parent.bottom)
                 }
             ) {
-                IconButton(onClick = { themeViewModel.setTheme(!isCurrentlyDark) }) {
+                IconButton(onClick = { viewModelTheme.setTheme(!isCurrentlyDark) }) {
                     Icon(
                         imageVector = if (isCurrentlyDark) Icons.Default.LightMode else Icons.Default.DarkMode,
                         contentDescription = "Toggle Theme",

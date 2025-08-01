@@ -6,13 +6,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
@@ -20,14 +18,11 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import androidx.window.layout.WindowMetricsCalculator
-import com.arkhe.domain.model.ThemeMode
 import com.arkhe.presentation.navigation.AppNavigation
 import com.arkhe.presentation.ui.theme.AppTheme
-import com.arkhe.presentation.viewmodel.ThemeViewModel
-import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.KoinContext
 
 @Suppress("DEPRECATION")
 class MainActivity : ComponentActivity() {
@@ -38,36 +33,29 @@ class MainActivity : ComponentActivity() {
         setupWindowForAndroid6()
 
         setContent {
-            val viewModelTheme: ThemeViewModel = koinViewModel()
-            val uiStateTheme by viewModelTheme.uiState.collectAsStateWithLifecycle()
+            KoinContext {
+                AppTheme {
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .systemBarsPadding(),
+                        color = MaterialTheme.colorScheme.background
+                    ) {
+                        val navController = rememberNavController()
 
-            val darkTheme = when (uiStateTheme.currentTheme) {
-                ThemeMode.LIGHT -> false
-                ThemeMode.DARK -> true
-                ThemeMode.AUTOMATIC -> isSystemInDarkTheme()
-            }
+                        val windowMetrics = remember(this) {
+                            WindowMetricsCalculator.getOrCreate()
+                                .computeCurrentWindowMetrics(this).bounds
+                        }
+                        val isTablet = with(LocalDensity.current) {
+                            windowMetrics.width().toDp() >= 600.dp
+                        }
 
-            AppTheme(darkTheme = darkTheme) {
-                Surface(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .systemBarsPadding(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    val navController = rememberNavController()
-
-                    val windowMetrics = remember(this) {
-                        WindowMetricsCalculator.getOrCreate()
-                            .computeCurrentWindowMetrics(this).bounds
+                        ResponsiveApp(
+                            navController = navController,
+                            isTablet = isTablet,
+                        )
                     }
-                    val isTablet = with(LocalDensity.current) {
-                        windowMetrics.width().toDp() >= 600.dp
-                    }
-
-                    ResponsiveApp(
-                        navController = navController,
-                        isTablet = isTablet,
-                    )
                 }
             }
         }
