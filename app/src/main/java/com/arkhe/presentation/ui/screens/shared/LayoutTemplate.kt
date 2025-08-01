@@ -48,6 +48,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.arkhe.constraintlayout.R
 import com.arkhe.core.utils.ConsLang
 import com.arkhe.domain.model.ThemeMode
+import com.arkhe.presentation.ui.components.CyclingThemeButton
 import com.arkhe.presentation.ui.screens.shared.ext.UserProfile
 import com.arkhe.presentation.ui.theme.AppSize
 import com.arkhe.presentation.ui.theme.AppTheme
@@ -279,6 +280,11 @@ fun FooterSection(
                     bottom.linkTo(parent.bottom)
                 }
             ) {
+                CyclingThemeButton(
+                    currentTheme = uiStateTheme.currentTheme,
+                    onCycleTheme = viewModelTheme.cycleTheme()
+                )
+
                 IconButton(onClick = { viewModelTheme.setTheme(!isCurrentlyDark) }) {
                     Icon(
                         imageVector = if (isCurrentlyDark) Icons.Default.LightMode else Icons.Default.DarkMode,
