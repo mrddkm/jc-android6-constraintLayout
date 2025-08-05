@@ -10,7 +10,6 @@ data class ThemeUiState(
     val selectedUIType: ThemeUIType = ThemeUIType.THREE_BUTTONS
 )
 
-enum class ThemeUIType(val displayName: String) {
-    CYCLING_BUTTON("Cycling Button"),
-    THREE_BUTTONS("Three Buttons Row")
+enum class ThemeUIType() {
+    THREE_BUTTONS()
 }

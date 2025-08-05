@@ -3,7 +3,7 @@ package com.arkhe.presentation.ui.components
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import com.arkhe.constraintlayout.R
+import com.arkhe.base.R
 
 val SourceCodePro = FontFamily(
     Font(

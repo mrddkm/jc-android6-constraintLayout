@@ -36,16 +36,6 @@ class ThemeViewModel(
             setThemeUseCase(themeMode)
         }
     }
-
-    fun cycleTheme() {
-        val currentTheme = uiState.value.currentTheme
-        val nextTheme = when (currentTheme) {
-            ThemeMode.LIGHT -> ThemeMode.DARK
-            ThemeMode.DARK -> ThemeMode.AUTOMATIC
-            ThemeMode.AUTOMATIC -> ThemeMode.LIGHT
-        }
-        setTheme(nextTheme)
-    }
 }
 
 /*Extension function from StateFlow*/

@@ -24,7 +24,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.arkhe.constraintlayout.R
+import com.arkhe.base.R
 import com.arkhe.presentation.ui.theme.AppTheme
 import kotlinx.coroutines.delay
 

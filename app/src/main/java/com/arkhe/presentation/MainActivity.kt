@@ -71,8 +71,6 @@ class MainActivity : ComponentActivity() {
                             navController = navController,
                             isTablet = isTablet,
                             uiStateTheme = uiStateTheme,
-                            currentTheme = uiStateTheme.currentTheme,
-                            onCycleTheme = viewModelTheme::cycleTheme,
                             onThemeSelected = viewModelTheme::setTheme,
                         )
                     }
@@ -123,8 +121,6 @@ fun ResponsiveApp(
     navController: androidx.navigation.NavHostController,
     isTablet: Boolean = false,
     uiStateTheme: ThemeUiState,
-    currentTheme: ThemeMode,
-    onCycleTheme: () -> Unit,
     onThemeSelected: (ThemeMode) -> Unit,
 ) {
     val (headerPercent, footerPercent) = if (isTablet) {
@@ -139,8 +135,6 @@ fun ResponsiveApp(
         footerPercent = footerPercent,
         isTablet = isTablet,
         uiStateTheme = uiStateTheme,
-        currentTheme = currentTheme,
-        onCycleTheme = onCycleTheme,
         onThemeSelected = onThemeSelected,
     )
 }

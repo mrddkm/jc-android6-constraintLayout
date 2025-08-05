@@ -1,6 +1,5 @@
 package com.arkhe.presentation.ui.components
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -17,67 +16,21 @@ import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.arkhe.domain.model.ThemeMode
-import com.arkhe.presentation.ui.theme.AppSize
 
-/*UI Option 1: Cycling Button*/
-@Composable
-fun CyclingThemeButton(
-    currentTheme: ThemeMode,
-    onCycleTheme: () -> Unit,
-) {
-    val context = LocalContext.current
-    val appSize = AppSize(isTablet = false)
-
-    val icon = when (currentTheme) {
-        ThemeMode.LIGHT -> Icons.Filled.LightMode
-        ThemeMode.DARK -> Icons.Filled.DarkMode
-        ThemeMode.AUTOMATIC -> Icons.Filled.BrightnessAuto
-    }
-
-    IconButton(
-        onClick = {
-            onCycleTheme()
-            val nextTheme = when (currentTheme) {
-                ThemeMode.LIGHT -> ThemeMode.DARK
-                ThemeMode.DARK -> ThemeMode.AUTOMATIC
-                ThemeMode.AUTOMATIC -> ThemeMode.LIGHT
-            }
-            Toast.makeText(
-                context,
-                nextTheme.displayName,
-                Toast.LENGTH_SHORT
-            ).show()
-        },
-        modifier = Modifier
-            .size(appSize.iconSize / 1.2f)
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            modifier = Modifier.size(appSize.iconSize / 1.2f)
-        )
-    }
-}
-
-/*UI Option 2: Three Buttons Row*/
 @Composable
 fun ThreeButtonsRow(
     currentTheme: ThemeMode,
     onThemeSelected: (ThemeMode) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
-
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -123,8 +76,8 @@ private fun ThemeIconButton(
 ) {
     val icon = when (themeMode) {
         ThemeMode.LIGHT -> Icons.Filled.LightMode
-        ThemeMode.DARK -> Icons.Filled.DarkMode
         ThemeMode.AUTOMATIC -> Icons.Filled.BrightnessAuto
+        ThemeMode.DARK -> Icons.Filled.DarkMode
     }
 
     val colors = if (isSelected) {
@@ -163,8 +116,8 @@ private fun ThemeIconButton(
                 Text(
                     text = when (themeMode) {
                         ThemeMode.LIGHT -> "Light"
-                        ThemeMode.DARK -> "Dark"
                         ThemeMode.AUTOMATIC -> "Auto"
+                        ThemeMode.DARK -> "Dark"
                     },
                     style = MaterialTheme.typography.labelSmall
                 )
@@ -191,8 +144,8 @@ private fun ThemeIconButton(
                 Text(
                     text = when (themeMode) {
                         ThemeMode.LIGHT -> "Light"
-                        ThemeMode.DARK -> "Dark"
                         ThemeMode.AUTOMATIC -> "Auto"
+                        ThemeMode.DARK -> "Dark"
                     },
                     style = MaterialTheme.typography.labelSmall
                 )

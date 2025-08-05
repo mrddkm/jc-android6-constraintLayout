@@ -19,7 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.arkhe.constraintlayout.R
+import com.arkhe.base.R
 import com.arkhe.presentation.ui.theme.AppSize
 import com.arkhe.presentation.ui.theme.AppTheme
 

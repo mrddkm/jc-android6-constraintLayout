@@ -19,8 +19,6 @@ fun AppNavigation(
     footerPercent: Float = 0.08f,
     isTablet: Boolean = false,
     uiStateTheme: ThemeUiState,
-    currentTheme: ThemeMode,
-    onCycleTheme: () -> Unit,
     onThemeSelected: (ThemeMode) -> Unit,
 ) {
     NavHost(
@@ -37,8 +35,6 @@ fun AppNavigation(
                 footerPercent = footerPercent,
                 isTablet = isTablet,
                 uiStateTheme = uiStateTheme,
-                currentTheme = currentTheme,
-                onCycleTheme = onCycleTheme,
                 onThemeSelected = onThemeSelected
             )
         }
@@ -53,8 +49,6 @@ fun AppNavigation(
                 footerPercent = footerPercent,
                 isTablet = isTablet,
                 uiStateTheme = uiStateTheme,
-                currentTheme = currentTheme,
-                onCycleTheme = onCycleTheme,
                 onThemeSelected = onThemeSelected,
             )
         }
@@ -76,8 +70,6 @@ fun AppNavigation(
                 footerPercent = footerPercent,
                 isTablet = isTablet,
                 uiStateTheme = uiStateTheme,
-                currentTheme = currentTheme,
-                onCycleTheme = onCycleTheme,
                 onThemeSelected = onThemeSelected,
             )
         }

@@ -3,7 +3,7 @@ package com.arkhe.presentation.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.arkhe.constraintlayout.R
+import com.arkhe.base.R
 import com.arkhe.core.utils.ConsLang
 import com.arkhe.core.utils.Constants
 import com.arkhe.core.utils.LanguageManager

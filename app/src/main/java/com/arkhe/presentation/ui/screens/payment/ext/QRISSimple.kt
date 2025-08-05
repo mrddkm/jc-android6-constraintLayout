@@ -32,10 +32,10 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.set
+import com.arkhe.base.R
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.QRCodeWriter
-import com.arkhe.constraintlayout.R
 import com.arkhe.presentation.ui.components.OpenSans
 import com.arkhe.presentation.ui.theme.AppTheme
 

@@ -49,7 +49,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.arkhe.constraintlayout.R
+import com.arkhe.base.R
 import com.arkhe.core.utils.ConsLang
 import com.arkhe.domain.model.ThemeMode
 import com.arkhe.presentation.state.ThemeUiState
@@ -70,8 +70,6 @@ fun SignInScreen(
     isTablet: Boolean = false,
     viewModelLanguage: LanguageViewModel = koinViewModel(),
     uiStateTheme: ThemeUiState,
-    currentTheme: ThemeMode,
-    onCycleTheme: () -> Unit,
     onThemeSelected: (ThemeMode) -> Unit,
 ) {
     var showAboutDialog by remember { mutableStateOf(false) }
@@ -119,8 +117,6 @@ fun SignInScreen(
             onAboutClick = { showAboutDialog = true },
             onSettingsClick = { showSettingsBottomSheet = true },
             currentUserProfile = null,
-            currentTheme = currentTheme,
-            onCycleTheme = onCycleTheme,
             modifier = Modifier.constrainAs(footer) {
                 top.linkTo(bottomGuideline)
                 start.linkTo(parent.start)

@@ -35,7 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.arkhe.constraintlayout.R
+import com.arkhe.base.R
 import com.arkhe.core.utils.LanguageManager
 import com.arkhe.domain.model.ThemeMode
 import com.arkhe.model.language.Language

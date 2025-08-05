@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ManageAccounts
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Wifi
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -39,10 +40,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.arkhe.constraintlayout.R
+import com.arkhe.base.R
 import com.arkhe.core.utils.ConsLang
-import com.arkhe.domain.model.ThemeMode
-import com.arkhe.presentation.ui.components.CyclingThemeButton
 import com.arkhe.presentation.ui.screens.shared.ext.UserProfile
 import com.arkhe.presentation.ui.theme.AppSize
 import com.arkhe.presentation.viewmodel.LanguageViewModel
@@ -56,8 +55,6 @@ fun LayoutTemplate(
     contentHeader: @Composable () -> Unit = { DefaultHeaderContent(isTablet = isTablet) },
     contentMain: @Composable () -> Unit = { DefaultMainContent(isTablet = isTablet) },
     onAboutClick: () -> Unit = {},
-    currentTheme: ThemeMode,
-    onCycleTheme: () -> Unit,
 ) {
     ConstraintLayout(
         modifier = Modifier
@@ -100,8 +97,6 @@ fun LayoutTemplate(
             onAboutClick = onAboutClick,
             onSettingsClick = { /* Default empty lambda */ },
             currentUserProfile = null,
-            currentTheme = currentTheme,
-            onCycleTheme = onCycleTheme,
             modifier = Modifier.constrainAs(footer) {
                 top.linkTo(bottomGuideline)
                 start.linkTo(parent.start)
@@ -196,8 +191,6 @@ fun FooterSection(
     onSettingsClick: () -> Unit,
     currentUserProfile: UserProfile? = null,
     viewModelLanguage: LanguageViewModel = koinViewModel(),
-    currentTheme: ThemeMode,
-    onCycleTheme: () -> Unit,
     modifier: Modifier
 ) {
     val appSize = AppSize(isTablet = isTablet)
@@ -262,10 +255,18 @@ fun FooterSection(
                     bottom.linkTo(parent.bottom)
                 }
             ) {
-                CyclingThemeButton(
-                    currentTheme = currentTheme,
-                    onCycleTheme = onCycleTheme,
-                )
+                IconButton(
+                    onClick = { },
+                    modifier = Modifier
+                        .size(appSize.iconSize / 1.2f)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Wifi,
+                        contentDescription = "Settings",
+                        tint = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.size(appSize.iconSize / 1.2f)
+                    )
+                }
             }
 
             Row(
