@@ -1,7 +1,7 @@
 package com.arkhe.data.repository.network
 
-import com.arkhe.domain.model.ConnectionState
-import com.arkhe.domain.repository.NetworkRepository
+import com.arkhe.domain.model.NetMonState
+import com.arkhe.domain.repository.NetMonRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
@@ -9,11 +9,11 @@ import kotlinx.coroutines.withContext
 import java.net.HttpURLConnection
 import java.net.URL
 
-class NetworkRepositoryImpl(
+class NetMonRepositoryImpl(
     private val networkMonitor: NetworkMonitor
-) : NetworkRepository {
+) : NetMonRepository {
 
-    override fun getConnectionState(): Flow<ConnectionState> {
+    override fun getConnectionState(): Flow<NetMonState> {
         return networkMonitor.networkState().flowOn(Dispatchers.IO)
     }
 

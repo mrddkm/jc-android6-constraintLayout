@@ -56,8 +56,6 @@ import com.arkhe.presentation.state.ThemeUiState
 import com.arkhe.presentation.ui.screens.shared.FooterSection
 import com.arkhe.presentation.ui.screens.shared.LoadingScreen
 import com.arkhe.presentation.ui.screens.shared.MainSection
-import com.arkhe.presentation.ui.screens.shared.ext.AboutDialog
-import com.arkhe.presentation.ui.screens.shared.ext.SettingsProfileBottomSheet
 import com.arkhe.presentation.ui.theme.AppSize
 import com.arkhe.presentation.viewmodel.LanguageViewModel
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -72,9 +70,6 @@ fun SignInScreen(
     uiStateTheme: ThemeUiState,
     onThemeSelected: (ThemeMode) -> Unit,
 ) {
-    var showAboutDialog by remember { mutableStateOf(false) }
-    var showSettingsBottomSheet by remember { mutableStateOf(false) }
-
     val languageState by viewModelLanguage.languageState.collectAsState()
 
     ConstraintLayout(
@@ -114,9 +109,9 @@ fun SignInScreen(
 
         FooterSection(
             isTablet = isTablet,
-            onAboutClick = { showAboutDialog = true },
-            onSettingsClick = { showSettingsBottomSheet = true },
             currentUserProfile = null,
+            uiStateTheme = uiStateTheme,
+            onThemeSelected = onThemeSelected,
             modifier = Modifier.constrainAs(footer) {
                 top.linkTo(bottomGuideline)
                 start.linkTo(parent.start)
@@ -125,23 +120,6 @@ fun SignInScreen(
                 width = Dimension.fillToConstraints
                 height = Dimension.fillToConstraints
             }
-        )
-    }
-
-    if (showAboutDialog) {
-        AboutDialog(
-            onDismissRequest = { showAboutDialog = false },
-            isTablet = isTablet
-        )
-    }
-
-    if (showSettingsBottomSheet) {
-        SettingsProfileBottomSheet(
-            onDismissRequest = { showSettingsBottomSheet = false },
-            isTablet = isTablet,
-            currentUserProfile = null,
-            uiStateTheme = uiStateTheme,
-            onThemeSelected = onThemeSelected
         )
     }
 }

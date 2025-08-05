@@ -5,7 +5,7 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
-import com.arkhe.domain.model.ConnectionState
+import com.arkhe.domain.model.NetMonState
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -23,7 +23,7 @@ class NetworkMonitor {
 
     private val connectivityManager: ConnectivityManager
 
-    fun networkState(): Flow<ConnectionState> = callbackFlow {
+    fun networkState(): Flow<NetMonState> = callbackFlow {
         val callback = object : ConnectivityManager.NetworkCallback() {
             override fun onAvailable(network: Network) {
                 super.onAvailable(network)
@@ -33,7 +33,7 @@ class NetworkMonitor {
 
             override fun onLost(network: Network) {
                 super.onLost(network)
-                trySend(ConnectionState.NotConnectedToInternet)
+                trySend(NetMonState.NotConnectedToInternet)
             }
 
             override fun onCapabilitiesChanged(
@@ -61,27 +61,27 @@ class NetworkMonitor {
         }
     }.distinctUntilChanged()
 
-    private fun getCurrentNetworkState(): ConnectionState {
+    private fun getCurrentNetworkState(): NetMonState {
         val activeNetwork = connectivityManager.activeNetwork
         val networkCapabilities = connectivityManager.getNetworkCapabilities(activeNetwork)
 
         return when {
-            networkCapabilities == null -> ConnectionState.NotConnectedToInternet
+            networkCapabilities == null -> NetMonState.NotConnectedToInternet
             networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> {
                 if (networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)) {
-                    ConnectionState.ConnectedWifi
+                    NetMonState.ConnectedWifi
                 } else {
-                    ConnectionState.NotConnectedToServer
+                    NetMonState.NotConnectedToServer
                 }
             }
             networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> {
                 if (networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)) {
-                    ConnectionState.ConnectedMobileData
+                    NetMonState.ConnectedMobileData
                 } else {
-                    ConnectionState.NotConnectedToServer
+                    NetMonState.NotConnectedToServer
                 }
             }
-            else -> ConnectionState.NotConnectedToInternet
+            else -> NetMonState.NotConnectedToInternet
         }
     }
 }

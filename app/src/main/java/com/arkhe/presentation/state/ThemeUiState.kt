@@ -2,7 +2,6 @@ package com.arkhe.presentation.state
 
 import com.arkhe.domain.model.ThemeMode
 
-
 data class ThemeUiState(
     val currentTheme: ThemeMode = ThemeMode.AUTOMATIC,
     val showBottomSheet: Boolean = false,

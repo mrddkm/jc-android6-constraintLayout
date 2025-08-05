@@ -19,7 +19,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ManageAccounts
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Wifi
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -30,6 +29,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
@@ -40,11 +40,20 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.arkhe.base.R
 import com.arkhe.core.utils.ConsLang
+import com.arkhe.domain.model.ThemeMode
+import com.arkhe.presentation.state.ThemeUiState
+import com.arkhe.presentation.ui.screens.shared.ext.AboutDialog
+import com.arkhe.presentation.ui.screens.shared.ext.NetMonDialog
+import com.arkhe.presentation.ui.screens.shared.ext.SettingsProfileBottomSheet
 import com.arkhe.presentation.ui.screens.shared.ext.UserProfile
 import com.arkhe.presentation.ui.theme.AppSize
+import com.arkhe.presentation.viewmodel.AboutDialogViewModel
 import com.arkhe.presentation.viewmodel.LanguageViewModel
+import com.arkhe.presentation.viewmodel.NetMonViewModel
+import com.arkhe.presentation.viewmodel.SettingsProfileViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -52,9 +61,10 @@ fun LayoutTemplate(
     headerPercent: Float = 0.10f,
     footerPercent: Float = 0.08f,
     isTablet: Boolean = false,
+    uiStateTheme: ThemeUiState,
+    onThemeSelected: (ThemeMode) -> Unit,
     contentHeader: @Composable () -> Unit = { DefaultHeaderContent(isTablet = isTablet) },
     contentMain: @Composable () -> Unit = { DefaultMainContent(isTablet = isTablet) },
-    onAboutClick: () -> Unit = {},
 ) {
     ConstraintLayout(
         modifier = Modifier
@@ -94,9 +104,9 @@ fun LayoutTemplate(
 
         FooterSection(
             isTablet = isTablet,
-            onAboutClick = onAboutClick,
-            onSettingsClick = { /* Default empty lambda */ },
             currentUserProfile = null,
+            uiStateTheme = uiStateTheme,
+            onThemeSelected = onThemeSelected,
             modifier = Modifier.constrainAs(footer) {
                 top.linkTo(bottomGuideline)
                 start.linkTo(parent.start)
@@ -187,13 +197,21 @@ fun MainSection(
 @Composable
 fun FooterSection(
     isTablet: Boolean,
-    onAboutClick: () -> Unit,
-    onSettingsClick: () -> Unit,
     currentUserProfile: UserProfile? = null,
     viewModelLanguage: LanguageViewModel = koinViewModel(),
+    viewModelAbout: AboutDialogViewModel = koinViewModel(),
+    viewModelNetMon: NetMonViewModel = koinViewModel(),
+    viewModelSettingsProfile: SettingsProfileViewModel = koinViewModel(),
+    uiStateTheme: ThemeUiState,
+    onThemeSelected: (ThemeMode) -> Unit,
     modifier: Modifier
 ) {
     val appSize = AppSize(isTablet = isTablet)
+
+    val netMonState by viewModelNetMon.netMonState.collectAsStateWithLifecycle()
+    val showAboutDialog by viewModelAbout.showDialog.collectAsStateWithLifecycle()
+    val showNetMonDialog by viewModelNetMon.showDialog.collectAsStateWithLifecycle()
+    val showSettingsBottomSheet by viewModelSettingsProfile.showBottomSheet.collectAsStateWithLifecycle()
 
     Card(
         modifier = modifier.padding(appSize.verticalPadding / 2),
@@ -227,14 +245,14 @@ fun FooterSection(
                 }
             ) {
                 IconButton(
-                    onClick = { onAboutClick() },
+                    onClick = { viewModelAbout.showAboutDialog() },
                     modifier = Modifier
                         .size(appSize.iconSize * 1.1f)
                         .padding(appSize.horizontalPadding / 8)
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.ae_ic),
-                        contentDescription = "ae_ic",
+                        contentDescription = null,
                         colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
                         contentScale = ContentScale.Fit
                     )
@@ -256,14 +274,14 @@ fun FooterSection(
                 }
             ) {
                 IconButton(
-                    onClick = { },
+                    onClick = { viewModelNetMon.showNetMonDialog() },
                     modifier = Modifier
                         .size(appSize.iconSize / 1.2f)
                 ) {
                     Icon(
-                        imageVector = Icons.Filled.Wifi,
-                        contentDescription = "Settings",
-                        tint = MaterialTheme.colorScheme.onSurface,
+                        imageVector = netMonState.icon,
+                        contentDescription = null,
+                        tint = netMonState.color,
                         modifier = Modifier.size(appSize.iconSize / 1.2f)
                     )
                 }
@@ -286,7 +304,7 @@ fun FooterSection(
                     )
                 }
                 IconButton(
-                    onClick = { onSettingsClick() },
+                    onClick = { viewModelSettingsProfile.showSettingsProfileBottomSheet() },
                     modifier = Modifier
                         .size(appSize.iconSize / 1.2f)
                 ) {
@@ -299,6 +317,31 @@ fun FooterSection(
                 }
             }
         }
+    }
+
+    if (showAboutDialog) {
+        AboutDialog(
+            onDismissRequest = { viewModelAbout.hideAboutDialog() },
+            isTablet = isTablet
+        )
+    }
+
+    if (showNetMonDialog) {
+        NetMonDialog(
+            onDismissRequest = { viewModelNetMon.hideNetMonDialog() },
+            netMonState = netMonState,
+            isTablet = isTablet
+        )
+    }
+
+    if (showSettingsBottomSheet) {
+        SettingsProfileBottomSheet(
+            onDismissRequest = { viewModelSettingsProfile.hideSettingsProfileBottomSheet() },
+            isTablet = isTablet,
+            currentUserProfile = currentUserProfile,
+            uiStateTheme = uiStateTheme,
+            onThemeSelected = onThemeSelected,
+        )
     }
 }
 
