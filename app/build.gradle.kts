@@ -31,11 +31,11 @@ val timestampString = localDateTime?.format(timestampFormatter)
 val buildTimestamp = timestampString
 
 android {
-    namespace = "com.arkhe.constraintlayout"
+    namespace = "com.arkhe.base"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.arkhe.constraintlayout"
+        applicationId = "com.arkhe.base"
         minSdk = 23
         targetSdk = 36
         versionCode = appVersionCode
