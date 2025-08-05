@@ -7,7 +7,7 @@ data class ThemeUiState(
     val currentTheme: ThemeMode = ThemeMode.AUTOMATIC,
     val showBottomSheet: Boolean = false,
     val isLoading: Boolean = false,
-    val selectedUIType: ThemeUIType = ThemeUIType.CYCLING_BUTTON
+    val selectedUIType: ThemeUIType = ThemeUIType.THREE_BUTTONS
 )
 
 enum class ThemeUIType(val displayName: String) {
