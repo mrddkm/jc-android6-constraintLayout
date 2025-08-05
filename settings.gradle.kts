@@ -21,5 +21,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "ConstraintLayout"
+rootProject.name = "arkhe-base"
 include(":app")
