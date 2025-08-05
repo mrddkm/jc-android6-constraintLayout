@@ -181,7 +181,7 @@ fun MainHeaderSection(
                 painter = painterResource(id = R.drawable.client_dishub_ic),
                 contentDescription = "Client",
                 modifier = Modifier
-                    .size(appSize.iconSize * 1.3f)
+                    .size(appSize.iconSizeDp * 1.3f)
                     .padding(appSize.horizontalPadding / 8),
                 contentScale = ContentScale.Fit
             )
@@ -207,7 +207,7 @@ fun MainHeaderSection(
                 imageVector = Icons.Outlined.Lock,
                 contentDescription = "Sign Out",
                 tint = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.size(appSize.iconSize)
+                modifier = Modifier.size(appSize.iconSizeDp)
             )
         }
     }
@@ -491,7 +491,7 @@ fun MainContent(
                                         imageVector = Icons.Outlined.Refresh,
                                         contentDescription = "Clear",
                                         tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                                        modifier = Modifier.size(appSize.iconSize)
+                                        modifier = Modifier.size(appSize.iconSizeDp)
                                     )
                                 }
                                 Button(
@@ -654,7 +654,7 @@ fun VehicleDetailCard(
                             painter = painterResource(id = R.drawable.qris_ic),
                             contentDescription = "QRIS",
                             contentScale = ContentScale.Fit,
-                            modifier = Modifier.size(appSize.iconSize * 2),
+                            modifier = Modifier.size(appSize.iconSizeDp * 2),
                             colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary),
                         )
                     }

@@ -239,7 +239,7 @@ private fun UserProfileInfo(
                 imageVector = Icons.Filled.Key,
                 contentDescription = "Settings",
                 tint = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.size(appSize.iconSize / 1.2f)
+                modifier = Modifier.size(appSize.iconSizeDp / 1.2f)
             )
             Text(
                 text = userProfile.username,
@@ -258,7 +258,7 @@ private fun UserProfileInfo(
                 imageVector = Icons.Filled.AssignmentInd,
                 contentDescription = "Settings",
                 tint = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.size(appSize.iconSize / 1.2f)
+                modifier = Modifier.size(appSize.iconSizeDp / 1.2f)
             )
             Text(
                 text = userProfile.fullName,

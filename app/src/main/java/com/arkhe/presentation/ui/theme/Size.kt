@@ -25,6 +25,8 @@ data class AppSize(val isTablet: Boolean) {
         get() = if (isTablet) 16.sp else 12.sp
     val captionTextSize: TextUnit
         get() = if (isTablet) 14.sp else 12.sp
+    val iconSizeSp: TextUnit
+    get() = if (isTablet) 32.sp else 24.sp
 
     // Spacing and Padding
     val horizontalPadding: Dp
@@ -43,7 +45,7 @@ data class AppSize(val isTablet: Boolean) {
         get() = if (isTablet) 24.dp else 20.dp
 
     // Other common sizes (you can add more as needed)
-    val iconSize: Dp
+    val iconSizeDp: Dp
         get() = if (isTablet) 32.dp else 24.dp
     val cardElevation: Dp
         get() = if (isTablet) 4.dp else 2.dp

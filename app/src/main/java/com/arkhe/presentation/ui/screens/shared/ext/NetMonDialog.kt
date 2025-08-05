@@ -19,11 +19,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.arkhe.domain.model.NetMonState
 import com.arkhe.presentation.ui.theme.AppSize
+import com.arkhe.presentation.ui.theme.AppTheme
 
 @Composable
 fun NetMonDialog(
@@ -98,5 +100,16 @@ fun NetMonDialog(
                 }
             }
         }
+    }
+}
+
+@Preview(name = "NetMonDialog - Connected", showBackground = true)
+@Composable
+fun NetMonDialogPreviewConnected() {
+    AppTheme(darkTheme = true) {
+        NetMonDialog(
+            onDismissRequest = {},
+            netMonState = NetMonState.ConnectedWifi,
+        )
     }
 }

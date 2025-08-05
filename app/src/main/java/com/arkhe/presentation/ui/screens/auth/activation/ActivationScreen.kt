@@ -230,7 +230,7 @@ fun ActivationContent(
                         imageVector = Icons.Outlined.Refresh,
                         contentDescription = "Clear",
                         tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                        modifier = Modifier.size(appSize.iconSize)
+                        modifier = Modifier.size(appSize.iconSizeDp)
                     )
                 }
                 Button(

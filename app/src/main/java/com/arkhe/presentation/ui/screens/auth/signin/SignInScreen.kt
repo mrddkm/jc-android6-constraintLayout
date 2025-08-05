@@ -226,7 +226,7 @@ fun SignInContent(
                     Icon(
                         imageVector = if (passwordVisible) Icons.Outlined.Abc else Icons.Outlined.Password,
                         contentDescription = if (passwordVisible) "Hide password" else "Show password",
-                        modifier = Modifier.size(appSize.iconSize)
+                        modifier = Modifier.size(appSize.iconSizeDp)
                     )
                 }
             },
@@ -268,7 +268,7 @@ fun SignInContent(
                         imageVector = Icons.Outlined.Refresh,
                         contentDescription = "Clear",
                         tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                        modifier = Modifier.size(appSize.iconSize)
+                        modifier = Modifier.size(appSize.iconSizeDp)
                     )
                 }
 

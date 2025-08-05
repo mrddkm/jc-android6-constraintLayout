@@ -232,10 +232,6 @@ fun FooterSection(
                 .padding(appSize.horizontalPadding / 4)
         ) {
             val (appInfo, themeButton, settingsAndProfile) = createRefs()
-            val copyright =
-                " " + viewModelLanguage.getLocalizedString(ConsLang.COPYRIGHT) + " " +
-                        viewModelLanguage.getLocalizedString(ConsLang.COMPANY)
-
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.constrainAs(appInfo) {
@@ -247,7 +243,7 @@ fun FooterSection(
                 IconButton(
                     onClick = { viewModelAbout.showAboutDialog() },
                     modifier = Modifier
-                        .size(appSize.iconSize * 1.1f)
+                        .size(appSize.iconSizeDp * 1.1f)
                         .padding(appSize.horizontalPadding / 8)
                 ) {
                     Image(
@@ -257,12 +253,6 @@ fun FooterSection(
                         contentScale = ContentScale.Fit
                     )
                 }
-                Text(
-                    text = copyright,
-                    fontSize = appSize.captionTextSize * 0.8f,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.padding(start = 1.dp)
-                )
             }
 
             Row(
@@ -276,13 +266,13 @@ fun FooterSection(
                 IconButton(
                     onClick = { viewModelNetMon.showNetMonDialog() },
                     modifier = Modifier
-                        .size(appSize.iconSize / 1.2f)
+                        .size(appSize.iconSizeDp / 1.2f)
                 ) {
                     Icon(
                         imageVector = netMonState.icon,
                         contentDescription = null,
                         tint = netMonState.color,
-                        modifier = Modifier.size(appSize.iconSize / 1.2f)
+                        modifier = Modifier.size(appSize.iconSizeDp / 1.2f)
                     )
                 }
             }
@@ -306,13 +296,13 @@ fun FooterSection(
                 IconButton(
                     onClick = { viewModelSettingsProfile.showSettingsProfileBottomSheet() },
                     modifier = Modifier
-                        .size(appSize.iconSize / 1.2f)
+                        .size(appSize.iconSizeDp / 1.2f)
                 ) {
                     Icon(
                         imageVector = if (currentUserProfile == null) Icons.Filled.Settings else Icons.Filled.ManageAccounts,
                         contentDescription = "Settings",
                         tint = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.size(appSize.iconSize / 1.2f)
+                        modifier = Modifier.size(appSize.iconSizeDp / 1.2f)
                     )
                 }
             }
@@ -371,7 +361,7 @@ fun DefaultHeaderContent(
                 painter = painterResource(id = R.drawable.ae_ic),
                 contentDescription = "ae_ic",
                 modifier = Modifier
-                    .size(appSize.iconSize * 1.3f)
+                    .size(appSize.iconSizeDp * 1.3f)
                     .padding(appSize.horizontalPadding / 8),
                 colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
                 contentScale = ContentScale.Fit
@@ -397,7 +387,7 @@ fun DefaultHeaderContent(
             Icon(
                 imageVector = Icons.Outlined.Lock,
                 contentDescription = "Sign Out",
-                modifier = Modifier.size(appSize.iconSize)
+                modifier = Modifier.size(appSize.iconSizeDp)
             )
         }
     }
