@@ -239,6 +239,7 @@ fun FooterSection(
                     top.linkTo(parent.top)
                     bottom.linkTo(parent.bottom)
                 }
+                    .padding(start = appSize.horizontalPadding / 2)
             ) {
                 IconButton(
                     onClick = { viewModelAbout.showAboutDialog() },
@@ -284,6 +285,7 @@ fun FooterSection(
                     top.linkTo(parent.top)
                     bottom.linkTo(parent.bottom)
                 }
+                    .padding(end = appSize.horizontalPadding / 2)
             ) {
                 currentUserProfile?.username?.let {
                     Text(
