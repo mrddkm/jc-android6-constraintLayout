@@ -151,157 +151,170 @@ fun SignInContent(
     ConstraintLayout(
         modifier = Modifier.fillMaxSize()
     ) {
-        val (headerLogo, title, subtitle, userIdField, passwordField, signInButton) = createRefs()
+        val (contentGroup) = createRefs()
 
-        Image(
-            painter = painterResource(id = R.drawable.app_ic),
-            contentDescription = "App Logo",
-            contentScale = ContentScale.Fit,
+        ConstraintLayout(
             modifier = Modifier
-                .constrainAs(headerLogo) {
-                    top.linkTo(parent.top, margin = appSize.screenTopMargin)
+                .constrainAs(contentGroup) {
+                    top.linkTo(parent.top)
+                    bottom.linkTo(parent.bottom)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
+                    width = Dimension.fillToConstraints
                 }
-                .size(appSize.logoSize)
-        )
-
-        Text(
-            text = viewModelLanguage.getLocalizedString(ConsLang.SIGN_IN_TITLE),
-            fontSize = appSize.titleSize,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.constrainAs(title) {
-                top.linkTo(headerLogo.bottom, margin = appSize.screenTopMargin)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-            }
-        )
-
-        Text(
-            text = viewModelLanguage.getLocalizedString(ConsLang.SIGN_IN_SUBTITLE),
-            fontSize = appSize.subtitleSize,
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier
-                .padding(horizontal = appSize.horizontalPadding)
-                .constrainAs(subtitle) {
-                    top.linkTo(title.bottom, margin = 4.dp)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                }
-        )
-
-        OutlinedTextField(
-            value = userId,
-            onValueChange = { userId = it },
-            label = { Text(viewModelLanguage.getLocalizedString(ConsLang.USERID)) },
-            placeholder = { Text(viewModelLanguage.getLocalizedString(ConsLang.USERID_PLACEHOLDER)) },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-            enabled = !isLoading,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = appSize.horizontalPadding)
-                .focusRequester(userIdFocusRequester)
-                .constrainAs(userIdField) {
-                    top.linkTo(subtitle.bottom, margin = appSize.fieldSpacing)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                }
-        )
-
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text(viewModelLanguage.getLocalizedString(ConsLang.PASSWORD)) },
-            placeholder = { Text(viewModelLanguage.getLocalizedString(ConsLang.PASSWORD_PLACEHOLDER)) },
-            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            enabled = !isLoading,
-            trailingIcon = {
-                IconButton(
-                    onClick = { passwordVisible = !passwordVisible }
-                ) {
-                    Icon(
-                        imageVector = if (passwordVisible) Icons.Outlined.Abc else Icons.Outlined.Password,
-                        contentDescription = if (passwordVisible) "Hide password" else "Show password",
-                        modifier = Modifier.size(appSize.iconSizeDp)
-                    )
-                }
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = appSize.horizontalPadding)
-                .constrainAs(passwordField) {
-                    top.linkTo(userIdField.bottom, margin = 4.dp)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                }
-        )
-
-        Card(
-            elevation = CardDefaults.cardElevation(defaultElevation = appSize.cardElevation),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = appSize.horizontalPadding)
-                .constrainAs(signInButton) {
-                    top.linkTo(passwordField.bottom, margin = appSize.fieldSpacing)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                },
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                IconButton(
-                    onClick = {
-                        userId = ""
-                        password = ""
-                        userIdFocusRequester.requestFocus()
-                    },
-                    modifier = Modifier
-                        .weight(0.2f)
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Refresh,
-                        contentDescription = "Clear",
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                        modifier = Modifier.size(appSize.iconSizeDp)
-                    )
-                }
+            val (headerLogo, title, subtitle, userIdField, passwordField, signInButton) = createRefs()
 
-                Button(
-                    onClick = {
-                        if (userId.isNotBlank() && password.isNotBlank()) {
-                            isLoading = true
-                            shouldSignIn = true
-                        }
+            Image(
+                painter = painterResource(id = R.drawable.app_ic),
+                contentDescription = "App Logo",
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .constrainAs(headerLogo) {
+                        top.linkTo(parent.top)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    }
+                    .size(appSize.logoSize)
+            )
+
+            Text(
+                text = viewModelLanguage.getLocalizedString(ConsLang.SIGN_IN_TITLE),
+                fontSize = appSize.titleSize,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.constrainAs(title) {
+                    top.linkTo(headerLogo.bottom, margin = appSize.screenTopMargin)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }
+            )
+
+            Text(
+                text = viewModelLanguage.getLocalizedString(ConsLang.SIGN_IN_SUBTITLE),
+                fontSize = appSize.subtitleSize,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier
+                    .padding(horizontal = appSize.horizontalPadding)
+                    .constrainAs(subtitle) {
+                        top.linkTo(title.bottom, margin = 4.dp)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    }
+            )
+
+            OutlinedTextField(
+                value = userId,
+                onValueChange = { userId = it },
+                label = { Text(viewModelLanguage.getLocalizedString(ConsLang.USERID)) },
+                placeholder = { Text(viewModelLanguage.getLocalizedString(ConsLang.USERID_PLACEHOLDER)) },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                enabled = !isLoading,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = appSize.horizontalPadding)
+                    .focusRequester(userIdFocusRequester)
+                    .constrainAs(userIdField) {
+                        top.linkTo(subtitle.bottom, margin = appSize.fieldSpacing)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    }
+            )
+
+            OutlinedTextField(
+                value = password,
+                onValueChange = { password = it },
+                label = { Text(viewModelLanguage.getLocalizedString(ConsLang.PASSWORD)) },
+                placeholder = { Text(viewModelLanguage.getLocalizedString(ConsLang.PASSWORD_PLACEHOLDER)) },
+                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                enabled = !isLoading,
+                trailingIcon = {
+                    IconButton(
+                        onClick = { passwordVisible = !passwordVisible }
+                    ) {
+                        Icon(
+                            imageVector = if (passwordVisible) Icons.Outlined.Abc else Icons.Outlined.Password,
+                            contentDescription = if (passwordVisible) "Hide password" else "Show password",
+                            modifier = Modifier.size(appSize.iconSizeDp)
+                        )
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = appSize.horizontalPadding)
+                    .constrainAs(passwordField) {
+                        top.linkTo(userIdField.bottom, margin = 4.dp)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    }
+            )
+
+            Card(
+                elevation = CardDefaults.cardElevation(defaultElevation = appSize.cardElevation),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = appSize.horizontalPadding)
+                    .constrainAs(signInButton) {
+                        top.linkTo(passwordField.bottom, margin = appSize.fieldSpacing)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
                     },
-                    enabled = userId.isNotBlank() && password.isNotBlank() && !isLoading,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(0.8f)
-                        .height(appSize.buttonHeight),
-                    shape = RoundedCornerShape(
-                        topStart = 0.dp,
-                        topEnd = appSize.roundedCornerShapeSize,
-                        bottomStart = 0.dp,
-                        bottomEnd = appSize.roundedCornerShapeSize
-                    ),
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    if (isLoading) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(appSize.circularProgressIndicatorSize),
-                            color = MaterialTheme.colorScheme.onPrimary
+                    IconButton(
+                        onClick = {
+                            userId = ""
+                            password = ""
+                            userIdFocusRequester.requestFocus()
+                        },
+                        modifier = Modifier
+                            .weight(0.2f)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Refresh,
+                            contentDescription = "Clear",
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                            modifier = Modifier.size(appSize.iconSizeDp)
                         )
-                    } else {
-                        Text(
-                            text = viewModelLanguage.getLocalizedString(ConsLang.SUBMIT_BUTTON),
-                            fontSize = appSize.buttonTextSize,
-                            fontWeight = FontWeight.Medium
-                        )
+                    }
+
+                    Button(
+                        onClick = {
+                            if (userId.isNotBlank() && password.isNotBlank()) {
+                                isLoading = true
+                                shouldSignIn = true
+                            }
+                        },
+                        enabled = userId.isNotBlank() && password.isNotBlank() && !isLoading,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(0.8f)
+                            .height(appSize.buttonHeight),
+                        shape = RoundedCornerShape(
+                            topStart = 0.dp,
+                            topEnd = appSize.roundedCornerShapeSize,
+                            bottomStart = 0.dp,
+                            bottomEnd = appSize.roundedCornerShapeSize
+                        ),
+                    ) {
+                        if (isLoading) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(appSize.circularProgressIndicatorSize),
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+                        } else {
+                            Text(
+                                text = viewModelLanguage.getLocalizedString(ConsLang.SUBMIT_BUTTON),
+                                fontSize = appSize.buttonTextSize,
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
                     }
                 }
             }

@@ -143,125 +143,138 @@ fun ActivationContent(
     ConstraintLayout(
         modifier = Modifier.fillMaxSize()
     ) {
-        val (headerLogo, title, subtitle, userIdField, activateButton) = createRefs()
+        val (contentGroup) = createRefs()
 
-        Image(
-            painter = painterResource(id = R.drawable.app_ic),
-            contentDescription = "App Logo",
-            contentScale = ContentScale.Fit,
+        ConstraintLayout(
             modifier = Modifier
-                .constrainAs(headerLogo) {
-                    top.linkTo(parent.top, margin = appSize.screenTopMargin)
+                .constrainAs(contentGroup) {
+                    top.linkTo(parent.top)
+                    bottom.linkTo(parent.bottom)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
+                    width = Dimension.fillToConstraints
                 }
-                .size(appSize.logoSize)
-        )
-
-        Text(
-            text = viewModelLanguage.getLocalizedString(ConsLang.ACTIVATION_TITLE),
-            fontSize = appSize.titleSize,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.constrainAs(title) {
-                top.linkTo(headerLogo.bottom, margin = appSize.fieldSpacing)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-            }
-        )
-
-        Text(
-            text = viewModelLanguage.getLocalizedString(ConsLang.ACTIVATION_SUBTITLE),
-            fontSize = appSize.subtitleSize,
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier
-                .padding(horizontal = appSize.horizontalPadding)
-                .constrainAs(subtitle) {
-                    top.linkTo(title.bottom, margin = 4.dp)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                }
-        )
-
-        OutlinedTextField(
-            value = userId,
-            onValueChange = { userId = it },
-            label = { Text(stringResource(R.string.user_id)) },
-            placeholder = { Text(viewModelLanguage.getLocalizedString(ConsLang.USERID_PLACEHOLDER)) },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-            enabled = !isLoading,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = appSize.horizontalPadding)
-                .focusRequester(userIdFocusRequester)
-                .constrainAs(userIdField) {
-                    top.linkTo(subtitle.bottom, margin = appSize.fieldSpacing)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                }
-        )
-
-        Card(
-            elevation = CardDefaults.cardElevation(defaultElevation = appSize.cardElevation),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = appSize.horizontalPadding)
-                .constrainAs(activateButton) {
-                    top.linkTo(userIdField.bottom, margin = appSize.fieldSpacing)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                },
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                IconButton(
-                    onClick = {
-                        userId = ""
-                        userIdFocusRequester.requestFocus()
-                    },
-                    modifier = Modifier
-                        .weight(0.2f)
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Refresh,
-                        contentDescription = "Clear",
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                        modifier = Modifier.size(appSize.iconSizeDp)
-                    )
+            val (headerLogo, title, subtitle, userIdField, activateButton) = createRefs()
+
+            Image(
+                painter = painterResource(id = R.drawable.app_ic),
+                contentDescription = "App Logo",
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .constrainAs(headerLogo) {
+                        top.linkTo(parent.top)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    }
+                    .size(appSize.logoSize)
+            )
+
+            Text(
+                text = viewModelLanguage.getLocalizedString(ConsLang.ACTIVATION_TITLE),
+                fontSize = appSize.titleSize,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.constrainAs(title) {
+                    top.linkTo(headerLogo.bottom, margin = appSize.fieldSpacing)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
                 }
-                Button(
-                    onClick = {
-                        if (userId.isNotBlank()) {
-                            isLoading = true
-                            shouldActivate = true
-                        }
+            )
+
+            Text(
+                text = viewModelLanguage.getLocalizedString(ConsLang.ACTIVATION_SUBTITLE),
+                fontSize = appSize.subtitleSize,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier
+                    .padding(horizontal = appSize.horizontalPadding)
+                    .constrainAs(subtitle) {
+                        top.linkTo(title.bottom, margin = 4.dp)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    }
+            )
+
+            OutlinedTextField(
+                value = userId,
+                onValueChange = { userId = it },
+                label = { Text(stringResource(R.string.user_id)) },
+                placeholder = { Text(viewModelLanguage.getLocalizedString(ConsLang.USERID_PLACEHOLDER)) },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                enabled = !isLoading,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = appSize.horizontalPadding)
+                    .focusRequester(userIdFocusRequester)
+                    .constrainAs(userIdField) {
+                        top.linkTo(subtitle.bottom, margin = appSize.fieldSpacing)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    }
+            )
+
+            Card(
+                elevation = CardDefaults.cardElevation(defaultElevation = appSize.cardElevation),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = appSize.horizontalPadding)
+                    .constrainAs(activateButton) {
+                        top.linkTo(userIdField.bottom, margin = appSize.fieldSpacing)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
                     },
-                    enabled = userId.isNotBlank() && !isLoading,
-                    modifier = Modifier
-                        .weight(0.8f)
-                        .height(appSize.buttonHeight),
-                    shape = RoundedCornerShape(
-                        topStart = 0.dp,
-                        topEnd = appSize.roundedCornerShapeSize,
-                        bottomStart = 0.dp,
-                        bottomEnd = appSize.roundedCornerShapeSize
-                    ),
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    if (isLoading) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(appSize.circularProgressIndicatorSize),
-                            color = MaterialTheme.colorScheme.onPrimary
+                    IconButton(
+                        onClick = {
+                            userId = ""
+                            userIdFocusRequester.requestFocus()
+                        },
+                        modifier = Modifier
+                            .weight(0.2f)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Refresh,
+                            contentDescription = "Clear",
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                            modifier = Modifier.size(appSize.iconSizeDp)
                         )
-                    } else {
-                        Text(
-                            text = viewModelLanguage.getLocalizedString(ConsLang.SUBMIT_BUTTON),
-                            fontSize = appSize.buttonTextSize,
-                            fontWeight = FontWeight.Medium
-                        )
+                    }
+                    Button(
+                        onClick = {
+                            if (userId.isNotBlank()) {
+                                isLoading = true
+                                shouldActivate = true
+                            }
+                        },
+                        enabled = userId.isNotBlank() && !isLoading,
+                        modifier = Modifier
+                            .weight(0.8f)
+                            .height(appSize.buttonHeight),
+                        shape = RoundedCornerShape(
+                            topStart = 0.dp,
+                            topEnd = appSize.roundedCornerShapeSize,
+                            bottomStart = 0.dp,
+                            bottomEnd = appSize.roundedCornerShapeSize
+                        ),
+                    ) {
+                        if (isLoading) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(appSize.circularProgressIndicatorSize),
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+                        } else {
+                            Text(
+                                text = viewModelLanguage.getLocalizedString(ConsLang.SUBMIT_BUTTON),
+                                fontSize = appSize.buttonTextSize,
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
                     }
                 }
             }
