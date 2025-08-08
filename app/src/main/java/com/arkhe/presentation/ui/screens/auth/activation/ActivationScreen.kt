@@ -6,14 +6,19 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material3.Button
@@ -32,6 +37,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -140,63 +146,43 @@ fun ActivationContent(
         }
     }
 
-    ConstraintLayout(
-        modifier = Modifier.fillMaxSize()
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .imePadding()
+            .verticalScroll(rememberScrollState())
     ) {
-        val (contentGroup) = createRefs()
+        Spacer(modifier = Modifier.weight(1f))
 
-        ConstraintLayout(
+        Column(
             modifier = Modifier
-                .constrainAs(contentGroup) {
-                    top.linkTo(parent.top)
-                    bottom.linkTo(parent.bottom)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    width = Dimension.fillToConstraints
-                }
+                .fillMaxWidth()
+                .padding(horizontal = appSize.horizontalPadding),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val (headerLogo, title, subtitle, userIdField, activateButton) = createRefs()
-
             Image(
                 painter = painterResource(id = R.drawable.app_ic),
-                contentDescription = "App Logo",
+                contentDescription = null,
                 contentScale = ContentScale.Fit,
-                modifier = Modifier
-                    .constrainAs(headerLogo) {
-                        top.linkTo(parent.top)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                    }
-                    .size(appSize.logoSize)
+                modifier = Modifier.size(appSize.logoSize)
             )
-
+            Spacer(modifier = Modifier.height(appSize.fieldSpacing / 3))
             Text(
                 text = viewModelLanguage.getLocalizedString(ConsLang.ACTIVATION_TITLE),
                 fontSize = appSize.titleSize,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.constrainAs(title) {
-                    top.linkTo(headerLogo.bottom, margin = appSize.fieldSpacing)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                }
+                color = MaterialTheme.colorScheme.primary
             )
-
+            Spacer(modifier = Modifier.height(4.dp / 2))
             Text(
                 text = viewModelLanguage.getLocalizedString(ConsLang.ACTIVATION_SUBTITLE),
                 fontSize = appSize.subtitleSize,
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier
-                    .padding(horizontal = appSize.horizontalPadding)
-                    .constrainAs(subtitle) {
-                        top.linkTo(title.bottom, margin = 4.dp)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                    }
+                modifier = Modifier.padding(horizontal = appSize.horizontalPadding)
             )
-
+            Spacer(modifier = Modifier.height(appSize.fieldSpacing / 4))
             OutlinedTextField(
                 value = userId,
                 onValueChange = { userId = it },
@@ -206,25 +192,12 @@ fun ActivationContent(
                 enabled = !isLoading,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = appSize.horizontalPadding)
                     .focusRequester(userIdFocusRequester)
-                    .constrainAs(userIdField) {
-                        top.linkTo(subtitle.bottom, margin = appSize.fieldSpacing)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                    }
             )
-
+            Spacer(modifier = Modifier.height(appSize.fieldSpacing / 2))
             Card(
                 elevation = CardDefaults.cardElevation(defaultElevation = appSize.cardElevation),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = appSize.horizontalPadding)
-                    .constrainAs(activateButton) {
-                        top.linkTo(userIdField.bottom, margin = appSize.fieldSpacing)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                    },
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -240,7 +213,7 @@ fun ActivationContent(
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.Refresh,
-                            contentDescription = "Clear",
+                            contentDescription = null,
                             tint = MaterialTheme.colorScheme.onPrimaryContainer,
                             modifier = Modifier.size(appSize.iconSizeDp)
                         )
@@ -279,6 +252,7 @@ fun ActivationContent(
                 }
             }
         }
+        Spacer(modifier = Modifier.weight(1f))
     }
 }
 
