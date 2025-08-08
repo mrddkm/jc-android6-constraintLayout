@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -48,6 +49,8 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -197,7 +200,12 @@ fun SignInContent(
                 onValueChange = { userId = it },
                 label = { Text(viewModelLanguage.getLocalizedString(ConsLang.USERID)) },
                 placeholder = { Text(viewModelLanguage.getLocalizedString(ConsLang.USERID_PLACEHOLDER)) },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                keyboardOptions = KeyboardOptions(
+                    capitalization = KeyboardCapitalization.None,
+                    autoCorrectEnabled = false,
+                    keyboardType = KeyboardType.Text
+                ),
+                singleLine = true,
                 enabled = !isLoading,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -210,7 +218,21 @@ fun SignInContent(
                 label = { Text(viewModelLanguage.getLocalizedString(ConsLang.PASSWORD)) },
                 placeholder = { Text(viewModelLanguage.getLocalizedString(ConsLang.PASSWORD_PLACEHOLDER)) },
                 visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                keyboardOptions = KeyboardOptions(
+                    capitalization = KeyboardCapitalization.None,
+                    autoCorrectEnabled = false,
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        if (userId.isNotBlank() && password.isNotBlank()) {
+                            isLoading = true
+                            shouldSignIn = true
+                        }
+                    }
+                ),
+                singleLine = true,
                 enabled = !isLoading,
                 trailingIcon = {
                     IconButton(
