@@ -88,58 +88,56 @@ base {
 }
 
 dependencies {
-    // Compose BOM
+    // Compose BOM - Platform for version alignment
     implementation(platform(libs.androidx.compose.bom))
 
-    // Core Android
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.activity.compose)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.material.icons.extended)
-    implementation(libs.androidx.window)
-    implementation(libs.google.material)
+    // AndroidX Core Libraries
+    implementation(libs.bundles.androidx.core)
 
-    // Lifecycle
+    // Material Design & Icons
+    implementation(libs.bundles.material.design)
+
+    // Lifecycle & Architecture Components
     implementation(libs.bundles.lifecycle)
 
-    // Compose
+    // Compose UI Components
     implementation(libs.bundles.compose.core)
-    implementation(libs.androidx.constraintlayout.compose)
 
     // Navigation
-    implementation(libs.androidx.navigation.compose)
+    implementation(libs.bundles.navigation)
 
-    // Coroutines
+    // Async Programming - Coroutines
     implementation(libs.bundles.coroutines)
 
     // Serialization
-    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.bundles.serialization)
 
-    // Ktor Client
+    // Networking - Ktor Client
     implementation(libs.bundles.ktor.client)
 
-    // Koin DI
+    // Dependency Injection - Koin
     implementation(platform(libs.koin.bom))
     implementation(libs.bundles.koin)
 
-    // Room Database
+    // Database - Room
     implementation(libs.bundles.room)
     ksp(libs.room.compiler)
 
-    // DataStore
+    // Data Storage - DataStore
     implementation(libs.bundles.datastore)
 
-    // Barcode/QR Code generation only
+    // Barcode & QR Code Generation
     implementation(libs.bundles.zxing)
 
-    // Testing
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    // Unit Testing
+    testImplementation(libs.bundles.testing.unit)
+
+    // Android Instrumented Testing
+    androidTestImplementation(libs.bundles.testing.android)
     androidTestImplementation(libs.bundles.compose.testing)
     androidTestImplementation(platform(libs.androidx.compose.bom))
 
-    // Debug
+    // Debug Tools
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 }
