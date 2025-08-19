@@ -25,6 +25,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -34,16 +35,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.arkhe.base.R
 import com.arkhe.core.utils.LanguageManager
+import com.arkhe.domain.model.NetMonState
 import com.arkhe.domain.model.ThemeMode
 import com.arkhe.model.language.Language
 import com.arkhe.model.language.Languages
 import com.arkhe.presentation.state.ThemeUiState
 import com.arkhe.presentation.ui.components.ThreeButtonsRow
 import com.arkhe.presentation.ui.theme.AppSize
+import com.arkhe.presentation.ui.theme.AppTheme
 import com.arkhe.presentation.viewmodel.LanguageViewModel
+import com.arkhe.presentation.viewmodel.NetMonViewModel
 import org.koin.androidx.compose.koinViewModel
 
 data class UserProfile(
@@ -57,13 +63,15 @@ fun SettingsProfileBottomSheet(
     onDismissRequest: () -> Unit,
     isTablet: Boolean,
     currentUserProfile: UserProfile? = null,
-    viewModel: LanguageViewModel = koinViewModel(),
+    viewModelLanguage: LanguageViewModel = koinViewModel(),
+    viewModelNetMon: NetMonViewModel = koinViewModel(),
     uiStateTheme: ThemeUiState,
     onThemeSelected: (ThemeMode) -> Unit,
 ) {
     val appSize = AppSize(isTablet = isTablet)
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    val languageState by viewModel.languageState.collectAsState()
+    val languageState by viewModelLanguage.languageState.collectAsState()
+    val netMonState by viewModelNetMon.netMonState.collectAsStateWithLifecycle()
 
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
@@ -91,8 +99,9 @@ fun SettingsProfileBottomSheet(
             isTablet = isTablet,
             userProfile = currentUserProfile,
             selectedLanguage = languageState.currentLanguage,
-            onLanguageSelected = viewModel::selectLanguage,
+            onLanguageSelected = viewModelLanguage::selectLanguage,
             uiStateTheme = uiStateTheme,
+            netMonState = netMonState,
             onThemeSelected = onThemeSelected
         )
     }
@@ -105,6 +114,7 @@ private fun SettingsSheetContent(
     selectedLanguage: Language,
     onLanguageSelected: (Language) -> Unit,
     uiStateTheme: ThemeUiState,
+    netMonState: NetMonState,
     onThemeSelected: (ThemeMode) -> Unit,
 ) {
     val appSize = AppSize(isTablet = isTablet)
@@ -131,7 +141,7 @@ private fun SettingsSheetContent(
 
         Text(
             text = title,
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
@@ -172,7 +182,7 @@ private fun SettingsSheetContent(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(appSize.verticalPadding)
+                .padding(appSize.verticalPadding / 4)
         ) {
             LazyColumn {
                 items(Languages.availableLanguages) { language ->
@@ -196,10 +206,40 @@ private fun SettingsSheetContent(
             isTablet = isTablet
         )
 
-        ThreeButtonsRow(
-            currentTheme = uiStateTheme.currentTheme,
-            onThemeSelected = onThemeSelected
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(appSize.verticalPadding / 4),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            ThreeButtonsRow(
+                currentTheme = uiStateTheme.currentTheme,
+                onThemeSelected = onThemeSelected
+            )
+        }
+
+        Spacer(modifier = Modifier.height(appSize.verticalPadding))
+
+        SectionTitle(
+            title = LanguageManager.getLocalizedString(
+                context,
+                R.string.connection,
+                selectedLanguage.code
+            ),
+            isTablet = isTablet
         )
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(appSize.verticalPadding / 4),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            NetMonInformation(
+                netMonState = netMonState,
+                isTablet = isTablet
+            )
+        }
 
         Spacer(modifier = Modifier.height(appSize.verticalPadding))
     }
@@ -279,7 +319,7 @@ private fun LanguageItem(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onLanguageSelected(language) }
-            .padding(vertical = 12.dp, horizontal = 8.dp),
+            .padding(vertical = 8.dp, horizontal = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(
@@ -302,6 +342,26 @@ private fun LanguageItem(
                 imageVector = Icons.Default.Check,
                 contentDescription = "Selected",
                 tint = MaterialTheme.colorScheme.primary
+            )
+        }
+    }
+}
+
+@Preview(name = "Settings Bottom Sheet - Phone", widthDp = 360, heightDp = 640)
+@Composable
+private fun SettingsProfileBottomSheetPreview() {
+    AppTheme {
+        Surface {
+            SettingsSheetContent(
+                isTablet = false,
+                userProfile = null,
+                selectedLanguage = Languages.ENGLISH,
+                onLanguageSelected = { },
+                uiStateTheme = ThemeUiState(
+                    currentTheme = ThemeMode.LIGHT
+                ),
+                netMonState = NetMonState.ConnectedMobileData,
+                onThemeSelected = { }
             )
         }
     }

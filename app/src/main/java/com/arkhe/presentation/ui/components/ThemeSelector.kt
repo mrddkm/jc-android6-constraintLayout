@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -28,42 +29,38 @@ import com.arkhe.domain.model.ThemeMode
 @Composable
 fun ThreeButtonsRow(
     currentTheme: ThemeMode,
-    onThemeSelected: (ThemeMode) -> Unit,
-    modifier: Modifier = Modifier
+    onThemeSelected: (ThemeMode) -> Unit
 ) {
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp, horizontal = 8.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            ThemeIconButton(
-                themeMode = ThemeMode.LIGHT,
-                isSelected = currentTheme == ThemeMode.LIGHT,
-                onClick = {
-                    onThemeSelected(ThemeMode.LIGHT)
-                }
-            )
+        ThemeIconButton(
+            themeMode = ThemeMode.LIGHT,
+            isSelected = currentTheme == ThemeMode.LIGHT,
+            onClick = {
+                onThemeSelected(ThemeMode.LIGHT)
+            }
+        )
 
-            ThemeIconButton(
-                themeMode = ThemeMode.AUTOMATIC,
-                isSelected = currentTheme == ThemeMode.AUTOMATIC,
-                onClick = {
-                    onThemeSelected(ThemeMode.AUTOMATIC)
-                }
-            )
+        ThemeIconButton(
+            themeMode = ThemeMode.AUTOMATIC,
+            isSelected = currentTheme == ThemeMode.AUTOMATIC,
+            onClick = {
+                onThemeSelected(ThemeMode.AUTOMATIC)
+            }
+        )
 
-            ThemeIconButton(
-                themeMode = ThemeMode.DARK,
-                isSelected = currentTheme == ThemeMode.DARK,
-                onClick = {
-                    onThemeSelected(ThemeMode.DARK)
-                }
-            )
-        }
+        ThemeIconButton(
+            themeMode = ThemeMode.DARK,
+            isSelected = currentTheme == ThemeMode.DARK,
+            onClick = {
+                onThemeSelected(ThemeMode.DARK)
+            }
+        )
     }
 }
 

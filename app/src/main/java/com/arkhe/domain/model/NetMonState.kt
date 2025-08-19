@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.SignalWifiOff
 import androidx.compose.material.icons.filled.Wifi
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 
 sealed class NetMonState(
     val message: String,
@@ -14,13 +15,13 @@ sealed class NetMonState(
     val color: Color
 ) {
     object ConnectedMobileData : NetMonState(
-        message = "Terhubung ke Internet via Data Seluler",
+        message = "Internet Data Seluler",
         icon = Icons.Default.SignalCellularAlt,
         color = Color(0xFF4CAF50) // Green
     )
 
     object ConnectedWifi : NetMonState(
-        message = "Terhubung ke Internet via WiFi",
+        message = "Internet WiFi",
         icon = Icons.Default.Wifi,
         color = Color(0xFF2196F3) // Blue
     )

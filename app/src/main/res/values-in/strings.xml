@@ -20,6 +20,13 @@
     <string name="select_language">Pilih Bahasa</string>
     <string name="current_language">Bahasa Saat Ini</string>
     <string name="select_theme">Pilih Tema</string>
+    <string name="connection">Status Koneksi</string>
+
+    <!--ConnectionStatus-->
+    <string name="connected_mobile_data">Internet Data Seluler</string>
+    <string name="connected_wifi">Internet Wifi</string>
+    <string name="not_connected_to_internet">Tidak Terhubung ke Internet</string>
+    <string name="not_connected_to_server">Tidak Terhubung ke Server Arkhe</string>
 
     <!--Common-->
     <string name="submit_button">Kirim</string>

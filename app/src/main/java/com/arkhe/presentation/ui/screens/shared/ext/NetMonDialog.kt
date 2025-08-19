@@ -1,6 +1,8 @@
 package com.arkhe.presentation.ui.screens.shared.ext
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,17 +26,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.arkhe.domain.model.NetMonState
-import com.arkhe.presentation.ui.theme.AppSize
 import com.arkhe.presentation.ui.theme.AppTheme
 
 @Composable
 fun NetMonDialog(
     onDismissRequest: () -> Unit,
     netMonState: NetMonState,
-    isTablet: Boolean = false
 ) {
-    val appSize = AppSize(isTablet = isTablet)
-
     Dialog(onDismissRequest = onDismissRequest) {
         Card(
             modifier = Modifier
@@ -103,13 +101,41 @@ fun NetMonDialog(
     }
 }
 
+@Composable
+fun NetMonInformation(
+    netMonState: NetMonState,
+    isTablet: Boolean = false
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp, horizontal = 8.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            imageVector = netMonState.icon,
+            contentDescription = null,
+            tint = netMonState.color,
+            modifier = Modifier.size(24.dp)
+        )
+
+        Text(
+            text = netMonState.message,
+            fontSize = if (isTablet) 16.sp else 14.sp,
+            color = netMonState.color,
+            fontWeight = FontWeight.Medium
+        )
+    }
+}
+
 @Preview(name = "NetMonDialog - Connected", showBackground = true)
 @Composable
 fun NetMonDialogPreviewConnected() {
     AppTheme(darkTheme = true) {
         NetMonDialog(
             onDismissRequest = {},
-            netMonState = NetMonState.ConnectedWifi,
+            netMonState = NetMonState.ConnectedMobileData,
         )
     }
 }
