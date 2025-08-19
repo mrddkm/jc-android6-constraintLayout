@@ -1,5 +1,6 @@
 package com.arkhe.presentation.ui.screens.shared.ext
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,6 +24,7 @@ import androidx.compose.material.icons.filled.Key
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
@@ -33,7 +35,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -48,6 +53,7 @@ import com.arkhe.presentation.state.ThemeUiState
 import com.arkhe.presentation.ui.components.ThreeButtonsRow
 import com.arkhe.presentation.ui.theme.AppSize
 import com.arkhe.presentation.ui.theme.AppTheme
+import com.arkhe.presentation.viewmodel.AboutDialogViewModel
 import com.arkhe.presentation.viewmodel.LanguageViewModel
 import com.arkhe.presentation.viewmodel.NetMonViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -116,9 +122,16 @@ private fun SettingsSheetContent(
     uiStateTheme: ThemeUiState,
     netMonState: NetMonState,
     onThemeSelected: (ThemeMode) -> Unit,
+    viewModelLanguage: LanguageViewModel = koinViewModel(),
+    viewModelAbout: AboutDialogViewModel = koinViewModel(),
+    viewModelNetMon: NetMonViewModel = koinViewModel(),
 ) {
     val appSize = AppSize(isTablet = isTablet)
     val context = LocalContext.current
+
+    val languageState by viewModelLanguage.languageState.collectAsState()
+    val showAboutDialog by viewModelAbout.showDialog.collectAsStateWithLifecycle()
+    val showNetMonDialog by viewModelNetMon.showDialog.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
@@ -218,31 +231,59 @@ private fun SettingsSheetContent(
             )
         }
 
-        Spacer(modifier = Modifier.height(appSize.verticalPadding))
+        Spacer(modifier = Modifier.height(appSize.verticalPadding * 5))
 
-        SectionTitle(
-            title = LanguageManager.getLocalizedString(
-                context,
-                R.string.connection,
-                selectedLanguage.code
-            ),
+        if (userProfile != null) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = appSize.verticalPadding / 2),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                IconButton(
+                    onClick = { viewModelAbout.showAboutDialog() },
+                    modifier = Modifier
+                        .size(appSize.iconSizeDp * 1.2f)
+                        .padding(appSize.horizontalPadding / 8)
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.ae_ic),
+                        contentDescription = null,
+                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
+                        contentScale = ContentScale.Fit
+                    )
+                }
+
+                IconButton(
+                    onClick = { viewModelNetMon.showNetMonDialog() },
+                    modifier = Modifier
+                        .size(appSize.iconSizeDp / 1f)
+                        .padding(appSize.horizontalPadding / 8)
+                ) {
+                    Icon(
+                        imageVector = netMonState.icon,
+                        contentDescription = null,
+                        tint = netMonState.color,
+                    )
+                }
+            }
+        }
+    }
+
+    if (showAboutDialog) {
+        AboutDialog(
+            onDismissRequest = { viewModelAbout.hideAboutDialog() },
             isTablet = isTablet
         )
+    }
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(appSize.verticalPadding / 4),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            NetMonInformation(
-                netMonState = netMonState,
-                isTablet = isTablet,
-                selectedLanguage = selectedLanguage
-            )
-        }
-
-        Spacer(modifier = Modifier.height(appSize.verticalPadding))
+    if (showNetMonDialog) {
+        NetMonGuideDialog(
+            onDismissRequest = { viewModelNetMon.hideNetMonDialog() },
+            currentNetMonState = netMonState,
+            selectedLanguage = languageState.currentLanguage,
+        )
     }
 }
 
@@ -348,7 +389,7 @@ private fun LanguageItem(
     }
 }
 
-@Preview(name = "Settings Bottom Sheet - Phone", widthDp = 360, heightDp = 640)
+/*@Preview(name = "Settings Bottom Sheet - Not SignIn", widthDp = 360, heightDp = 640)
 @Composable
 private fun SettingsProfileBottomSheetPreview() {
     AppTheme {
@@ -356,6 +397,29 @@ private fun SettingsProfileBottomSheetPreview() {
             SettingsSheetContent(
                 isTablet = false,
                 userProfile = null,
+                selectedLanguage = Languages.ENGLISH,
+                onLanguageSelected = { },
+                uiStateTheme = ThemeUiState(
+                    currentTheme = ThemeMode.LIGHT
+                ),
+                netMonState = NetMonState.ConnectedWifi,
+                onThemeSelected = { }
+            )
+        }
+    }
+}*/
+
+@Preview(name = "Settings Bottom Sheet - SignIn", widthDp = 360, heightDp = 640)
+@Composable
+private fun SettingsProfileSignInBottomSheetPreview() {
+    AppTheme {
+        Surface {
+            SettingsSheetContent(
+                isTablet = false,
+                userProfile = UserProfile(
+                    username = "john_doe",
+                    fullName = "John Doe"
+                ),
                 selectedLanguage = Languages.ENGLISH,
                 onLanguageSelected = { },
                 uiStateTheme = ThemeUiState(

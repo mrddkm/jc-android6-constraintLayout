@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -24,8 +23,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.arkhe.domain.model.NetMonState
 import com.arkhe.model.language.Language
 import com.arkhe.presentation.ui.components.SourceCodePro
@@ -33,7 +32,7 @@ import com.arkhe.presentation.ui.theme.AppSize
 import com.arkhe.presentation.ui.theme.AppTheme
 
 @Composable
-fun NetMonGuide(
+fun NetMonGuideDialog(
     onDismissRequest: () -> Unit,
     currentNetMonState: NetMonState,
     isTablet: Boolean = false,
@@ -42,19 +41,26 @@ fun NetMonGuide(
     val appSize = AppSize(isTablet = isTablet)
     val context = LocalContext.current
 
-    Dialog(onDismissRequest = onDismissRequest) {
+    Dialog(
+        onDismissRequest = onDismissRequest,
+        properties = DialogProperties(
+            dismissOnBackPress = true,
+            dismissOnClickOutside = true,
+            usePlatformDefaultWidth = false
+        )
+    ) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
-                    vertical = appSize.verticalPadding,
-                    horizontal = appSize.horizontalPadding
+                    horizontal = appSize.horizontalPadding,
+                    vertical = appSize.verticalPadding
                 ),
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape(appSize.roundedCornerShapeSize),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface
             ),
-            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+            elevation = CardDefaults.cardElevation(defaultElevation = appSize.cardElevation)
         ) {
             Column(
                 modifier = Modifier
@@ -216,43 +222,11 @@ fun NetMonStatusList(
     }
 }
 
-@Composable
-fun NetMonInformation(
-    netMonState: NetMonState,
-    isTablet: Boolean = false,
-    selectedLanguage: Language,
-) {
-    val appSize = AppSize(isTablet = isTablet)
-    val context = LocalContext.current
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp, horizontal = 8.dp),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Icon(
-            imageVector = netMonState.icon,
-            contentDescription = null,
-            tint = netMonState.color,
-            modifier = Modifier.size(24.dp)
-        )
-        Spacer(modifier = Modifier.width(appSize.fieldSpacing / 2))
-        Text(
-            text = netMonState.getMessage(context, selectedLanguage.code),
-            fontSize = if (isTablet) 16.sp else 14.sp,
-            color = netMonState.color,
-            fontWeight = FontWeight.Medium
-        )
-    }
-}
-
 @Preview(name = "NetMonDialog - Connected", showBackground = true)
 @Composable
 fun NetMonDialogPreviewConnected() {
     AppTheme(darkTheme = false) {
-        NetMonGuide(
+        NetMonGuideDialog(
             onDismissRequest = {},
             currentNetMonState = NetMonState.ConnectedMobileData,
             selectedLanguage = Language("en", "English", "English")

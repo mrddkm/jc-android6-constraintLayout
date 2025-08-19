@@ -270,7 +270,7 @@ fun TextWithInlineIcon(isTablet: Boolean = false) {
 }
 
 @Composable
-private fun VersionInfoCard(
+fun VersionInfoCard(
     isTablet: Boolean = false,
     viewModelLanguage: LanguageViewModel = koinViewModel(),
 ) {
