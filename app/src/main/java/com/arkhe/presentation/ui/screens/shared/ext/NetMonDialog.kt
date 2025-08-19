@@ -152,3 +152,13 @@ fun NetMonDialogPreviewConnected() {
         )
     }
 }
+
+@Preview(name = "NetMonDialog - Connected", showBackground = true)
+@Composable
+fun NetMonInformationPreviewConnected() {
+    AppTheme(darkTheme = true) {
+        NetMonInformation(
+            netMonState = NetMonState.ConnectedMobileData,
+        )
+    }
+}
