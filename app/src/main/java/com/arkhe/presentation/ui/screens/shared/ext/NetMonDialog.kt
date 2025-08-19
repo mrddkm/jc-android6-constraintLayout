@@ -17,8 +17,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,12 +30,18 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.arkhe.domain.model.NetMonState
 import com.arkhe.presentation.ui.theme.AppTheme
+import com.arkhe.presentation.viewmodel.LanguageViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun NetMonDialog(
     onDismissRequest: () -> Unit,
     netMonState: NetMonState,
+    languageViewModel: LanguageViewModel = koinViewModel()
 ) {
+    val context = LocalContext.current
+    val languageState by languageViewModel.languageState.collectAsState()
+
     Dialog(onDismissRequest = onDismissRequest) {
         Card(
             modifier = Modifier
@@ -72,7 +81,7 @@ fun NetMonDialog(
 
                 // Connection message
                 Text(
-                    text = netMonState.message,
+                    text = netMonState.getMessage(context, languageState.currentLanguage.code),
                     fontSize = 16.sp,
                     textAlign = TextAlign.Center,
                     color = netMonState.color,
@@ -91,7 +100,7 @@ fun NetMonDialog(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = "Tutup",
+                        text = "OK",
                         color = MaterialTheme.colorScheme.onPrimary,
                         fontWeight = FontWeight.Medium
                     )
@@ -104,8 +113,12 @@ fun NetMonDialog(
 @Composable
 fun NetMonInformation(
     netMonState: NetMonState,
-    isTablet: Boolean = false
+    isTablet: Boolean = false,
+    languageViewModel: LanguageViewModel = koinViewModel()
 ) {
+    val context = LocalContext.current
+    val languageState by languageViewModel.languageState.collectAsState()
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -121,7 +134,7 @@ fun NetMonInformation(
         )
 
         Text(
-            text = netMonState.message,
+            text = netMonState.getMessage(context, languageState.currentLanguage.code),
             fontSize = if (isTablet) 16.sp else 14.sp,
             color = netMonState.color,
             fontWeight = FontWeight.Medium

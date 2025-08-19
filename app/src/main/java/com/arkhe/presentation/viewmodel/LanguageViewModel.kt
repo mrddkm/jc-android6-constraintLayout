@@ -173,6 +173,32 @@ class LanguageViewModel(
                     R.string.select_theme,
                     languageCode
                 ),
+                ConsLang.CONNECTION to LanguageManager.getLocalizedString(
+                    getApplication(),
+                    R.string.connection,
+                    languageCode
+                ),
+                /*ConnectionStatus*/
+                ConsLang.CONNECTED_MOBILE_DATA to LanguageManager.getLocalizedString(
+                    getApplication(),
+                    R.string.connected_mobile_data,
+                    languageCode
+                ),
+                ConsLang.CONNECTED_WIFI to LanguageManager.getLocalizedString(
+                    getApplication(),
+                    R.string.connected_wifi,
+                    languageCode
+                ),
+                ConsLang.NOT_CONNECTED_TO_INTERNET to LanguageManager.getLocalizedString(
+                    getApplication(),
+                    R.string.not_connected_to_internet,
+                    languageCode
+                ),
+                ConsLang.NOT_CONNECTED_TO_SERVER to LanguageManager.getLocalizedString(
+                    getApplication(),
+                    R.string.not_connected_to_server,
+                    languageCode
+                ),
                 /*Common*/
                 ConsLang.SUBMIT_BUTTON to LanguageManager.getLocalizedString(
                     getApplication(),

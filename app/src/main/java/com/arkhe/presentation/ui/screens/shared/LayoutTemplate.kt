@@ -198,7 +198,6 @@ fun MainSection(
 fun FooterSection(
     isTablet: Boolean,
     currentUserProfile: UserProfile? = null,
-    viewModelLanguage: LanguageViewModel = koinViewModel(),
     viewModelAbout: AboutDialogViewModel = koinViewModel(),
     viewModelNetMon: NetMonViewModel = koinViewModel(),
     viewModelSettingsProfile: SettingsProfileViewModel = koinViewModel(),
@@ -234,11 +233,12 @@ fun FooterSection(
             val (appInfo, themeButton, settingsAndProfile) = createRefs()
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.constrainAs(appInfo) {
-                    start.linkTo(parent.start)
-                    top.linkTo(parent.top)
-                    bottom.linkTo(parent.bottom)
-                }
+                modifier = Modifier
+                    .constrainAs(appInfo) {
+                        start.linkTo(parent.start)
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+                    }
                     .padding(start = appSize.horizontalPadding / 2)
             ) {
                 IconButton(
@@ -280,11 +280,12 @@ fun FooterSection(
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.constrainAs(settingsAndProfile) {
-                    end.linkTo(parent.end)
-                    top.linkTo(parent.top)
-                    bottom.linkTo(parent.bottom)
-                }
+                modifier = Modifier
+                    .constrainAs(settingsAndProfile) {
+                        end.linkTo(parent.end)
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+                    }
                     .padding(end = appSize.horizontalPadding / 2)
             ) {
                 currentUserProfile?.username?.let {
@@ -322,7 +323,6 @@ fun FooterSection(
         NetMonDialog(
             onDismissRequest = { viewModelNetMon.hideNetMonDialog() },
             netMonState = netMonState,
-            isTablet = isTablet
         )
     }
 

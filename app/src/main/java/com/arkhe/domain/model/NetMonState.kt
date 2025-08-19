@@ -1,5 +1,6 @@
 package com.arkhe.domain.model
 
+import android.content.Context
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.filled.SignalCellularAlt
@@ -7,34 +8,39 @@ import androidx.compose.material.icons.filled.SignalWifiOff
 import androidx.compose.material.icons.filled.Wifi
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
+import com.arkhe.base.R
+import com.arkhe.core.utils.LanguageManager
 
 sealed class NetMonState(
-    val message: String,
     val icon: ImageVector,
-    val color: Color
+    val color: Color,
+    private val messageRes: Int
 ) {
     object ConnectedMobileData : NetMonState(
-        message = "Internet Data Seluler",
         icon = Icons.Default.SignalCellularAlt,
-        color = Color(0xFF4CAF50) // Green
+        color = Color(0xFF4CAF50),
+        messageRes = R.string.connected_mobile_data
     )
 
     object ConnectedWifi : NetMonState(
-        message = "Internet WiFi",
         icon = Icons.Default.Wifi,
-        color = Color(0xFF2196F3) // Blue
+        color = Color(0xFF2196F3),
+        messageRes = R.string.connected_wifi
     )
 
     object NotConnectedToInternet : NetMonState(
-        message = "Tidak Terhubung ke Internet",
         icon = Icons.Default.SignalWifiOff,
-        color = Color(0xFFFF9800) // Orange
+        color = Color(0xFFFF9800),
+        messageRes = R.string.not_connected_to_internet
     )
 
     object NotConnectedToServer : NetMonState(
-        message = "Tidak Terhubung ke Server",
         icon = Icons.Default.CloudOff,
-        color = Color(0xFFE91E63) // Pink
+        color = Color(0xFFE91E63),
+        messageRes = R.string.not_connected_to_server
     )
+
+    fun getMessage(context: Context, languageCode: String): String {
+        return LanguageManager.getLocalizedString(context, messageRes, languageCode)
+    }
 }

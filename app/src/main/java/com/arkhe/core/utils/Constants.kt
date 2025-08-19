@@ -39,6 +39,13 @@ object ConsLang {
     const val SELECT_LANGUAGE = "select_language"
     const val CURRENT_LANGUAGE = "current_language"
     const val SELECT_THEME = "select_theme"
+    const val CONNECTION = "connection"
+
+    /*ConnectionStatus*/
+    const val CONNECTED_MOBILE_DATA = "connected_mobile_data"
+    const val CONNECTED_WIFI = "connected_wifi"
+    const val NOT_CONNECTED_TO_INTERNET = "not_connected_to_internet"
+    const val NOT_CONNECTED_TO_SERVER = "not_connected_to_server"
 
     /*Common*/
     const val SUBMIT_BUTTON = "submit_button"
