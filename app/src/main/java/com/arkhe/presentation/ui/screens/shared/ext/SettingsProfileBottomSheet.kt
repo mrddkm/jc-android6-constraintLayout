@@ -360,7 +360,7 @@ private fun SettingsProfileBottomSheetPreview() {
                 uiStateTheme = ThemeUiState(
                     currentTheme = ThemeMode.LIGHT
                 ),
-                netMonState = NetMonState.ConnectedMobileData,
+                netMonState = NetMonState.ConnectedWifi,
                 onThemeSelected = { }
             )
         }

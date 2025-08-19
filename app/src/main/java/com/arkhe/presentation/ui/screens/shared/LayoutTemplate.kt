@@ -46,7 +46,7 @@ import com.arkhe.core.utils.ConsLang
 import com.arkhe.domain.model.ThemeMode
 import com.arkhe.presentation.state.ThemeUiState
 import com.arkhe.presentation.ui.screens.shared.ext.AboutDialog
-import com.arkhe.presentation.ui.screens.shared.ext.NetMonDialog
+import com.arkhe.presentation.ui.screens.shared.ext.NetMonGuide
 import com.arkhe.presentation.ui.screens.shared.ext.SettingsProfileBottomSheet
 import com.arkhe.presentation.ui.screens.shared.ext.UserProfile
 import com.arkhe.presentation.ui.theme.AppSize
@@ -320,7 +320,7 @@ fun FooterSection(
     }
 
     if (showNetMonDialog) {
-        NetMonDialog(
+        NetMonGuide(
             onDismissRequest = { viewModelNetMon.hideNetMonDialog() },
             netMonState = netMonState,
         )

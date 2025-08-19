@@ -18,29 +18,38 @@ sealed class NetMonState(
 ) {
     object ConnectedMobileData : NetMonState(
         icon = Icons.Default.SignalCellularAlt,
-        color = Color(0xFF4CAF50),
+        color = Color(0xFF008450),
         messageRes = R.string.connected_mobile_data
     )
 
     object ConnectedWifi : NetMonState(
         icon = Icons.Default.Wifi,
-        color = Color(0xFF2196F3),
+        color = Color(0xFF008450),
         messageRes = R.string.connected_wifi
     )
 
     object NotConnectedToInternet : NetMonState(
         icon = Icons.Default.SignalWifiOff,
-        color = Color(0xFFFF9800),
+        color = Color(0xFFEFB700),
         messageRes = R.string.not_connected_to_internet
     )
 
     object NotConnectedToServer : NetMonState(
         icon = Icons.Default.CloudOff,
-        color = Color(0xFFE91E63),
+        color = Color(0xFFB81D13),
         messageRes = R.string.not_connected_to_server
     )
 
     fun getMessage(context: Context, languageCode: String): String {
         return LanguageManager.getLocalizedString(context, messageRes, languageCode)
+    }
+
+    companion object {
+        val allStates: List<NetMonState> = listOf(
+            ConnectedMobileData,
+            ConnectedWifi,
+            NotConnectedToInternet,
+            NotConnectedToServer
+        )
     }
 }
