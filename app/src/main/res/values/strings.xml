@@ -23,10 +23,10 @@
     <string name="connection">Connection Status</string>
 
     <!--ConnectionStatus-->
-    <string name="connected_mobile_data">Internet Mobile Data</string>
-    <string name="connected_wifi">Internet Wifi</string>
+    <string name="connected_mobile_data">Mobile Data</string>
+    <string name="connected_wifi">Wifi</string>
     <string name="not_connected_to_internet">Not Connected to Internet</string>
-    <string name="not_connected_to_server">Not Connected to Arkhe Server</string>
+    <string name="not_connected_to_server">Not Connected to Server</string>
 
     <!--Common-->
     <string name="submit_button">Submit</string>

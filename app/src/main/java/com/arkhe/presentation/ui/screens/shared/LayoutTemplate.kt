@@ -29,6 +29,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,6 +58,7 @@ import com.arkhe.presentation.viewmodel.SettingsProfileViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
+@Suppress("Unused")
 fun LayoutTemplate(
     headerPercent: Float = 0.10f,
     footerPercent: Float = 0.08f,
@@ -198,6 +200,7 @@ fun MainSection(
 fun FooterSection(
     isTablet: Boolean,
     currentUserProfile: UserProfile? = null,
+    viewModelLanguage: LanguageViewModel = koinViewModel(),
     viewModelAbout: AboutDialogViewModel = koinViewModel(),
     viewModelNetMon: NetMonViewModel = koinViewModel(),
     viewModelSettingsProfile: SettingsProfileViewModel = koinViewModel(),
@@ -207,6 +210,7 @@ fun FooterSection(
 ) {
     val appSize = AppSize(isTablet = isTablet)
 
+    val languageState by viewModelLanguage.languageState.collectAsState()
     val netMonState by viewModelNetMon.netMonState.collectAsStateWithLifecycle()
     val showAboutDialog by viewModelAbout.showDialog.collectAsStateWithLifecycle()
     val showNetMonDialog by viewModelNetMon.showDialog.collectAsStateWithLifecycle()
@@ -322,7 +326,8 @@ fun FooterSection(
     if (showNetMonDialog) {
         NetMonGuide(
             onDismissRequest = { viewModelNetMon.hideNetMonDialog() },
-            netMonState = netMonState,
+            currentNetMonState = netMonState,
+            selectedLanguage = languageState.currentLanguage,
         )
     }
 

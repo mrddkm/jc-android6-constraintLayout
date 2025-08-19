@@ -237,7 +237,8 @@ private fun SettingsSheetContent(
         ) {
             NetMonInformation(
                 netMonState = netMonState,
-                isTablet = isTablet
+                isTablet = isTablet,
+                selectedLanguage = selectedLanguage
             )
         }
 

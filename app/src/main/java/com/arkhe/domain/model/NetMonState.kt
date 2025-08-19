@@ -14,7 +14,7 @@ import com.arkhe.core.utils.LanguageManager
 sealed class NetMonState(
     val icon: ImageVector,
     val color: Color,
-    private val messageRes: Int
+    val messageRes: Int
 ) {
     object ConnectedMobileData : NetMonState(
         icon = Icons.Default.SignalCellularAlt,
@@ -40,16 +40,7 @@ sealed class NetMonState(
         messageRes = R.string.not_connected_to_server
     )
 
-    fun getMessage(context: Context, languageCode: String): String {
-        return LanguageManager.getLocalizedString(context, messageRes, languageCode)
-    }
-
-    companion object {
-        val allStates: List<NetMonState> = listOf(
-            ConnectedMobileData,
-            ConnectedWifi,
-            NotConnectedToInternet,
-            NotConnectedToServer
-        )
+    fun getMessage(context: Context, selectedLanguage: String): String {
+        return LanguageManager.getLocalizedString(context, messageRes, selectedLanguage)
     }
 }
