@@ -1,6 +1,7 @@
 [versions]
 # Core Android & Build Tools
 agp = "8.12.1"
+#noinspection NewerVersionAvailable
 kotlin = "2.2.0"
 googleKsp = "2.2.0-2.0.2"
 
